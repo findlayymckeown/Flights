@@ -340,6 +340,51 @@
 
     /* ── Footer ── */
     .page-footer { text-align:center;padding-top:1rem;font-size:.73rem;color:var(--fg-subtle);line-height:1.9; }
+  
+    /* ── Page 3: Date Matrix ── */
+    .date-grid { display:grid; grid-template-columns:auto repeat(6,1fr); gap:2px; margin-bottom:1rem; font-size:.72rem; }
+    .dg-header { background:rgba(255,255,255,0.04); padding:.4rem .3rem; text-align:center; border-radius:4px; font-weight:700; color:var(--fg-subtle); font-family:var(--mono); }
+    .dg-dep { background:rgba(255,255,255,0.04); padding:.4rem .5rem; border-radius:4px; font-weight:700; color:var(--fg-muted); font-family:var(--mono); white-space:nowrap; }
+    .dg-cell { padding:.35rem .25rem; text-align:center; border-radius:5px; cursor:default; transition:background 150ms; }
+    .dg-cell:hover { filter:brightness(1.3); }
+    .dg-cell.unchecked { background:rgba(255,255,255,0.03); color:var(--fg-subtle); border:1px solid rgba(255,255,255,0.06); }
+    .dg-cell.checked   { background:rgba(239,68,68,0.12); color:#FCA5A5; border:1px solid rgba(239,68,68,0.2); font-family:var(--mono); }
+    .dg-cell.found     { background:rgba(16,185,129,0.15); color:#6EE7B7; border:1px solid rgba(16,185,129,0.3); font-family:var(--mono); font-weight:700; }
+    .dg-cell.ideal     { background:var(--accent-dim); border:1px solid rgba(94,106,210,0.35); color:#A5B4FC; }
+    .dg-cell.invalid   { background:rgba(255,255,255,0.01); color:rgba(255,255,255,0.12); border:1px dashed rgba(255,255,255,0.06); }
+    .dg-legend { display:flex; gap:.75rem; flex-wrap:wrap; font-size:.7rem; color:var(--fg-subtle); margin-top:.5rem; }
+    .dg-swatch { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:3px; vertical-align:middle; }
+
+    /* Airport cards */
+    .airport-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:.7rem; margin-bottom:1rem; }
+    .airport-card { padding:1rem; }
+    .airport-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.6rem; }
+    .airport-code { font-family:var(--mono); font-size:1.5rem; font-weight:800; color:var(--accent); }
+    .airport-name { font-size:.82rem; font-weight:600; color:var(--fg); margin-top:.05rem; }
+    .airport-priority { font-size:.65rem; color:var(--fg-subtle); }
+    .airport-stat { font-size:.75rem; color:var(--fg-muted); display:flex; gap:.4rem; align-items:center; padding:.2rem 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .airport-stat:last-of-type { border-bottom:none; }
+    .airport-stat-icon { width:14px; color:var(--fg-subtle); flex-shrink:0; }
+    .airport-notes { font-size:.72rem; color:var(--fg-subtle); margin-top:.5rem; line-height:1.5; padding-top:.5rem; border-top:1px solid var(--border); }
+
+    /* Distance bar */
+    .dist-bar-wrap { margin-bottom:1rem; }
+    .dist-row { display:flex; align-items:center; gap:.75rem; padding:.35rem 0; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .dist-row:last-child { border-bottom:none; }
+    .dist-code { font-family:var(--mono); font-size:.78rem; font-weight:700; color:var(--accent); width:36px; flex-shrink:0; }
+    .dist-bar-outer { flex:1; height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
+    .dist-bar-inner { height:100%; border-radius:3px; }
+    .dist-label { font-size:.72rem; color:var(--fg-muted); white-space:nowrap; width:60px; text-align:right; font-family:var(--mono); }
+    .dist-train { font-size:.7rem; color:var(--fg-subtle); width:55px; text-align:right; }
+
+    /* Booking links with pre-filled dates */
+    .booking-links-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.5rem; }
+    .booking-link-card { padding:.7rem .9rem; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--radius-sm); text-decoration:none; display:flex; flex-direction:column; gap:.2rem; transition:background 150ms var(--ease),border-color 150ms var(--ease),transform 100ms var(--ease); }
+    .booking-link-card:hover { background:var(--accent-dim); border-color:rgba(94,106,210,0.35); transform:translateY(-1px); text-decoration:none; }
+    .blc-name { font-size:.82rem; font-weight:700; color:var(--accent); }
+    .blc-route { font-size:.72rem; color:var(--fg-muted); }
+    .blc-note { font-size:.68rem; color:var(--fg-subtle); }
+
   </style>
 </head>
 <body>
@@ -361,6 +406,10 @@
       <button class="nav-item active" data-page="hunt" id="nav-hunt">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Flight Hunt
+      </button>
+      <button class="nav-item" data-page="dates" id="nav-dates">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Date Finder
       </button>
       <button class="nav-item" data-page="deals" id="nav-deals">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -389,6 +438,7 @@
   <!-- Main -->
   <main class="main">
     <div class="page active" id="page-hunt"></div>
+    <div class="page" id="page-dates"></div>
     <div class="page" id="page-deals"></div>
   </main>
 
@@ -871,6 +921,359 @@ window.FLIGHT_DATA = {
       "vtype": "red",
       "url": "https://www.delta.com"
     }
+  ],
+  "date_matrix": {
+    "note": "All combinations that satisfy hard requirements. Prices are estimates; blank = not yet checked.",
+    "depart_options": [
+      "Jun 28",
+      "Jun 29",
+      "Jun 30",
+      "Jul 1",
+      "Jul 2"
+    ],
+    "return_options": [
+      "Jul 10",
+      "Jul 11",
+      "Jul 12",
+      "Jul 13",
+      "Jul 14",
+      "Jul 15"
+    ],
+    "valid": [
+      {
+        "dep": "Jun 28",
+        "ret": "Jul 10",
+        "days": 12,
+        "status": "valid",
+        "price_est": null,
+        "notes": "Longer trip, more time in England"
+      },
+      {
+        "dep": "Jun 28",
+        "ret": "Jul 11",
+        "days": 13,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 28",
+        "ret": "Jul 12",
+        "days": 14,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 28",
+        "ret": "Jul 13",
+        "days": 15,
+        "status": "valid",
+        "price_est": null,
+        "notes": "Max length"
+      },
+      {
+        "dep": "Jun 29",
+        "ret": "Jul 10",
+        "days": 11,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 29",
+        "ret": "Jul 11",
+        "days": 12,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 29",
+        "ret": "Jul 12",
+        "days": 13,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 29",
+        "ret": "Jul 13",
+        "days": 14,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 29",
+        "ret": "Jul 14",
+        "days": 15,
+        "status": "valid",
+        "price_est": null,
+        "notes": "Max length"
+      },
+      {
+        "dep": "Jun 30",
+        "ret": "Jul 10",
+        "days": 10,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 30",
+        "ret": "Jul 11",
+        "days": 11,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 30",
+        "ret": "Jul 12",
+        "days": 12,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 30",
+        "ret": "Jul 13",
+        "days": 13,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 30",
+        "ret": "Jul 14",
+        "days": 14,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jun 30",
+        "ret": "Jul 15",
+        "days": 15,
+        "status": "valid",
+        "price_est": null,
+        "notes": "Max length"
+      },
+      {
+        "dep": "Jul 1",
+        "ret": "Jul 10",
+        "days": 9,
+        "status": "valid",
+        "price_est": null,
+        "notes": "Tight but valid"
+      },
+      {
+        "dep": "Jul 1",
+        "ret": "Jul 11",
+        "days": 10,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jul 1",
+        "ret": "Jul 12",
+        "days": 11,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jul 1",
+        "ret": "Jul 13",
+        "days": 12,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jul 1",
+        "ret": "Jul 14",
+        "days": 13,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jul 1",
+        "ret": "Jul 15",
+        "days": 14,
+        "status": "valid",
+        "price_est": null,
+        "notes": "Ideal dates"
+      },
+      {
+        "dep": "Jul 2",
+        "ret": "Jul 10",
+        "days": 8,
+        "status": "valid",
+        "price_est": null,
+        "notes": "Minimum — arrive Jul 3 only possible with overnight flight"
+      },
+      {
+        "dep": "Jul 2",
+        "ret": "Jul 11",
+        "days": 9,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jul 2",
+        "ret": "Jul 12",
+        "days": 10,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jul 2",
+        "ret": "Jul 13",
+        "days": 11,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jul 2",
+        "ret": "Jul 14",
+        "days": 12,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      },
+      {
+        "dep": "Jul 2",
+        "ret": "Jul 15",
+        "days": 13,
+        "status": "valid",
+        "price_est": null,
+        "notes": ""
+      }
+    ],
+    "invalid_examples": [
+      {
+        "dep": "Jul 3",
+        "reason": "Arrives Jul 4 at earliest — misses first wedding"
+      },
+      {
+        "dep": "Jun 28",
+        "ret": "Jul 16",
+        "reason": "17 days — exceeds 15-day maximum"
+      },
+      {
+        "dep": "Jul 1",
+        "ret": "Jul 9",
+        "reason": "Only 8 days but must leave AFTER Jul 10"
+      }
+    ]
+  },
+  "airport_guide": [
+    {
+      "code": "MAN",
+      "name": "Manchester",
+      "priority": 1,
+      "miles_from_leeds": 43,
+      "train_mins": 60,
+      "train_cost": "~£15–30",
+      "verdict": "Best",
+      "verdict_type": "green",
+      "notes": "Direct trains to Leeds every 30 min. Most direct option for Yorkshire weddings."
+    },
+    {
+      "code": "LBA",
+      "name": "Leeds Bradford",
+      "priority": 2,
+      "miles_from_leeds": 8,
+      "train_mins": 30,
+      "train_cost": "~£5–10",
+      "verdict": "Closest",
+      "verdict_type": "green",
+      "notes": "Only 8 miles from Leeds city centre. Taxi ~£20. Limited flight options but best location."
+    },
+    {
+      "code": "LPL",
+      "name": "Liverpool",
+      "priority": 3,
+      "miles_from_leeds": 75,
+      "train_mins": 90,
+      "train_cost": "~£25–50",
+      "verdict": "Viable",
+      "verdict_type": "yellow",
+      "notes": "Train to Leeds via Manchester ~1.5h. PLAY Airlines flies here from US via Reykjavik."
+    },
+    {
+      "code": "BHX",
+      "name": "Birmingham",
+      "priority": 4,
+      "miles_from_leeds": 115,
+      "train_mins": 120,
+      "train_cost": "~£30–60",
+      "verdict": "Far",
+      "verdict_type": "yellow",
+      "notes": "2h train to Leeds. Further than ideal but has more flight options."
+    },
+    {
+      "code": "NCL",
+      "name": "Newcastle",
+      "priority": 5,
+      "miles_from_leeds": 100,
+      "train_mins": 90,
+      "train_cost": "~£25–45",
+      "verdict": "Viable",
+      "verdict_type": "yellow",
+      "notes": "~1.5h train to Leeds. Good option if significantly cheaper."
+    },
+    {
+      "code": "LHR",
+      "name": "London Heathrow",
+      "priority": 6,
+      "miles_from_leeds": 200,
+      "train_mins": 210,
+      "train_cost": "~£60–100",
+      "verdict": "Far",
+      "verdict_type": "red",
+      "notes": "2.5–3h to Leeds via train. Expensive rail connection but most flights available."
+    },
+    {
+      "code": "LGW",
+      "name": "London Gatwick",
+      "priority": 7,
+      "miles_from_leeds": 215,
+      "train_mins": 240,
+      "train_cost": "~£65–110",
+      "verdict": "Far",
+      "verdict_type": "red",
+      "notes": "Slightly south of LHR. Norse Atlantic flies here cheaply. Consider overnight to Leeds."
+    },
+    {
+      "code": "STN",
+      "name": "London Stansted",
+      "priority": 8,
+      "miles_from_leeds": 200,
+      "train_mins": 240,
+      "train_cost": "~£65–105",
+      "verdict": "Far",
+      "verdict_type": "red",
+      "notes": "PLAY Airlines destination. East of London, further from North England."
+    },
+    {
+      "code": "LTN",
+      "name": "London Luton",
+      "priority": 9,
+      "miles_from_leeds": 185,
+      "train_mins": 240,
+      "train_cost": "~£60–100",
+      "verdict": "Far",
+      "verdict_type": "red",
+      "notes": "Budget airport. Similar distance to LHR. Avoid if possible."
+    }
   ]
 };
 </script>
@@ -1155,6 +1558,165 @@ window.FLIGHT_DATA = {
         <span class="live-dot"></span>Deal scanner running hourly &nbsp;·&nbsp;
         <a href="https://claude.ai/code/routines">claude.ai/code/routines</a><br>
         Data refreshed: ${new Date(D.meta.last_updated).toLocaleString()}
+      </div>
+    `;
+
+
+
+    /* ─────────────────────────────────────────────
+       PAGE 3 — DATE FINDER
+    ───────────────────────────────────────────── */
+    const dm = D.date_matrix || {valid:[],depart_options:[],return_options:[]};
+    const ag = D.airport_guide || [];
+
+    // Build date matrix lookup
+    const priceMap = {};
+    (dm.valid||[]).forEach(v=>{ priceMap[v.dep+'|'+v.ret] = v; });
+
+    const depOpts = dm.depart_options || [];
+    const retOpts = dm.return_options || [];
+
+    // Identify ideal combo
+    const isIdeal = (d,r) => d==='Jul 1' && r==='Jul 15';
+
+    let gridHTML = '<div class="date-grid">';
+    // header row
+    gridHTML += '<div class="dg-header">Depart ↓ / Return →</div>';
+    retOpts.forEach(r => gridHTML += `<div class="dg-header">${e(r)}</div>`);
+    // data rows
+    depOpts.forEach(dep => {
+      gridHTML += `<div class="dg-dep">${e(dep)}</div>`;
+      retOpts.forEach(ret => {
+        const key = dep+'|'+ret;
+        const cell = priceMap[key];
+        if(!cell){
+          gridHTML += '<div class="dg-cell invalid">✕</div>';
+        } else if(cell.price_est){
+          const cls = cell.price_est <= B ? 'found' : 'checked';
+          gridHTML += `<div class="dg-cell ${cls}" title="${e(cell.notes||'')}">$${cell.price_est}</div>`;
+        } else {
+          const cls = isIdeal(dep,ret) ? 'ideal' : 'unchecked';
+          gridHTML += `<div class="dg-cell ${cls}" title="${e(cell.notes||'')} (${cell.days} days)">${isIdeal(dep,ret)?'★':'—'}</div>`;
+        }
+      });
+    });
+    gridHTML += '</div>';
+    gridHTML += `<div class="dg-legend">
+      <span><span class="dg-swatch" style="background:rgba(16,185,129,0.3)"></span>Under $550</span>
+      <span><span class="dg-swatch" style="background:rgba(239,68,68,0.2)"></span>Over budget</span>
+      <span><span class="dg-swatch" style="background:var(--accent-dim)"></span>Ideal dates</span>
+      <span><span class="dg-swatch" style="background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.1)"></span>Invalid combo</span>
+      <span style="color:var(--fg-subtle);margin-top:.2rem;flex-basis:100%;font-size:.68rem">Hover a cell for notes. — = not yet priced. ✕ = fails 8–15 day or date requirements.</span>
+    </div>`;
+
+    // Airport distance bars (max distance ~215 miles = LGW)
+    const maxDist = 215;
+    let distHTML = '<div class="dist-bar-wrap">';
+    ag.forEach(a => {
+      const pct = Math.round((a.miles_from_leeds / maxDist) * 100);
+      const col = a.verdict_type==='green'?'var(--success)':a.verdict_type==='yellow'?'var(--warning)':'var(--danger)';
+      distHTML += `<div class="dist-row">
+        <div class="dist-code">${e(a.code)}</div>
+        <div class="dist-bar-outer"><div class="dist-bar-inner" style="width:${pct}%;background:${col}"></div></div>
+        <div class="dist-label">${a.miles_from_leeds} mi</div>
+        <div class="dist-train">🚂 ${a.train_mins}m</div>
+      </div>`;
+    });
+    distHTML += '</div>';
+
+    // Pre-filled booking links
+    const bookingLinks = [
+      {name:"Google Flights",route:"SLC→MAN",url:"https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI2LTA3LTAxagwIAxIIL20vMHFrZGpyDAgDEggvbS8wNWx3MRooEgoyMDI2LTA3LTE1agwIAxIIL20vMDVsdzFyDAgDEggvbS8wcWtkag%3D%3D&curr=USD",note:"Jul 1 → Jul 15 pre-filled"},
+      {name:"Kayak DEN→MAN",route:"DEN→MAN Jul 1–15",url:"https://www.kayak.com/flights/DEN-MAN/2026-07-01/2026-07-15",note:"Icelandair route"},
+      {name:"Kayak SLC→MAN",route:"SLC→MAN Jul 1–15",url:"https://www.kayak.com/flights/SLC-MAN/2026-07-01/2026-07-15",note:"All airlines"},
+      {name:"Kayak SLC→LHR",route:"SLC→LHR Jul 1–15",url:"https://www.kayak.com/flights/SLC-LHR/2026-07-01/2026-07-15",note:"London Heathrow"},
+      {name:"Skyscanner SLC→UK",route:"SLC→UK Jul 1–15",url:"https://www.skyscanner.com/transport/flights/slc/uk/20260701/20260715/",note:"Flexible destination"},
+      {name:"Momondo SLC→MAN",route:"SLC→MAN Jul 1–15",url:"https://www.momondo.com/flights/salt-lake-city/manchester/2026-07-01/2026-07-15",note:"Price comparison"},
+      {name:"Expedia SLC→MAN",route:"SLC→MAN Jul 1–15",url:"https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from%3ASLC%2Cto%3AMAN%2Cdeparture%3A07%2F01%2F2026&leg2=from%3AMAN%2Cto%3ASLC%2Cdeparture%3A07%2F15%2F2026",note:"Package deals"},
+      {name:"Orbitz SLC→MAN",route:"SLC→MAN Jul 1–15",url:"https://www.orbitz.com/Flights-Search?trip=roundtrip&leg1=from%3ASLC%2Cto%3AMAN%2Cdeparture%3A07%2F01%2F2026&leg2=from%3AMAN%2Cto%3ASLC%2Cdeparture%3A07%2F15%2F2026",note:"Often has deals"},
+      {name:"Icelandair DEN→MAN",route:"DEN→MAN direct",url:"https://www.icelandair.com/us/book/flights/?from=DEN&to=MAN&departure=2026-07-01&return=2026-07-15&adults=1&class=economy",note:"Best structural option"},
+      {name:"Norse Atlantic",route:"JFK→LGW",url:"https://flights.flynorse.com/en-us/",note:"Budget transatlantic"},
+      {name:"PLAY Airlines",route:"US→LPL/STN",url:"https://www.flyplay.com/en-us/cheap-flights-from-united-states",note:"Via Reykjavik"},
+      {name:"Kiwi.com SLC→MAN",route:"Self-transfer combos",url:"https://www.kiwi.com/us/search/tiles/SLC/MAN/2026-07-01/2026-07-15?adults=1&selectedBaggageOption=0",note:"Multi-carrier"},
+    ];
+
+    let blHTML = '<div class="booking-links-grid">';
+    bookingLinks.forEach(l => {
+      blHTML += `<a class="booking-link-card" href="${e(l.url)}" target="_blank" rel="noopener">
+        <div class="blc-name">${e(l.name)}</div>
+        <div class="blc-route">${e(l.route)}</div>
+        <div class="blc-note">${e(l.note)}</div>
+      </a>`;
+    });
+    blHTML += '</div>';
+
+    document.getElementById('page-dates').innerHTML = `
+      <div class="page-head">
+        <div class="page-eyebrow"><span class="dot"></span> Date Intelligence</div>
+        <h1 class="page-h1">Date <span class="grad">Finder</span></h1>
+        <div class="page-sub">All valid date combinations · Airport distances · Direct booking links</div>
+      </div>
+
+      <div class="glass card-pad mb">
+        <div class="slabel">Valid Date Combinations — All 27 options that meet requirements</div>
+        <div style="font-size:.78rem;color:var(--fg-muted);margin-bottom:.75rem;line-height:1.6;">
+          Hard rules: <strong style="color:var(--fg)">arrive by Jul 3</strong> (depart Jun 28–Jul 2) ·
+          <strong style="color:var(--fg)">leave no earlier than Jul 10</strong> ·
+          <strong style="color:var(--fg)">8–15 days</strong> in England ·
+          <span style="color:var(--accent)">★ = your ideal dates</span>
+        </div>
+        ${gridHTML}
+        <div style="font-size:.75rem;color:var(--fg-muted);margin-top:.75rem;line-height:1.6;">
+          <strong style="color:var(--fg)">Tip:</strong> Earlier departure (Jun 28–30) may be cheaper since it avoids the
+          peak July 1 holiday rush. The routine will fill in prices as they're discovered.
+          Jul 2 → Jul 10 is the shortest valid trip (8 days, tight).
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="glass card-pad">
+          <div class="slabel">Airport Distance from Leeds (assumed wedding area)</div>
+          ${distHTML}
+          <div style="font-size:.69rem;color:var(--fg-subtle);margin-top:.5rem">
+            Bars show distance. Clock = estimated train time to Leeds. MAN &amp; LBA are by far closest.
+          </div>
+        </div>
+        <div class="glass card-pad">
+          <div class="slabel">Airport Quick Reference</div>
+          ${ag.map(a=>`
+            <div class="dist-row" style="align-items:flex-start;gap:.6rem;padding:.5rem 0">
+              <div style="min-width:36px">
+                <div style="font-family:var(--mono);font-size:.82rem;font-weight:700;color:var(--accent)">${e(a.code)}</div>
+                <div>${{green:'🟢',yellow:'🟡',red:'🔴'}[a.verdict_type]||''}</div>
+              </div>
+              <div>
+                <div style="font-size:.8rem;font-weight:600;color:var(--fg)">${e(a.name)}</div>
+                <div style="font-size:.72rem;color:var(--fg-muted);margin-top:.1rem">${e(a.notes)}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="glass card-pad mb">
+        <div class="slabel">Direct Booking Links — Dates Pre-Filled Where Possible</div>
+        <div style="font-size:.77rem;color:var(--fg-muted);margin-bottom:.75rem;">
+          Links use Jul 1 → Jul 15. Change dates in the booking site if needed.
+        </div>
+        ${blHTML}
+      </div>
+
+      <div class="glass card-pad">
+        <div class="slabel">What to Book if You're Over Budget</div>
+        <div class="ctx-row"><span>💡</span><span><strong style="color:var(--fg)">Widen dates:</strong> Try Jun 28 or Jun 29 departure — holiday surge pricing often starts Jul 1. Could save $50–150.</span></div>
+        <div class="ctx-row"><span>🔀</span><span><strong style="color:var(--fg)">Try shorter trip:</strong> Jul 2 → Jul 10 (8 days, bare minimum). Shorter trips can sometimes be cheaper by ~5–10%.</span></div>
+        <div class="ctx-row"><span>🏙</span><span><strong style="color:var(--fg)">Accept London:</strong> LGW via Norse Atlantic is cheapest total combination. Train to Leeds is long but doable overnight.</span></div>
+        <div class="ctx-row"><span>📞</span><span><strong style="color:var(--fg)">Call the airline:</strong> Occasionally unpublished fares exist. Try calling Icelandair (+1-800-223-5500) and asking for the lowest available July fare DEN–MAN.</span></div>
+        <div class="ctx-row"><span>🎫</span><span><strong style="color:var(--fg)">Award seats:</strong> Check British Airways Executive Club (Avios), United MileagePlus, and Delta SkyMiles. Award flights on this route in economy often cost £100–£200 in fees only.</span></div>
+      </div>
+
+      <div class="page-footer">
+        <span class="live-dot"></span>Date matrix prices filled in automatically each hourly scan &nbsp;·&nbsp;
+        <a href="https://github.com/findlayymckeown/Flights">github.com/findlayymckeown/Flights</a>
       </div>
     `;
 
