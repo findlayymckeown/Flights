@@ -5,16 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flight Hunter — Utah to England</title>
   <style>
-    /* ── Reset ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    /* ── Root tokens (Modern Dark Cinema) ── */
     :root {
       --bg-deep:      #020203;
       --bg-base:      #050506;
       --bg-elevated:  #0a0a0c;
       --surface:      rgba(255,255,255,0.03);
-      --surface-hover:rgba(255,255,255,0.06);
+      --surface-hover:rgba(255,255,255,0.055);
       --border:       rgba(255,255,255,0.08);
       --border-top:   rgba(255,255,255,0.13);
       --fg:           #EDEDEF;
@@ -22,119 +19,149 @@
       --fg-subtle:    #4B5563;
       --accent:       #5E6AD2;
       --accent-glow:  rgba(94,106,210,0.25);
-      --accent-dim:   rgba(94,106,210,0.15);
+      --accent-dim:   rgba(94,106,210,0.12);
       --success:      #10B981;
-      --success-glow: rgba(16,185,129,0.2);
       --success-dim:  rgba(16,185,129,0.1);
       --danger:       #EF4444;
-      --danger-glow:  rgba(239,68,68,0.2);
       --danger-dim:   rgba(239,68,68,0.1);
       --warning:      #F59E0B;
       --warning-dim:  rgba(245,158,11,0.1);
+      --sidebar-w:    220px;
       --radius:       14px;
       --radius-sm:    8px;
       --ease:         cubic-bezier(0.16,1,0.3,1);
-      --font-mono:    'SF Mono','Fira Code','Cascadia Code','Consolas',monospace;
-      --font-sans:    -apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif;
+      --mono: 'SF Mono','Fira Code','Cascadia Code','Consolas',monospace;
+      --sans: -apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif;
     }
-
-    /* ── Base ── */
     html { color-scheme: dark; }
-    body {
-      font-family: var(--font-sans);
-      background: var(--bg-deep);
-      color: var(--fg);
-      min-height: 100dvh;
-      padding: 2.5rem 1rem 4rem;
-      overflow-x: hidden;
-    }
+    body { font-family: var(--sans); background: var(--bg-deep); color: var(--fg); min-height: 100dvh; overflow-x: hidden; }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
     a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 
-    /* ── Ambient background ── */
-    .blobs {
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      overflow: hidden;
-    }
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(90px);
-      animation: drift 20s ease-in-out infinite alternate;
-    }
-    .blob-1 {
-      width: 500px; height: 500px;
-      background: rgba(94,106,210,0.07);
-      top: -150px; left: -100px;
-      animation-delay: 0s; animation-duration: 22s;
-    }
-    .blob-2 {
-      width: 400px; height: 400px;
-      background: rgba(124,58,237,0.06);
-      bottom: 0; right: -80px;
-      animation-delay: -8s; animation-duration: 18s;
-    }
-    .blob-3 {
-      width: 300px; height: 300px;
-      background: rgba(16,185,129,0.05);
-      top: 50%; left: 40%;
-      animation-delay: -14s; animation-duration: 25s;
-    }
+    /* ── Blobs ── */
+    .blobs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); animation: drift 20s ease-in-out infinite alternate; }
+    .blob-1 { width:500px;height:500px;background:rgba(94,106,210,0.07);top:-150px;left:-100px;animation-duration:22s; }
+    .blob-2 { width:400px;height:400px;background:rgba(124,58,237,0.06);bottom:0;right:-80px;animation-delay:-8s;animation-duration:18s; }
+    .blob-3 { width:300px;height:300px;background:rgba(16,185,129,0.05);top:50%;left:40%;animation-delay:-14s;animation-duration:25s; }
     @keyframes drift {
-      0%   { transform: translate(0,0) scale(1); }
-      33%  { transform: translate(40px,-30px) scale(1.05); }
-      66%  { transform: translate(-20px,50px) scale(0.97); }
-      100% { transform: translate(30px,20px) scale(1.02); }
+      0%   { transform:translate(0,0) scale(1); }
+      33%  { transform:translate(40px,-30px) scale(1.05); }
+      66%  { transform:translate(-20px,50px) scale(0.97); }
+      100% { transform:translate(30px,20px) scale(1.02); }
     }
-    @media (prefers-reduced-motion: reduce) {
-      .blob { animation: none; }
-    }
+    @media(prefers-reduced-motion:reduce){ .blob { animation:none; } }
 
     /* ── Layout ── */
-    .container { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; }
-
-    /* ── Header ── */
-    .header { text-align: center; margin-bottom: 2.5rem; }
-    .header-eyebrow {
-      display: inline-flex; align-items: center; gap: .5rem;
-      font-size: .72rem; font-weight: 600; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--accent);
-      background: var(--accent-dim); border: 1px solid rgba(94,106,210,0.3);
-      padding: .3rem .8rem; border-radius: 20px; margin-bottom: 1rem;
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-w);
+      background: rgba(5,5,6,0.9);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      z-index: 50;
+      transition: transform 280ms var(--ease);
     }
-    .header-eyebrow .pulse {
-      width: 6px; height: 6px; background: var(--success);
-      border-radius: 50%;
-      box-shadow: 0 0 0 0 var(--success-glow);
+    .main { margin-left: var(--sidebar-w); position: relative; z-index: 1; }
+
+    /* ── Mobile ── */
+    .mobile-header {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; height: 52px;
+      background: rgba(5,5,6,0.95); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      align-items: center; justify-content: space-between;
+      padding: 0 1rem; z-index: 60;
+    }
+    .menu-btn {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--fg); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1rem;
+    }
+    .mobile-title { font-size: .9rem; font-weight: 700; color: var(--fg); }
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65); z-index: 49;
+    }
+
+    @media(max-width:768px){
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .mobile-header { display: flex; }
+      .overlay.show { display: block; }
+      .main { margin-left: 0; padding-top: 52px; }
+    }
+
+    /* ── Sidebar internals ── */
+    .sidebar-brand {
+      padding: 1.25rem 1.1rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-logo {
+      font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--accent);
+      display: flex; align-items: center; gap: .45rem;
+    }
+    .brand-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--success); flex-shrink: 0;
       animation: ping 1.8s ease-out infinite;
     }
     @keyframes ping {
-      0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
-      70%  { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
-      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+      0%  { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+      70% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+      100%{ box-shadow: 0 0 0 0 rgba(16,185,129,0); }
     }
-    .header h1 {
-      font-size: clamp(2rem, 5vw, 3rem); font-weight: 800;
-      letter-spacing: -1px; color: var(--fg); line-height: 1.1;
+    .brand-title { font-size: 1rem; font-weight: 800; color: var(--fg); margin-top: .25rem; }
+    .brand-sub { font-size: .72rem; color: var(--fg-subtle); margin-top: .1rem; }
+
+    .sidebar-nav { flex: 1; padding: .75rem .6rem; display: flex; flex-direction: column; gap: .25rem; }
+    .nav-item {
+      display: flex; align-items: center; gap: .7rem;
+      padding: .6rem .8rem; border-radius: 10px;
+      font-size: .84rem; font-weight: 500; color: var(--fg-muted);
+      background: none; border: none; cursor: pointer; width: 100%;
+      text-align: left;
+      transition: background 150ms var(--ease), color 150ms var(--ease);
     }
-    .header h1 .route-accent {
-      background: linear-gradient(135deg, var(--accent), #818CF8);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .nav-item:hover { background: var(--surface); color: var(--fg); }
+    .nav-item.active {
+      background: var(--accent-dim);
+      color: var(--fg);
+      border: 1px solid rgba(94,106,210,0.25);
     }
-    .header-sub { color: var(--fg-muted); margin-top: .5rem; font-size: .9rem; }
-    .header-pills {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: .5rem; margin-top: 1rem;
-    }
-    .header-pill {
-      font-size: .75rem; padding: .25rem .75rem;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 20px; color: var(--fg-muted);
+    .nav-item svg { flex-shrink: 0; opacity: .7; }
+    .nav-item.active svg { opacity: 1; }
+    .nav-section-label {
+      font-size: .65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--fg-subtle);
+      padding: .6rem .8rem .2rem;
     }
 
-    /* ── Glass card base ── */
+    .sidebar-footer {
+      padding: .9rem 1.1rem;
+      border-top: 1px solid var(--border);
+      font-size: .72rem; color: var(--fg-subtle); line-height: 1.6;
+    }
+    .sidebar-footer strong { color: var(--fg-muted); }
+
+    /* ── Page container ── */
+    .page { display: none; padding: 2rem 1.5rem 4rem; max-width: 860px; }
+    .page.active { display: block; }
+    @media(max-width:768px){ .page { padding: 1.25rem 1rem 4rem; } }
+
+    /* ── Section label ── */
+    .slabel {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--fg-subtle); margin-bottom: .75rem;
+    }
+    .mb { margin-bottom: 1rem; }
+
+    /* ── Glass card ── */
     .glass {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -142,211 +169,177 @@
       border-radius: var(--radius);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      transition: background var(--ease) 150ms, border-color var(--ease) 150ms;
+      transition: background 150ms var(--ease);
     }
     .glass:hover { background: var(--surface-hover); }
+    .card-pad { padding: 1.25rem; }
+
+    /* ── Page header ── */
+    .page-head { margin-bottom: 1.75rem; }
+    .page-eyebrow {
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--accent); background: var(--accent-dim);
+      border: 1px solid rgba(94,106,210,0.25);
+      padding: .25rem .75rem; border-radius: 20px; margin-bottom: .75rem;
+    }
+    .page-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: ping 1.8s ease-out infinite; }
+    .page-h1 { font-size: clamp(1.6rem,4vw,2.2rem); font-weight: 800; letter-spacing: -0.5px; }
+    .page-h1 .grad { background: linear-gradient(135deg,var(--accent),#818CF8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .page-sub { color: var(--fg-muted); font-size: .875rem; margin-top: .35rem; }
+    .header-pills { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.8rem; }
+    .hpill { font-size:.73rem; padding:.2rem .65rem; background:var(--surface); border:1px solid var(--border); border-radius:20px; color:var(--fg-muted); }
 
     /* ── Status banner ── */
     .status-banner {
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      display: flex; align-items: center; gap: 1.25rem;
+      padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
+      display: flex; align-items: center; gap: 1.1rem;
       position: relative; overflow: hidden;
     }
-    .status-banner::before {
-      content: ''; position: absolute; inset: 0;
-      opacity: .07; pointer-events: none;
-    }
-    .status-banner.over { border-color: rgba(239,68,68,0.25); }
-    .status-banner.over::before { background: radial-gradient(ellipse at top left, var(--danger), transparent 70%); }
-    .status-banner.found { border-color: rgba(16,185,129,0.3); }
-    .status-banner.found::before { background: radial-gradient(ellipse at top left, var(--success), transparent 70%); }
+    .status-banner::before { content:''; position:absolute; inset:0; opacity:.06; pointer-events:none; }
+    .status-banner.over { border-color:rgba(239,68,68,0.25); }
+    .status-banner.over::before { background:radial-gradient(ellipse at top left,var(--danger),transparent 70%); }
+    .status-banner.found { border-color:rgba(16,185,129,0.3); }
+    .status-banner.found::before { background:radial-gradient(ellipse at top left,var(--success),transparent 70%); }
+    .status-icon { width:48px;height:48px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem; }
+    .status-banner.over  .status-icon { background:var(--danger-dim); border:1px solid rgba(239,68,68,0.25); }
+    .status-banner.found .status-icon { background:var(--success-dim); border:1px solid rgba(16,185,129,0.3); }
+    .status-text h2 { font-size:1rem; font-weight:700; }
+    .status-banner.over  .status-text h2 { color:#FCA5A5; }
+    .status-banner.found .status-text h2 { color:#6EE7B7; }
+    .status-text p { font-size:.8rem; color:var(--fg-muted); margin-top:.2rem; line-height:1.5; }
+    .live-dot { display:inline-block;width:7px;height:7px;background:var(--success);border-radius:50%;margin-right:4px;vertical-align:middle;animation:ping 1.8s ease-out infinite; }
 
-    .status-icon-wrap {
-      width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem;
-    }
-    .status-banner.over .status-icon-wrap { background: var(--danger-dim); border: 1px solid rgba(239,68,68,0.25); }
-    .status-banner.found .status-icon-wrap { background: var(--success-dim); border: 1px solid rgba(16,185,129,0.3); }
-    .status-text h2 { font-size: 1.05rem; font-weight: 700; }
-    .status-banner.over .status-text h2  { color: #FCA5A5; }
-    .status-banner.found .status-text h2 { color: #6EE7B7; }
-    .status-text p { font-size: .82rem; color: var(--fg-muted); margin-top: .25rem; line-height: 1.5; }
-    .live-dot {
-      display: inline-block; width: 7px; height: 7px;
-      background: var(--success); border-radius: 50%;
-      margin-right: 5px; vertical-align: middle;
-      animation: ping 1.8s ease-out infinite;
-    }
+    /* ── Stat grid ── */
+    .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.65rem; margin-bottom:1rem; }
+    @media(max-width:700px){ .stat-grid { grid-template-columns:1fr 1fr; } }
+    .stat-card { padding:1rem 1.1rem; }
+    .stat-label { font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-subtle);margin-bottom:.3rem; }
+    .stat-val { font-family:var(--mono);font-size:1.55rem;font-weight:700;letter-spacing:-1px;line-height:1; }
+    .stat-val.blue   { color:var(--accent); }
+    .stat-val.red    { color:var(--danger); }
+    .stat-val.yellow { color:var(--warning); }
+    .stat-val.green  { color:var(--success); }
+    .stat-sub { font-size:.7rem;color:var(--fg-subtle);margin-top:.25rem; }
 
-    /* ── Grids ── */
-    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: .75rem; margin-bottom: 1rem; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    @media (max-width: 800px) { .grid-4 { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 500px) { .grid-4 { grid-template-columns: 1fr 1fr; } .grid-2 { grid-template-columns: 1fr; } }
+    /* ── Best card ── */
+    .best-card { padding:1.4rem; margin-bottom:1rem; position:relative; }
+    .best-card::after { content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35; }
+    .route-viz { display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:.5rem 0 .8rem; }
+    .atag { font-family:var(--mono);font-size:.76rem;font-weight:700;padding:.2rem .5rem;border-radius:6px;border:1px solid rgba(94,106,210,0.35);background:rgba(94,106,210,0.1);color:#A5B4FC; }
+    .atag.pref { border-color:rgba(167,139,250,0.4);background:rgba(124,58,237,0.12);color:#C4B5FD; }
+    .rarrow { color:var(--fg-subtle);font-size:.8rem; }
+    .chips { display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.7rem; }
+    .chip { font-size:.73rem;padding:.18rem .55rem;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--fg-muted); }
+    .best-flex { display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem; }
+    .big-price { font-family:var(--mono);font-size:2.4rem;font-weight:800;letter-spacing:-2px;line-height:1; }
+    .big-price.over  { color:var(--danger);text-shadow:0 0 30px rgba(239,68,68,0.3); }
+    .big-price.found { color:var(--success);text-shadow:0 0 30px rgba(16,185,129,0.3); }
+    .price-badge { display:inline-block;margin-top:.35rem;font-size:.68rem;padding:.18rem .55rem;border-radius:20px;font-weight:700; }
+    .price-badge.over  { background:var(--danger-dim);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5; }
+    .price-badge.found { background:var(--success-dim);border:1px solid rgba(16,185,129,0.3);color:#6EE7B7; }
+    .best-notes { font-size:.79rem;color:var(--fg-muted);line-height:1.65;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--border); }
 
-    /* ── Stat cards ── */
-    .stat-card { padding: 1.1rem 1.25rem; }
-    .stat-label { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--fg-subtle); margin-bottom: .35rem; }
-    .stat-value { font-family: var(--font-mono); font-size: 1.6rem; font-weight: 700; letter-spacing: -1px; line-height: 1; }
-    .stat-value.blue    { color: var(--accent); }
-    .stat-value.green   { color: var(--success); }
-    .stat-value.red     { color: var(--danger); }
-    .stat-value.yellow  { color: var(--warning); }
-    .stat-sub { font-size: .72rem; color: var(--fg-subtle); margin-top: .3rem; }
-
-    /* ── Section label ── */
-    .section-label {
-      font-size: .68rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .1em; color: var(--fg-subtle); margin-bottom: .75rem;
-    }
-
-    /* ── Best option card ── */
-    .best-card { padding: 1.5rem; margin-bottom: 1rem; position: relative; }
-    .best-card::after {
-      content: ''; position: absolute;
-      top: 0; left: 20%; right: 20%; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: .4;
-    }
-    .route-display {
-      display: flex; flex-wrap: wrap; align-items: center; gap: .4rem;
-      margin: .6rem 0 .9rem;
-    }
-    .atag {
-      font-family: var(--font-mono); font-size: .78rem; font-weight: 700;
-      padding: .2rem .5rem; border-radius: 6px;
-      border: 1px solid rgba(94,106,210,0.4);
-      background: rgba(94,106,210,0.1); color: #A5B4FC;
-    }
-    .atag.pref {
-      border-color: rgba(167,139,250,0.4);
-      background: rgba(124,58,237,0.12); color: #C4B5FD;
-    }
-    .route-arrow { color: var(--fg-subtle); font-size: .85rem; }
-    .best-meta { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .75rem; }
-    .meta-chip {
-      font-size: .75rem; padding: .2rem .6rem; border-radius: 20px;
-      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-      color: var(--fg-muted);
-    }
-    .best-price-wrap { text-align: right; flex-shrink: 0; }
-    .big-price { font-family: var(--font-mono); font-size: 2.6rem; font-weight: 800; letter-spacing: -2px; line-height: 1; }
-    .big-price.over  { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
-    .big-price.found { color: var(--success); text-shadow: 0 0 30px var(--success-glow); }
-    .price-badge {
-      display: inline-block; margin-top: .4rem;
-      font-size: .7rem; padding: .2rem .6rem; border-radius: 20px; font-weight: 600;
-    }
-    .price-badge.over  { background: var(--danger-dim); border: 1px solid rgba(239,68,68,0.3); color: #FCA5A5; }
-    .price-badge.found { background: var(--success-dim); border: 1px solid rgba(16,185,129,0.3); color: #6EE7B7; }
-    .best-flex { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
-    .best-notes { font-size: .8rem; color: var(--fg-muted); line-height: 1.6; margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--border); }
-
-    /* ── Flights table ── */
-    .table-card { margin-bottom: 1rem; overflow: hidden; }
-    .table-header-bar { padding: .9rem 1.25rem .7rem; border-bottom: 1px solid var(--border); }
-    .table-scroll { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 600px; }
-    thead th {
-      padding: .6rem 1rem; text-align: left;
-      font-size: .67rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
-      color: var(--fg-subtle); background: rgba(255,255,255,0.02);
-      border-bottom: 1px solid var(--border);
-    }
-    tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      transition: background 150ms var(--ease);
-      cursor: default;
-    }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: var(--surface-hover); }
-    tbody tr.rejected { opacity: .4; }
-    tbody td { padding: .75rem 1rem; font-size: .855rem; vertical-align: middle; }
-    .td-price { font-family: var(--font-mono); font-weight: 700; font-size: .95rem; white-space: nowrap; }
-    .td-price.over  { color: var(--danger); }
-    .td-price.found { color: var(--success); }
-    .td-rank { font-family: var(--font-mono); font-size: .8rem; color: var(--fg-subtle); font-weight: 600; }
-    .td-route { font-weight: 500; }
-    .td-dest-man { color: #A5B4FC; font-weight: 600; }
-    .td-dest-lba { color: #C4B5FD; font-weight: 600; }
-    .table-legend {
-      padding: .6rem 1.25rem; border-top: 1px solid var(--border);
-      font-size: .7rem; color: var(--fg-subtle);
-      display: flex; gap: 1.5rem; flex-wrap: wrap;
-    }
+    /* ── Tables ── */
+    .table-card { margin-bottom:1rem; overflow:hidden; }
+    .table-bar { padding:.85rem 1.2rem .7rem;border-bottom:1px solid var(--border); }
+    .tscroll { overflow-x:auto; }
+    table { width:100%;border-collapse:collapse;min-width:560px; }
+    thead th { padding:.55rem .9rem;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--fg-subtle);background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border); }
+    tbody tr { border-bottom:1px solid rgba(255,255,255,0.035);transition:background 120ms var(--ease); }
+    tbody tr:last-child { border-bottom:none; }
+    tbody tr:hover { background:var(--surface-hover); }
+    tbody tr.dim { opacity:.4; }
+    tbody td { padding:.7rem .9rem;font-size:.84rem;vertical-align:middle; }
+    .td-mono { font-family:var(--mono);font-weight:700;font-size:.92rem; }
+    .td-mono.over  { color:var(--danger); }
+    .td-mono.found { color:var(--success); }
+    .td-rank { font-family:var(--mono);font-size:.78rem;color:var(--fg-subtle);font-weight:600; }
+    .td-man { color:#A5B4FC;font-weight:600; }
+    .td-lba { color:#C4B5FD;font-weight:600; }
+    .tlegend { padding:.55rem 1.2rem;border-top:1px solid var(--border);font-size:.69rem;color:var(--fg-subtle);display:flex;gap:1.25rem;flex-wrap:wrap; }
 
     /* ── Badges ── */
-    .badge {
-      display: inline-flex; align-items: center; gap: .2rem;
-      font-size: .68rem; font-weight: 700; padding: .18rem .55rem; border-radius: 6px; white-space: nowrap;
-    }
-    .badge-red    { background: var(--danger-dim); color: #FCA5A5; border: 1px solid rgba(239,68,68,0.25); }
-    .badge-green  { background: var(--success-dim); color: #6EE7B7; border: 1px solid rgba(16,185,129,0.25); }
-    .badge-yellow { background: var(--warning-dim); color: #FDE68A; border: 1px solid rgba(245,158,11,0.25); }
-    .badge-gray   { background: rgba(255,255,255,0.04); color: var(--fg-subtle); border: 1px solid var(--border); }
-    .badge-accent { background: var(--accent-dim); color: #A5B4FC; border: 1px solid rgba(94,106,210,0.3); }
+    .badge { display:inline-flex;align-items:center;gap:.2rem;font-size:.67rem;font-weight:700;padding:.16rem .52rem;border-radius:6px;white-space:nowrap; }
+    .badge-red    { background:var(--danger-dim);color:#FCA5A5;border:1px solid rgba(239,68,68,0.25); }
+    .badge-green  { background:var(--success-dim);color:#6EE7B7;border:1px solid rgba(16,185,129,0.25); }
+    .badge-yellow { background:var(--warning-dim);color:#FDE68A;border:1px solid rgba(245,158,11,0.25); }
+    .badge-gray   { background:rgba(255,255,255,0.04);color:var(--fg-subtle);border:1px solid var(--border); }
+    .badge-accent { background:var(--accent-dim);color:#A5B4FC;border:1px solid rgba(94,106,210,0.3); }
+
+    /* ── 2-col grid ── */
+    .grid2 { display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem; }
+    @media(max-width:580px){ .grid2 { grid-template-columns:1fr; } }
 
     /* ── Market bars ── */
-    .market-card { padding: 1.25rem; margin-bottom: 1rem; }
-    .bar-row { margin-bottom: .75rem; }
-    .bar-row:last-child { margin-bottom: 0; }
-    .bar-label { display: flex; justify-content: space-between; font-size: .75rem; color: var(--fg-muted); margin-bottom: .35rem; }
-    .bar-label span:last-child { font-family: var(--font-mono); color: var(--danger); }
-    .bar-track { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
-    .bar-fill {
-      height: 100%; border-radius: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--danger));
-      transition: width .8s var(--ease);
-    }
-    .bar-budget-line {
-      font-size: .7rem; color: var(--fg-subtle); margin-top: .5rem;
-      padding-top: .5rem; border-top: 1px solid var(--border);
-    }
+    .bar-row { margin-bottom:.65rem; }
+    .bar-row:last-of-type { margin-bottom:0; }
+    .bar-lbl { display:flex;justify-content:space-between;font-size:.73rem;color:var(--fg-muted);margin-bottom:.3rem; }
+    .bar-lbl span:last-child { font-family:var(--mono);color:var(--danger); }
+    .bar-track { height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden; }
+    .bar-fill { height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--danger));transition:width .8s var(--ease); }
+    .bar-note { font-size:.69rem;color:var(--fg-subtle);margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--border); }
 
-    /* ── Context card ── */
-    .context-card { padding: 1.25rem; }
-    .ctx-row { display: flex; gap: .6rem; padding: .4rem 0; font-size: .83rem; color: var(--fg-muted); line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .ctx-row:last-child { border-bottom: none; }
+    /* ── Context rows ── */
+    .ctx-row { display:flex;gap:.55rem;padding:.35rem 0;font-size:.82rem;color:var(--fg-muted);line-height:1.5;border-bottom:1px solid rgba(255,255,255,0.035); }
+    .ctx-row:last-child { border-bottom:none; }
 
-    /* ── Drop log / rejected ── */
-    .log-empty { padding: 2rem; text-align: center; color: var(--fg-subtle); font-size: .85rem; line-height: 1.7; }
-    .rejected-row-item { display: flex; align-items: flex-start; gap: .75rem; padding: .7rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: .84rem; }
-    .rejected-row-item:last-child { border-bottom: none; }
-    .rej-x { color: var(--danger); flex-shrink: 0; font-weight: 700; margin-top: 1px; }
-    .rej-reason { font-size: .75rem; color: var(--fg-subtle); margin-top: .15rem; }
+    /* ── Rejected / drop items ── */
+    .log-empty { padding:1.75rem;text-align:center;color:var(--fg-subtle);font-size:.83rem;line-height:1.7; }
+    .list-item { display:flex;align-items:flex-start;gap:.65rem;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,0.035);font-size:.83rem; }
+    .list-item:last-child { border-bottom:none; }
+    .item-x { color:var(--danger);font-weight:700;flex-shrink:0; }
+    .item-sub { font-size:.73rem;color:var(--fg-subtle);margin-top:.12rem; }
 
     /* ── Tips ── */
-    .tips-card { padding: 1.25rem; margin-bottom: 1rem; }
-    .tip-row { display: flex; gap: .75rem; padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: .84rem; align-items: flex-start; }
-    .tip-row:last-child { border-bottom: none; }
-    .tip-text { color: var(--fg-muted); line-height: 1.6; }
-    .tip-text strong { color: var(--fg); }
-    .tip-text a { color: var(--accent); }
+    .tip-row { display:flex;gap:.65rem;padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,0.035);font-size:.83rem;align-items:flex-start; }
+    .tip-row:last-child { border-bottom:none; }
+    .tip-text { color:var(--fg-muted);line-height:1.6; }
+    .tip-text strong { color:var(--fg); }
 
-    /* ── Search links ── */
-    .links-card { padding: 1.25rem; margin-bottom: 1rem; }
-    .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: .5rem; }
-    .link-btn {
-      display: block; padding: .6rem 1rem; text-align: center;
-      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-      border-radius: var(--radius-sm); color: var(--accent); font-size: .82rem; font-weight: 500;
-      transition: background 150ms var(--ease), border-color 150ms var(--ease), transform 100ms var(--ease);
-      cursor: pointer;
-    }
-    .link-btn:hover { background: var(--accent-dim); border-color: rgba(94,106,210,0.4); transform: translateY(-1px); text-decoration: none; }
-    .link-btn:active { transform: translateY(0); }
+    /* ── Links grid ── */
+    .links-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.45rem; }
+    .link-btn { display:block;padding:.55rem .9rem;text-align:center;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);font-size:.8rem;font-weight:500;transition:background 150ms var(--ease),border-color 150ms var(--ease),transform 100ms var(--ease);cursor:pointer; }
+    .link-btn:hover { background:var(--accent-dim);border-color:rgba(94,106,210,0.4);transform:translateY(-1px);text-decoration:none; }
+    .link-btn:active { transform:translateY(0); }
 
-    /* ── History table ── */
-    .hist-card { overflow: hidden; margin-bottom: 1rem; }
+    /* ── Page 2: Strategy cards ── */
+    .strategy-grid { display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1rem; }
+    @media(max-width:620px){ .strategy-grid { grid-template-columns:1fr; } }
+    .strat-card { padding:1.15rem;display:flex;flex-direction:column;gap:.65rem; }
+    .strat-head { display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem; }
+    .strat-name { font-size:.88rem;font-weight:700;color:var(--fg); }
+    .strat-price { font-family:var(--mono);font-size:.82rem;font-weight:700;color:var(--warning);white-space:nowrap; }
+    .strat-steps { display:flex;flex-direction:column;gap:.3rem; }
+    .strat-step { font-size:.75rem;color:var(--fg-muted);display:flex;gap:.45rem;align-items:flex-start; }
+    .step-n { font-family:var(--mono);font-size:.68rem;color:var(--fg-subtle);flex-shrink:0;margin-top:.05rem; }
+    .strat-procon { display:grid;grid-template-columns:1fr 1fr;gap:.5rem;padding:.6rem;background:rgba(255,255,255,0.02);border-radius:8px; }
+    .pro-list,.con-list { display:flex;flex-direction:column;gap:.2rem; }
+    .pro-item,.con-item { font-size:.7rem;display:flex;gap:.3rem;color:var(--fg-muted); }
+    .pro-icon { color:var(--success);flex-shrink:0; }
+    .con-icon { color:var(--danger);flex-shrink:0; }
+    .strat-action { display:flex;gap:.4rem; }
+    .btn-sm { flex:1;padding:.4rem .6rem;text-align:center;border-radius:7px;font-size:.75rem;font-weight:600;cursor:pointer;border:none;transition:opacity 150ms; }
+    .btn-sm:hover { opacity:.8; }
+    .btn-primary { background:var(--accent-dim);color:#A5B4FC;border:1px solid rgba(94,106,210,0.3); }
+    .btn-secondary { background:rgba(255,255,255,0.04);color:var(--fg-muted);border:1px solid var(--border); }
+
+    /* ── Deal feed ── */
+    .deal-feed-empty { padding:2rem;text-align:center;color:var(--fg-subtle);font-size:.83rem;line-height:1.8; }
+    .deal-item { display:flex;align-items:flex-start;gap:.75rem;padding:.75rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;margin-bottom:.5rem; }
+    .deal-icon { width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem; }
+    .deal-icon.sale { background:var(--success-dim); }
+    .deal-icon.error { background:var(--warning-dim); }
+    .deal-body { flex:1; }
+    .deal-title { font-size:.83rem;font-weight:600;color:var(--fg); }
+    .deal-meta { font-size:.72rem;color:var(--fg-subtle);margin-top:.15rem; }
+    .deal-price { font-family:var(--mono);font-size:.9rem;font-weight:700;color:var(--success);white-space:nowrap; }
+
+    /* ── Airline intel table ── */
+    .verdict-cell { display:inline-flex; }
 
     /* ── Footer ── */
-    .footer { text-align: center; margin-top: 2rem; font-size: .75rem; color: var(--fg-subtle); line-height: 1.8; }
-
-    /* ── Utility ── */
-    .mb { margin-bottom: 1rem; }
-    .card-pad { padding: 1.25rem; }
+    .page-footer { text-align:center;padding-top:1rem;font-size:.73rem;color:var(--fg-subtle);line-height:1.9; }
   </style>
 </head>
 <body>
@@ -356,7 +349,48 @@
     <div class="blob blob-3"></div>
   </div>
 
-  <div class="container" id="app"></div>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo"><span class="brand-dot"></span> Flight Hunter</div>
+      <div class="brand-title">Utah → England</div>
+      <div class="brand-sub">July 2026 · $550 budget</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Navigation</div>
+      <button class="nav-item active" data-page="hunt" id="nav-hunt">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Flight Hunt
+      </button>
+      <button class="nav-item" data-page="deals" id="nav-deals">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Deal Watch
+      </button>
+    </nav>
+    <div class="sidebar-footer" id="sidebar-footer">
+      <div><span class="live-dot"></span><strong>Scans active</strong></div>
+      <div>Updated: <span id="last-up">—</span></div>
+      <div>Run #<span id="run-count">—</span></div>
+    </div>
+  </aside>
+
+  <!-- Mobile overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Mobile header -->
+  <header class="mobile-header">
+    <button class="menu-btn" id="menu-btn">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <span class="mobile-title">✈ Flight Hunter</span>
+    <span class="live-dot"></span>
+  </header>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="page active" id="page-hunt"></div>
+    <div class="page" id="page-deals"></div>
+  </main>
 
   <!-- DATA_START -->
 <script>
@@ -369,7 +403,10 @@ window.FLIGHT_DATA = {
   "trip": {
     "must_arrive_by": "July 3, 2026",
     "must_leave_after": "July 10, 2026",
-    "weddings": ["July 4", "July 10"],
+    "weddings": [
+      "July 4",
+      "July 10"
+    ],
     "budget_usd": 550,
     "ideal_depart": "July 1, 2026",
     "ideal_return": "July 15, 2026"
@@ -384,7 +421,13 @@ window.FLIGHT_DATA = {
   "best_option": {
     "price_display": "~$800",
     "price_numeric": 800,
-    "route_airports": ["SLC","DEN","MAN","DEN","SLC"],
+    "route_airports": [
+      "SLC",
+      "DEN",
+      "MAN",
+      "DEN",
+      "SLC"
+    ],
     "preferred_dest": "MAN",
     "airlines": "Icelandair (DEN↔MAN) + Frontier/Southwest (SLC↔DEN)",
     "dates": "Jul 1 → Jul 15, 2026",
@@ -394,305 +437,747 @@ window.FLIGHT_DATA = {
     "notes": "Icelandair DEN→MAN confirmed at $690–$717 for Aug–Oct. July pricing unconfirmed — check icelandair.com directly for Jul 1 dates."
   },
   "market_bars": [
-    {"label":"DEN→MAN + positioning","price":"~$800 est.","pct":71},
-    {"label":"SLC→BHX (United)","price":"$795 ref.","pct":70},
-    {"label":"SLC→LBA (Delta)","price":"$885 ref.","pct":78},
-    {"label":"SLC→MAN (AA/BA)","price":"$892 ref.","pct":79},
-    {"label":"SLC→LHR (United, Jul confirmed)","price":"$1,134","pct":100}
+    {
+      "label": "DEN→MAN + positioning",
+      "price": "~$800 est.",
+      "pct": 71
+    },
+    {
+      "label": "SLC→BHX (United)",
+      "price": "$795 ref.",
+      "pct": 70
+    },
+    {
+      "label": "SLC→LBA (Delta)",
+      "price": "$885 ref.",
+      "pct": 78
+    },
+    {
+      "label": "SLC→MAN (AA/BA)",
+      "price": "$892 ref.",
+      "pct": 79
+    },
+    {
+      "label": "SLC→LHR (United, Jul confirmed)",
+      "price": "$1,134",
+      "pct": 100
+    }
   ],
   "context_items": [
-    {"icon":"🔴","text":"July is peak season — highest demand all year"},
-    {"icon":"🔴","text":"31 days out — past the optimal 40–60 day booking window"},
-    {"icon":"🟡","text":"DEN hub often $100–200 cheaper than flying direct from SLC"},
-    {"icon":"🟢","text":"Icelandair DEN→MAN is best structural option found so far"},
-    {"icon":"🟢","text":"Error fares & flash sales still possible — keep watching"}
+    {
+      "icon": "🔴",
+      "text": "July is peak season — highest demand all year"
+    },
+    {
+      "icon": "🔴",
+      "text": "31 days out — past the optimal 40–60 day booking window"
+    },
+    {
+      "icon": "🟡",
+      "text": "DEN hub often $100–200 cheaper than flying direct from SLC"
+    },
+    {
+      "icon": "🟢",
+      "text": "Icelandair DEN→MAN is best structural option found so far"
+    },
+    {
+      "icon": "🟢",
+      "text": "Error fares & flash sales still possible — keep watching"
+    }
   ],
   "flights": [
-    {"rank":1,"price_display":"~$750","price_numeric":750,"route":"SLC→DEN→MAN→DEN→SLC","dest":"MAN","airline":"Icelandair + positioning","ref_dates":"Sep–Oct (ref)","stops":"1 each way","rejected":false,"booking_url":"https://www.kayak.com/flight-routes/Denver-Intl-DEN/Manchester-MAN"},
-    {"rank":2,"price_display":"$795","price_numeric":795,"route":"SLC→BHX→SLC","dest":"BHX","airline":"United Airlines","ref_dates":"Nov (ref)","stops":"2 each way","rejected":false,"booking_url":"https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/England-GBENG"},
-    {"rank":3,"price_display":"$885","price_numeric":885,"route":"SLC→LBA→SLC","dest":"LBA","airline":"Delta","ref_dates":"Nov (ref)","stops":"1 each way","rejected":false,"booking_url":"https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/England-GBENG"},
-    {"rank":4,"price_display":"$892","price_numeric":892,"route":"SLC→MAN→SLC","dest":"MAN","airline":"American Airlines","ref_dates":"Aug (ref)","stops":"2 each way","rejected":false,"booking_url":"https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/Manchester-MAN"},
-    {"rank":5,"price_display":"$893","price_numeric":893,"route":"SLC→MAN→SLC","dest":"MAN","airline":"British Airways","ref_dates":"Aug (ref)","stops":"2 each way","rejected":false,"booking_url":"https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/Manchester-MAN"},
-    {"rank":6,"price_display":"$910","price_numeric":910,"route":"SLC→MAN→SLC","dest":"MAN","airline":"SWISS (via ZRH)","ref_dates":"Sep (ref)","stops":"2 each way","rejected":false,"booking_url":"https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/Manchester-MAN"},
-    {"rank":null,"price_display":"$961","price_numeric":961,"route":"SLC→LGW→SLC","dest":"LGW","airline":"JetBlue","ref_dates":"Jul 19 ❌","stops":"1 each way","rejected":true,"reject_reason":"Departs Jul 19 — arrives after hard deadline of Jul 3","booking_url":""},
-    {"rank":7,"price_display":"$1,134","price_numeric":1134,"route":"SLC→LHR→SLC","dest":"LHR","airline":"United Airlines","ref_dates":"Jul 2026 ✓","stops":"1–2 each way","rejected":false,"booking_url":"https://www.united.com/en-us/flights-from-salt-lake-city-to-london"},
-    {"rank":8,"price_display":"~$1,279","price_numeric":1279,"route":"SLC→LHR→SLC","dest":"LHR","airline":"Virgin Atlantic","ref_dates":"Jul 2026 (est)","stops":"1–2 each way","rejected":false,"booking_url":"https://flights.virginatlantic.com/en-us/flights-from-salt-lake-city-to-united-kingdom"}
+    {
+      "rank": 1,
+      "price_display": "~$750",
+      "price_numeric": 750,
+      "route": "SLC→DEN→MAN→DEN→SLC",
+      "dest": "MAN",
+      "airline": "Icelandair + positioning",
+      "ref_dates": "Sep–Oct (ref)",
+      "stops": "1 each way",
+      "rejected": false,
+      "booking_url": "https://www.kayak.com/flight-routes/Denver-Intl-DEN/Manchester-MAN"
+    },
+    {
+      "rank": 2,
+      "price_display": "$795",
+      "price_numeric": 795,
+      "route": "SLC→BHX→SLC",
+      "dest": "BHX",
+      "airline": "United Airlines",
+      "ref_dates": "Nov (ref)",
+      "stops": "2 each way",
+      "rejected": false,
+      "booking_url": "https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/England-GBENG"
+    },
+    {
+      "rank": 3,
+      "price_display": "$885",
+      "price_numeric": 885,
+      "route": "SLC→LBA→SLC",
+      "dest": "LBA",
+      "airline": "Delta",
+      "ref_dates": "Nov (ref)",
+      "stops": "1 each way",
+      "rejected": false,
+      "booking_url": "https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/England-GBENG"
+    },
+    {
+      "rank": 4,
+      "price_display": "$892",
+      "price_numeric": 892,
+      "route": "SLC→MAN→SLC",
+      "dest": "MAN",
+      "airline": "American Airlines",
+      "ref_dates": "Aug (ref)",
+      "stops": "2 each way",
+      "rejected": false,
+      "booking_url": "https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/Manchester-MAN"
+    },
+    {
+      "rank": 5,
+      "price_display": "$893",
+      "price_numeric": 893,
+      "route": "SLC→MAN→SLC",
+      "dest": "MAN",
+      "airline": "British Airways",
+      "ref_dates": "Aug (ref)",
+      "stops": "2 each way",
+      "rejected": false,
+      "booking_url": "https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/Manchester-MAN"
+    },
+    {
+      "rank": 6,
+      "price_display": "$910",
+      "price_numeric": 910,
+      "route": "SLC→MAN→SLC",
+      "dest": "MAN",
+      "airline": "SWISS (via ZRH)",
+      "ref_dates": "Sep (ref)",
+      "stops": "2 each way",
+      "rejected": false,
+      "booking_url": "https://www.kayak.com/flight-routes/Salt-Lake-City-SLC/Manchester-MAN"
+    },
+    {
+      "rank": null,
+      "price_display": "$961",
+      "price_numeric": 961,
+      "route": "SLC→LGW→SLC",
+      "dest": "LGW",
+      "airline": "JetBlue",
+      "ref_dates": "Jul 19 ❌",
+      "stops": "1 each way",
+      "rejected": true,
+      "reject_reason": "Departs Jul 19 — arrives after hard deadline of Jul 3",
+      "booking_url": ""
+    },
+    {
+      "rank": 7,
+      "price_display": "$1,134",
+      "price_numeric": 1134,
+      "route": "SLC→LHR→SLC",
+      "dest": "LHR",
+      "airline": "United Airlines",
+      "ref_dates": "Jul 2026 ✓",
+      "stops": "1–2 each way",
+      "rejected": false,
+      "booking_url": "https://www.united.com/en-us/flights-from-salt-lake-city-to-london"
+    },
+    {
+      "rank": 8,
+      "price_display": "~$1,279",
+      "price_numeric": 1279,
+      "route": "SLC→LHR→SLC",
+      "dest": "LHR",
+      "airline": "Virgin Atlantic",
+      "ref_dates": "Jul 2026 (est)",
+      "stops": "1–2 each way",
+      "rejected": false,
+      "booking_url": "https://flights.virginatlantic.com/en-us/flights-from-salt-lake-city-to-united-kingdom"
+    }
   ],
   "rejected": [
-    {"flight":"JetBlue SLC→LGW · $961 · Jul 19","reason":"Arrives Jul 19 — after hard deadline of Jul 3"},
-    {"flight":"Kiwi.com “from $487”","reason":"One-way only — round trip starts at $1,095"},
-    {"flight":"Kayak “from $205–$311”","reason":"One-way route minimums — not bookable July round-trip fares"}
+    {
+      "flight": "JetBlue SLC→LGW · $961 · Jul 19",
+      "reason": "Arrives Jul 19 — after hard deadline of Jul 3"
+    },
+    {
+      "flight": "Kiwi.com “from $487”",
+      "reason": "One-way only — round trip starts at $1,095"
+    },
+    {
+      "flight": "Kayak “from $205–$311”",
+      "reason": "One-way route minimums — not bookable July round-trip fares"
+    }
   ],
   "price_drops": [],
   "tips": [
-    {"icon":"🎯","text":"<strong>Icelandair DEN→MAN</strong> — Best structural option. Check <a href='https://www.icelandair.com'>icelandair.com</a> for July 1 exact dates. Off-peak was $699–$717."},
-    {"icon":"⚡","text":"<strong>Error fares & sales</strong> — Check <a href='https://www.going.com'>Going.com</a> and <a href='https://secretflying.com'>Secret Flying</a> daily. One mistake fare can get you under $550."},
-    {"icon":"🔀","text":"<strong>SLC→LAX/JFK + budget transatlantic</strong> — Cheap Southwest to LA or NY, then Norse Atlantic to LGW. Check if total beats direct SLC routing."},
-    {"icon":"📅","text":"<strong>2-week-out price drops</strong> — Airlines sometimes release unsold seats cheaply 14–21 days before. Risky but worth watching."},
-    {"icon":"🏆","text":"<strong>Points & miles</strong> — If you hold Delta, United, AA, or British Airways Avios miles, award seats may cost far less in fees."}
+    {
+      "icon": "🎯",
+      "text": "<strong>Icelandair DEN→MAN</strong> — Best structural option. Check <a href='https://www.icelandair.com'>icelandair.com</a> for July 1 exact dates. Off-peak was $699–$717."
+    },
+    {
+      "icon": "⚡",
+      "text": "<strong>Error fares & sales</strong> — Check <a href='https://www.going.com'>Going.com</a> and <a href='https://secretflying.com'>Secret Flying</a> daily. One mistake fare can get you under $550."
+    },
+    {
+      "icon": "🔀",
+      "text": "<strong>SLC→LAX/JFK + budget transatlantic</strong> — Cheap Southwest to LA or NY, then Norse Atlantic to LGW. Check if total beats direct SLC routing."
+    },
+    {
+      "icon": "📅",
+      "text": "<strong>2-week-out price drops</strong> — Airlines sometimes release unsold seats cheaply 14–21 days before. Risky but worth watching."
+    },
+    {
+      "icon": "🏆",
+      "text": "<strong>Points & miles</strong> — If you hold Delta, United, AA, or British Airways Avios miles, award seats may cost far less in fees."
+    }
   ],
   "search_links": [
-    {"label":"Google Flights","url":"https://www.google.com/travel/flights"},
-    {"label":"Kayak: DEN→MAN","url":"https://www.kayak.com/flight-routes/Denver-Intl-DEN/Manchester-MAN"},
-    {"label":"Icelandair","url":"https://www.icelandair.com"},
-    {"label":"Skyscanner","url":"https://www.skyscanner.com"},
-    {"label":"Kiwi.com","url":"https://www.kiwi.com"},
-    {"label":"Going.com (deals)","url":"https://www.going.com"},
-    {"label":"Secret Flying","url":"https://secretflying.com"},
-    {"label":"Momondo","url":"https://www.momondo.com/flights/utah-united-states/england-united-kingdom"}
+    {
+      "label": "Google Flights",
+      "url": "https://www.google.com/travel/flights"
+    },
+    {
+      "label": "Kayak: DEN→MAN",
+      "url": "https://www.kayak.com/flight-routes/Denver-Intl-DEN/Manchester-MAN"
+    },
+    {
+      "label": "Icelandair",
+      "url": "https://www.icelandair.com"
+    },
+    {
+      "label": "Skyscanner",
+      "url": "https://www.skyscanner.com"
+    },
+    {
+      "label": "Kiwi.com",
+      "url": "https://www.kiwi.com"
+    },
+    {
+      "label": "Going.com (deals)",
+      "url": "https://www.going.com"
+    },
+    {
+      "label": "Secret Flying",
+      "url": "https://secretflying.com"
+    },
+    {
+      "label": "Momondo",
+      "url": "https://www.momondo.com/flights/utah-united-states/england-united-kingdom"
+    }
   ],
   "history": [
-    {"run":1,"date":"2026-05-31","type":"manual","cheapest":"~$750 est.","sources":"Kayak, Expedia, Skyscanner, Momondo, Kiwi, Travelocity, Virgin Atlantic, Icelandair, PLAY, Norse","notes":"Baseline established — 8+ sources checked"}
+    {
+      "run": 1,
+      "date": "2026-05-31",
+      "type": "manual",
+      "cheapest": "~$750 est.",
+      "sources": "Kayak, Expedia, Skyscanner, Momondo, Kiwi, Travelocity, Virgin Atlantic, Icelandair, PLAY, Norse",
+      "notes": "Baseline established — 8+ sources checked"
+    }
+  ],
+  "deals": {
+    "last_checked": "2026-05-31T00:00:00Z",
+    "items": []
+  },
+  "strategies": [
+    {
+      "name": "Icelandair via Denver",
+      "tag": "BEST OPTION",
+      "tag_type": "green",
+      "est_price": "$750–$870",
+      "steps": [
+        "SLC → DEN on Frontier/Southwest (~$50–80 each way)",
+        "DEN → KEF → MAN on Icelandair (round trip ~$700–$800)",
+        "Return: MAN → KEF → DEN on Icelandair",
+        "DEN → SLC on Frontier/Southwest"
+      ],
+      "pros": [
+        "Manchester arrival (priority #1)",
+        "Only 1 stop each way via Reykjavik",
+        "Free Iceland stopover possible",
+        "Most consistent pricing found"
+      ],
+      "cons": [
+        "~$200+ over $550 budget",
+        "July-specific price unconfirmed",
+        "Requires 2 separate bookings"
+      ],
+      "booking_url": "https://www.icelandair.com",
+      "check_url": "https://www.kayak.com/flight-routes/Denver-Intl-DEN/Manchester-MAN"
+    },
+    {
+      "name": "Norse Atlantic via New York",
+      "tag": "CHECK COMBO",
+      "tag_type": "yellow",
+      "est_price": "$700–$950 total est.",
+      "steps": [
+        "SLC → JFK on Southwest/JetBlue (~$100–180 each way)",
+        "JFK → LGW on Norse Atlantic (budget, nonstop)",
+        "Return: LGW → JFK on Norse Atlantic",
+        "JFK → SLC on Southwest/JetBlue"
+      ],
+      "pros": [
+        "Norse is cheapest transatlantic carrier",
+        "Nonstop JFK–LGW",
+        "Flexible separate tickets"
+      ],
+      "cons": [
+        "4 separate tickets = missed connection risk",
+        "London Gatwick is priority #7",
+        "JFK positioning adds cost + hassle"
+      ],
+      "booking_url": "https://flights.flynorse.com/en-us/",
+      "check_url": "https://flights.flynorse.com/en-us/"
+    },
+    {
+      "name": "PLAY Airlines via LA or Boston",
+      "tag": "INVESTIGATE",
+      "tag_type": "accent",
+      "est_price": "Unknown — check directly",
+      "steps": [
+        "SLC → LAX or BOS on Southwest (~$80–150)",
+        "LAX/BOS → KEF → LPL or STN on PLAY Airlines",
+        "Return: LPL/STN → KEF → LAX/BOS on PLAY",
+        "LAX/BOS → SLC on Southwest"
+      ],
+      "pros": [
+        "PLAY is ultra-budget Icelandic carrier",
+        "Liverpool LPL = priority #3 destination",
+        "Free Reykjavik stopover option"
+      ],
+      "cons": [
+        "US route availability unclear",
+        "Needs direct investigation at flyplay.com",
+        "May not serve LAX/BOS"
+      ],
+      "booking_url": "https://www.flyplay.com/en-us/cheap-flights-from-united-states",
+      "check_url": "https://www.flyplay.com/en-us/cheap-flights-from-united-states"
+    },
+    {
+      "name": "Aer Lingus via Dublin",
+      "tag": "WORTH CHECKING",
+      "tag_type": "yellow",
+      "est_price": "$800–$1,000 est.",
+      "steps": [
+        "SLC → DEN or ORD (positioning)",
+        "DEN/ORD → DUB → MAN on Aer Lingus",
+        "Return: MAN → DUB → DEN/ORD on Aer Lingus",
+        "DEN/ORD → SLC"
+      ],
+      "pros": [
+        "Manchester arrival possible",
+        "Pre-clears US customs in Dublin (faster arrival)",
+        "Often competitive pricing"
+      ],
+      "cons": [
+        "Over budget",
+        "Extra stop via Dublin",
+        "Complex booking"
+      ],
+      "booking_url": "https://www.aerlingus.com",
+      "check_url": "https://www.aerlingus.com/en-us/flights-from-denver-to-manchester"
+    }
+  ],
+  "airlines": [
+    {
+      "name": "Icelandair",
+      "hub": "KEF",
+      "routes": "DEN → MAN",
+      "july_est": "$700–$850 RT",
+      "stops": "1",
+      "verdict": "Best pick",
+      "vtype": "green",
+      "url": "https://www.icelandair.com"
+    },
+    {
+      "name": "Norse Atlantic",
+      "hub": "LGW",
+      "routes": "JFK/LAX → LGW",
+      "july_est": "$350–$550 OW",
+      "stops": "0",
+      "verdict": "Check combo",
+      "vtype": "yellow",
+      "url": "https://flights.flynorse.com/en-us/"
+    },
+    {
+      "name": "PLAY Airlines",
+      "hub": "KEF",
+      "routes": "US → LPL/STN",
+      "july_est": "Unknown",
+      "stops": "1",
+      "verdict": "Investigate",
+      "vtype": "accent",
+      "url": "https://www.flyplay.com/en-us/cheap-flights-from-united-states"
+    },
+    {
+      "name": "Aer Lingus",
+      "hub": "DUB",
+      "routes": "DEN → MAN",
+      "july_est": "~$800–$1,000 RT",
+      "stops": "1",
+      "verdict": "Check July",
+      "vtype": "yellow",
+      "url": "https://www.aerlingus.com/en-us/flights-from-denver-to-manchester"
+    },
+    {
+      "name": "KLM",
+      "hub": "AMS",
+      "routes": "SLC → MAN",
+      "july_est": "~$900–$1,100 RT",
+      "stops": "2",
+      "verdict": "Over budget",
+      "vtype": "red",
+      "url": "https://www.klm.com"
+    },
+    {
+      "name": "American",
+      "hub": "ORD/PHL",
+      "routes": "SLC → MAN",
+      "july_est": "~$892+ RT",
+      "stops": "2",
+      "verdict": "Over budget",
+      "vtype": "red",
+      "url": "https://www.aa.com"
+    },
+    {
+      "name": "British Airways",
+      "hub": "LHR",
+      "routes": "SLC → MAN",
+      "july_est": "~$893+ RT",
+      "stops": "2",
+      "verdict": "Over budget",
+      "vtype": "red",
+      "url": "https://www.britishairways.com"
+    },
+    {
+      "name": "United",
+      "hub": "IAD/EWR",
+      "routes": "SLC → LHR",
+      "july_est": "$1,134 RT (confirmed)",
+      "stops": "1–2",
+      "verdict": "Over budget",
+      "vtype": "red",
+      "url": "https://www.united.com"
+    },
+    {
+      "name": "Delta",
+      "hub": "ATL/JFK",
+      "routes": "SLC → LHR (nonstop)",
+      "july_est": "~$1,200+ RT",
+      "stops": "0–1",
+      "verdict": "Over budget",
+      "vtype": "red",
+      "url": "https://www.delta.com"
+    }
   ]
 };
 </script>
 <!-- DATA_END -->
 
   <script>
-  (function () {
+  (function(){
     const D = window.FLIGHT_DATA;
-    const budget = D.trip.budget_usd;
-
-    function esc(s) {
-      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
-    function timeAgo(iso) {
-      const m = Math.round((Date.now() - new Date(iso)) / 60000);
-      if (m < 2)  return 'just now';
-      if (m < 60) return m + 'm ago';
-      const h = Math.round(m / 60);
-      if (h < 24) return h + 'h ago';
-      return Math.round(h / 24) + 'd ago';
-    }
-    function badge(text, type) {
-      return `<span class="badge badge-${type}">${text}</span>`;
-    }
-    function atag(code, pref) {
-      return `<span class="atag${pref ? ' pref' : ''}">${esc(code)}</span>`;
-    }
-    function destClass(dest) {
-      if (dest === 'MAN') return 'td-dest-man';
-      if (dest === 'LBA') return 'td-dest-lba';
-      return '';
-    }
-
+    const B = D.trip.budget_usd;
+    const St = D.status;
     const bo = D.best_option;
-    const st = D.status;
 
-    const html = `
-      <div class="header">
-        <div class="header-eyebrow">
-          <span class="pulse"></span> Live Flight Tracker
-        </div>
-        <h1>Utah <span class="route-accent">→ England</span></h1>
-        <div class="header-sub">July 2026 · Two Weddings · Budget $${budget}</div>
+    /* ── Helpers ── */
+    function e(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function ta(iso){
+      const m=Math.round((Date.now()-new Date(iso))/60000);
+      if(m<2) return'just now'; if(m<60) return m+'m ago';
+      const h=Math.round(m/60); if(h<24) return h+'h ago';
+      return Math.round(h/24)+'d ago';
+    }
+    function badge(t,c){ return `<span class="badge badge-${c}">${t}</span>`; }
+    function atag(a,pref){ return `<span class="atag${pref?' pref':''}">${e(a)}</span>`; }
+    function destC(d){ return d==='MAN'?'td-man':d==='LBA'?'td-lba':''; }
+
+    /* ── Sidebar meta ── */
+    document.getElementById('last-up').textContent = ta(D.meta.last_updated);
+    document.getElementById('run-count').textContent = D.meta.run_count;
+
+    /* ─────────────────────────────────────────────
+       PAGE 1 — FLIGHT HUNT
+    ───────────────────────────────────────────── */
+    document.getElementById('page-hunt').innerHTML = `
+      <div class="page-head">
+        <div class="page-eyebrow"><span class="dot"></span> Live Search</div>
+        <h1 class="page-h1">Utah <span class="grad">→ England</span></h1>
+        <div class="page-sub">Real-time flight monitoring · July 2026</div>
         <div class="header-pills">
-          <span class="header-pill">📅 Arrive by ${esc(D.trip.must_arrive_by)}</span>
-          <span class="header-pill">💒 Weddings: ${D.trip.weddings.join(' &amp; ')}</span>
-          <span class="header-pill">🏠 Depart after ${esc(D.trip.must_leave_after)}</span>
-          <span class="header-pill">✈ ${D.meta.run_count} search run${D.meta.run_count !== 1 ? 's' : ''}</span>
+          <span class="hpill">📅 Arrive by ${e(D.trip.must_arrive_by)}</span>
+          <span class="hpill">💒 ${D.trip.weddings.join(' &amp; ')}</span>
+          <span class="hpill">🏠 Leave after ${e(D.trip.must_leave_after)}</span>
+          <span class="hpill">🔁 ${D.meta.run_count} run${D.meta.run_count!==1?'s':''}</span>
         </div>
       </div>
 
-      <div class="glass status-banner ${st.found_qualifying ? 'found' : 'over'}">
-        <div class="status-icon-wrap">${st.found_qualifying ? '✅' : '⚠️'}</div>
+      <div class="glass status-banner ${St.found_qualifying?'found':'over'} mb">
+        <div class="status-icon">${St.found_qualifying?'✅':'⚠️'}</div>
         <div class="status-text">
-          <h2>${st.found_qualifying
-            ? 'QUALIFYING FLIGHT FOUND — BOOK NOW'
-            : `No qualifying flight under $${budget} found yet`}</h2>
-          <p>
-            Closest: <strong style="color:var(--fg)">${esc(st.closest_price_display)}</strong> &nbsp;·&nbsp;
-            Budget gap: ~$${st.budget_gap} &nbsp;·&nbsp;
-            <span class="live-dot"></span>Updated ${timeAgo(D.meta.last_updated)} &nbsp;·&nbsp;
-            ${st.days_to_departure} days to departure
-          </p>
+          <h2>${St.found_qualifying?'QUALIFYING FLIGHT FOUND — BOOK NOW':`No flight found under $${B} yet`}</h2>
+          <p>Closest: <strong style="color:var(--fg)">${e(St.closest_price_display)}</strong> &nbsp;·&nbsp;
+            Gap: ~$${St.budget_gap} &nbsp;·&nbsp;
+            <span class="live-dot"></span>${ta(D.meta.last_updated)} &nbsp;·&nbsp;
+            ${St.days_to_departure} days to departure</p>
         </div>
       </div>
 
-      <div class="grid-4">
-        <div class="glass stat-card">
-          <div class="stat-label">Budget</div>
-          <div class="stat-value blue">$${budget}</div>
-          <div class="stat-sub">All-in max</div>
-        </div>
-        <div class="glass stat-card">
-          <div class="stat-label">Closest Found</div>
-          <div class="stat-value red">${esc(st.closest_price_display)}</div>
-          <div class="stat-sub">Est. total</div>
-        </div>
-        <div class="glass stat-card">
-          <div class="stat-label">Budget Gap</div>
-          <div class="stat-value yellow">~$${st.budget_gap}</div>
-          <div class="stat-sub">Over budget</div>
-        </div>
-        <div class="glass stat-card">
-          <div class="stat-label">Days Out</div>
-          <div class="stat-value ${st.days_to_departure <= 21 ? 'red' : 'yellow'}">${st.days_to_departure}</div>
-          <div class="stat-sub">Until Jul 1</div>
-        </div>
+      <div class="stat-grid">
+        <div class="glass stat-card"><div class="stat-label">Budget</div><div class="stat-val blue">$${B}</div><div class="stat-sub">All-in max</div></div>
+        <div class="glass stat-card"><div class="stat-label">Closest Found</div><div class="stat-val red">${e(St.closest_price_display)}</div><div class="stat-sub">Estimated total</div></div>
+        <div class="glass stat-card"><div class="stat-label">Budget Gap</div><div class="stat-val yellow">~$${St.budget_gap}</div><div class="stat-sub">Over limit</div></div>
+        <div class="glass stat-card"><div class="stat-label">Days Out</div><div class="stat-val ${St.days_to_departure<=21?'red':'yellow'}">${St.days_to_departure}</div><div class="stat-sub">Until Jul 1</div></div>
       </div>
 
       <div class="glass best-card mb">
-        <div class="section-label">Current Best Option</div>
+        <div class="slabel">Current Best Option</div>
         <div class="best-flex">
-          <div style="flex:1;min-width:0;">
-            <div class="route-display">
-              ${bo.route_airports.map((a, i, arr) =>
-                atag(a, a === bo.preferred_dest) +
-                (i < arr.length - 1 ? '<span class="route-arrow">→</span>' : '')
-              ).join('')}
+          <div style="flex:1;min-width:0">
+            <div class="route-viz">
+              ${bo.route_airports.map((a,i,arr)=>atag(a,a===bo.preferred_dest)+(i<arr.length-1?'<span class="rarrow">→</span>':'')).join('')}
             </div>
-            <div class="best-meta">
-              <span class="meta-chip">${esc(bo.airlines)}</span>
-              <span class="meta-chip">${esc(bo.stops)}</span>
-              <span class="meta-chip">${esc(bo.travel_time)}</span>
-              <span class="meta-chip">${esc(bo.dates)}</span>
+            <div class="chips">
+              <span class="chip">${e(bo.airlines)}</span>
+              <span class="chip">${e(bo.stops)}</span>
+              <span class="chip">${e(bo.travel_time)}</span>
+              <span class="chip">${e(bo.dates)}</span>
             </div>
-            ${bo.booking_url ? `<a href="${esc(bo.booking_url)}" target="_blank" rel="noopener"
-              class="link-btn" style="display:inline-block;margin-top:.25rem;font-size:.8rem;padding:.4rem .9rem;">
-              Check price →
-            </a>` : ''}
+            ${bo.booking_url?`<a href="${e(bo.booking_url)}" target="_blank" rel="noopener" class="link-btn" style="display:inline-block;margin-top:.2rem;padding:.38rem .8rem;font-size:.78rem;">Check price →</a>`:''}
           </div>
-          <div class="best-price-wrap">
-            <div class="big-price ${bo.price_numeric <= budget ? 'found' : 'over'}">${esc(bo.price_display)}</div>
-            <div>
-              <span class="price-badge ${bo.price_numeric <= budget ? 'found' : 'over'}">
-                ${bo.price_numeric <= budget ? '✅ IN BUDGET' : '⚠ OVER BUDGET'}
-              </span>
-            </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div class="big-price ${bo.price_numeric<=B?'found':'over'}">${e(bo.price_display)}</div>
+            <div><span class="price-badge ${bo.price_numeric<=B?'found':'over'}">${bo.price_numeric<=B?'✅ IN BUDGET':'⚠ OVER BUDGET'}</span></div>
           </div>
         </div>
-        <div class="best-notes">${esc(bo.notes)}</div>
+        <div class="best-notes">${e(bo.notes)}</div>
+      </div>
+
+      <div class="glass table-card mb">
+        <div class="table-bar"><div class="slabel" style="margin:0">All Options — Cheapest First</div></div>
+        <div class="tscroll"><table>
+          <thead><tr><th>#</th><th>Price</th><th>Route</th><th>Airline</th><th>Ref. Dates</th><th>Stops</th><th>Status</th></tr></thead>
+          <tbody>
+            ${D.flights.map(f=>`
+              <tr class="${f.rejected?'dim':''}">
+                <td class="td-rank">${f.rank??'—'}</td>
+                <td class="td-mono ${f.price_numeric<=B?'found':'over'}">${e(f.price_display)}</td>
+                <td class="${destC(f.dest)}" style="font-weight:${['MAN','LBA'].includes(f.dest)?600:400}">${e(f.route)}</td>
+                <td style="color:var(--fg-muted)">${e(f.airline)}</td>
+                <td style="color:var(--fg-subtle);font-size:.77rem">${e(f.ref_dates)}</td>
+                <td>${badge(e(f.stops),f.stops.startsWith('1')?'green':'gray')}</td>
+                <td>${f.rejected?badge('❌ REJECTED','gray'):f.price_numeric<=B?badge('✅ IN BUDGET','green'):badge('⚠ OVER','red')}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table></div>
+        <div class="tlegend">
+          <span><strong style="color:#A5B4FC">Blue</strong> = Manchester #1</span>
+          <span><strong style="color:#C4B5FD">Purple</strong> = Leeds Bradford #2</span>
+          <span>Faded = date violation</span>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="glass card-pad">
+          <div class="slabel">Budget vs. Market</div>
+          ${D.market_bars.map(b=>`
+            <div class="bar-row">
+              <div class="bar-lbl"><span>${e(b.label)}</span><span>${e(b.price)}</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width:${b.pct}%"></div></div>
+            </div>`).join('')}
+          <div class="bar-note">$${B} budget sits far left — every bar exceeds it.</div>
+        </div>
+        <div class="glass card-pad">
+          <div class="slabel">Market Context</div>
+          ${D.context_items.map(c=>`<div class="ctx-row"><span>${c.icon}</span><span>${e(c.text)}</span></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="glass card-pad">
+          <div class="slabel">Price Drop Log</div>
+          ${D.price_drops.length===0
+            ?'<div class="log-empty">No drops yet.<br>Watching every hour.</div>'
+            :D.price_drops.map(p=>`<div class="list-item"><div style="color:var(--success);font-weight:700">↓</div><div><div>${e(p.date)} — $${p.saving} saved</div><div class="item-sub">${e(p.from)} → ${e(p.to)}</div></div></div>`).join('')}
+        </div>
+        <div class="glass card-pad">
+          <div class="slabel">Rejected Flights</div>
+          ${D.rejected.map(r=>`<div class="list-item"><div class="item-x">✕</div><div><div>${e(r.flight)}</div><div class="item-sub">${e(r.reason)}</div></div></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="glass card-pad mb">
+        <div class="slabel">Strategies to Watch</div>
+        ${D.tips.map(t=>`<div class="tip-row"><div>${t.icon}</div><div class="tip-text">${t.text}</div></div>`).join('')}
+      </div>
+
+      <div class="glass card-pad mb">
+        <div class="slabel">Search Now</div>
+        <div class="links-grid">
+          ${D.search_links.map(l=>`<a class="link-btn" href="${e(l.url)}" target="_blank" rel="noopener">${e(l.label)}</a>`).join('')}
+        </div>
       </div>
 
       <div class="glass table-card">
-        <div class="table-header-bar">
-          <div class="section-label" style="margin-bottom:0;">All Options — Cheapest to Most Expensive</div>
-        </div>
-        <div class="table-scroll">
-          <table>
-            <thead><tr>
-              <th>#</th><th>Price</th><th>Route</th><th>Airline</th>
-              <th>Ref. Dates</th><th>Stops</th><th>Status</th>
-            </tr></thead>
-            <tbody>
-              ${D.flights.map(f => `
-                <tr class="${f.rejected ? 'rejected' : ''}">
-                  <td class="td-rank">${f.rank ?? '—'}</td>
-                  <td class="td-price ${f.price_numeric <= budget ? 'found' : 'over'}">${esc(f.price_display)}</td>
-                  <td class="td-route ${destClass(f.dest)}">${esc(f.route)}</td>
-                  <td style="color:var(--fg-muted)">${esc(f.airline)}</td>
-                  <td style="color:var(--fg-subtle);font-size:.78rem;">${esc(f.ref_dates)}</td>
-                  <td>${badge(esc(f.stops), f.stops.startsWith('1') ? 'green' : 'gray')}</td>
-                  <td>${f.rejected
-                    ? badge('❌ REJECTED', 'gray')
-                    : f.price_numeric <= budget
-                      ? badge('✅ IN BUDGET', 'green')
-                      : badge('⚠ OVER', 'red')}</td>
-                </tr>`).join('')}
-            </tbody>
-          </table>
-        </div>
-        <div class="table-legend">
-          <span><strong style="color:#A5B4FC;">Blue</strong> = Manchester (priority #1)</span>
-          <span><strong style="color:#C4B5FD;">Purple</strong> = Leeds Bradford (priority #2)</span>
-          <span style="color:var(--fg-subtle);">Faded rows = rejected (date violation)</span>
-        </div>
+        <div class="table-bar"><div class="slabel" style="margin:0">Search History</div></div>
+        <div class="tscroll"><table>
+          <thead><tr><th>#</th><th>Date</th><th>Type</th><th>Cheapest</th><th>Notes</th></tr></thead>
+          <tbody>
+            ${D.history.map(h=>`
+              <tr>
+                <td class="td-rank">#${h.run}</td>
+                <td style="font-family:var(--mono);font-size:.8rem">${e(h.date)}</td>
+                <td>${badge(h.type==='manual'?'Manual':'Auto',h.type==='manual'?'accent':'green')}</td>
+                <td class="td-mono over">${e(h.cheapest)}</td>
+                <td style="color:var(--fg-muted);font-size:.79rem">${e(h.notes)}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table></div>
       </div>
 
-      <div class="grid-2">
-        <div class="glass market-card">
-          <div class="section-label">Budget vs. Market</div>
-          ${D.market_bars.map(b => `
-            <div class="bar-row">
-              <div class="bar-label">
-                <span>${esc(b.label)}</span>
-                <span>${esc(b.price)}</span>
-              </div>
-              <div class="bar-track"><div class="bar-fill" style="width:${b.pct}%"></div></div>
-            </div>`).join('')}
-          <div class="bar-budget-line">$${budget} budget = far left. Every bar exceeds it.</div>
-        </div>
-        <div class="glass context-card">
-          <div class="section-label">Market Context</div>
-          ${D.context_items.map(c => `
-            <div class="ctx-row"><span>${c.icon}</span><span>${esc(c.text)}</span></div>`).join('')}
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="glass card-pad">
-          <div class="section-label">Price Drop Log</div>
-          ${D.price_drops.length === 0
-            ? `<div class="log-empty">No drops recorded yet.<br>Watching every hour.</div>`
-            : D.price_drops.map(p => `
-                <div class="rejected-row-item">
-                  <div style="color:var(--success);font-weight:700;">↓</div>
-                  <div>
-                    <div>${esc(p.date)} — saved $${p.saving}</div>
-                    <div class="rej-reason">${esc(p.from)} → ${esc(p.to)} · ${esc(p.route)}</div>
-                  </div>
-                </div>`).join('')}
-        </div>
-        <div class="glass card-pad">
-          <div class="section-label">Rejected Flights</div>
-          ${D.rejected.map(r => `
-            <div class="rejected-row-item">
-              <div class="rej-x">✕</div>
-              <div>
-                <div>${esc(r.flight)}</div>
-                <div class="rej-reason">${esc(r.reason)}</div>
-              </div>
-            </div>`).join('')}
-        </div>
-      </div>
-
-      <div class="glass tips-card">
-        <div class="section-label">Strategies to Watch</div>
-        ${D.tips.map(t => `
-          <div class="tip-row">
-            <div>${t.icon}</div>
-            <div class="tip-text">${t.text}</div>
-          </div>`).join('')}
-      </div>
-
-      <div class="glass links-card">
-        <div class="section-label">Search Now</div>
-        <div class="links-grid">
-          ${D.search_links.map(l => `
-            <a class="link-btn" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}
-        </div>
-      </div>
-
-      <div class="glass hist-card">
-        <div class="table-header-bar"><div class="section-label" style="margin-bottom:0;">Search History</div></div>
-        <div class="table-scroll">
-          <table>
-            <thead><tr><th>#</th><th>Date</th><th>Type</th><th>Cheapest</th><th>Notes</th></tr></thead>
-            <tbody>
-              ${D.history.map(h => `
-                <tr>
-                  <td class="td-rank">#${h.run}</td>
-                  <td style="font-family:var(--font-mono);font-size:.82rem;">${esc(h.date)}</td>
-                  <td>${badge(h.type === 'manual' ? 'Manual' : 'Auto', h.type === 'manual' ? 'accent' : 'green')}</td>
-                  <td class="td-price over">${esc(h.cheapest)}</td>
-                  <td style="color:var(--fg-muted);font-size:.8rem;">${esc(h.notes)}</td>
-                </tr>`).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="footer">
-        <span class="live-dot"></span>
-        Automated hourly scans active &nbsp;·&nbsp;
+      <div class="page-footer">
+        <span class="live-dot"></span>Hourly scans active &nbsp;·&nbsp;
         <a href="https://claude.ai/code/routines">claude.ai/code/routines</a> &nbsp;·&nbsp;
         <a href="https://github.com/findlayymckeown/Flights">github.com/findlayymckeown/Flights</a><br>
-        Last updated: ${new Date(D.meta.last_updated).toLocaleString()} &nbsp;·&nbsp; Run #${D.meta.run_count}
+        Last updated: ${new Date(D.meta.last_updated).toLocaleString()} · Run #${D.meta.run_count}
       </div>
     `;
 
-    document.getElementById('app').innerHTML = html;
+    /* ─────────────────────────────────────────────
+       PAGE 2 — DEAL WATCH
+    ───────────────────────────────────────────── */
+    const deals   = D.deals   || {last_checked:'',items:[]};
+    const strats  = D.strategies || [];
+    const airlines = D.airlines || [];
+
+    document.getElementById('page-deals').innerHTML = `
+      <div class="page-head">
+        <div class="page-eyebrow"><span class="dot"></span> Deal Intelligence</div>
+        <h1 class="page-h1">Deal <span class="grad">Watch</span></h1>
+        <div class="page-sub">Live deal monitoring, route strategies &amp; airline intel</div>
+      </div>
+
+      <div class="glass card-pad mb">
+        <div class="slabel">Live Deal Feed</div>
+        ${deals.items.length===0
+          ? `<div class="deal-feed-empty">
+               🔍 No deals spotted yet.<br>
+               The hourly scanner checks <strong style="color:var(--fg)">Going.com</strong>,
+               <strong style="color:var(--fg)">Secret Flying</strong> &amp;
+               <strong style="color:var(--fg)">Thrifty Traveler</strong> each run.<br>
+               <span style="font-size:.75rem;margin-top:.5rem;display:block;color:var(--fg-subtle)">
+                 Last checked: ${deals.last_checked ? ta(deals.last_checked) : 'pending first scan'}
+               </span>
+             </div>`
+          : deals.items.map(d=>`
+              <div class="deal-item">
+                <div class="deal-icon ${d.type}">
+                  ${d.type==='error'?'⚡':'🏷'}
+                </div>
+                <div class="deal-body">
+                  <div class="deal-title">${e(d.title)}</div>
+                  <div class="deal-meta">${e(d.source)} · ${ta(d.found_at)}</div>
+                </div>
+                <div class="deal-price">${e(d.price)}</div>
+              </div>`).join('')}
+        <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
+          <a class="link-btn" href="https://www.going.com" target="_blank" rel="noopener">Going.com</a>
+          <a class="link-btn" href="https://secretflying.com" target="_blank" rel="noopener">Secret Flying</a>
+          <a class="link-btn" href="https://thriftytraveler.com/deals/airlines" target="_blank" rel="noopener">Thrifty Traveler</a>
+          <a class="link-btn" href="https://airfarewatchdog.com" target="_blank" rel="noopener">Airfare Watchdog</a>
+        </div>
+      </div>
+
+      <div class="slabel">Route Strategies — ${strats.length} options ranked</div>
+      <div class="strategy-grid mb">
+        ${strats.map(s=>`
+          <div class="glass strat-card">
+            <div class="strat-head">
+              <div class="strat-name">${e(s.name)}</div>
+              ${badge(e(s.tag), s.tag_type)}
+            </div>
+            <div class="strat-price">${e(s.est_price)}</div>
+            <div class="strat-steps">
+              ${s.steps.map((st,i)=>`
+                <div class="strat-step">
+                  <span class="step-n">${i+1}.</span>
+                  <span>${e(st)}</span>
+                </div>`).join('')}
+            </div>
+            <div class="strat-procon">
+              <div class="pro-list">
+                ${s.pros.map(p=>`<div class="pro-item"><span class="pro-icon">✓</span><span>${e(p)}</span></div>`).join('')}
+              </div>
+              <div class="con-list">
+                ${s.cons.map(c=>`<div class="con-item"><span class="con-icon">✗</span><span>${e(c)}</span></div>`).join('')}
+              </div>
+            </div>
+            <div class="strat-action">
+              <a href="${e(s.booking_url)}" target="_blank" rel="noopener" class="btn-sm btn-primary">Book →</a>
+              <a href="${e(s.check_url)}" target="_blank" rel="noopener" class="btn-sm btn-secondary">Check price</a>
+            </div>
+          </div>`).join('')}
+      </div>
+
+      <div class="glass table-card mb">
+        <div class="table-bar"><div class="slabel" style="margin:0">Airline Intelligence — All Carriers Serving This Route</div></div>
+        <div class="tscroll"><table>
+          <thead><tr><th>Airline</th><th>Hub</th><th>Route</th><th>July Est.</th><th>Stops</th><th>Verdict</th><th>Link</th></tr></thead>
+          <tbody>
+            ${airlines.map(a=>`
+              <tr>
+                <td style="font-weight:600">${e(a.name)}</td>
+                <td style="font-family:var(--mono);font-size:.78rem;color:var(--fg-muted)">${e(a.hub)}</td>
+                <td style="font-size:.8rem;color:var(--fg-muted)">${e(a.routes)}</td>
+                <td class="td-mono" style="color:${a.vtype==='green'?'var(--success)':a.vtype==='yellow'?'var(--warning)':'var(--danger)'}">${e(a.july_est)}</td>
+                <td>${badge(e(a.stops)+'★', a.stops==='0'?'green':a.stops==='1'?'yellow':'gray')}</td>
+                <td>${badge(e(a.verdict), a.vtype)}</td>
+                <td><a href="${e(a.url)}" target="_blank" rel="noopener" style="font-size:.75rem">Check →</a></td>
+              </tr>`).join('')}
+          </tbody>
+        </table></div>
+        <div class="tlegend"><span>★ stops each way · RT = round trip · OW = one way</span></div>
+      </div>
+
+      <div class="glass card-pad mb">
+        <div class="slabel">Booking Timeline Guidance</div>
+        <div class="ctx-row"><span>📉</span><span><strong style="color:var(--fg)">Now (31 days out)</strong> — Past the optimal 40–60 day window. Prices have likely peaked for peak-season travel. Keep watching but prepare for current rates.</span></div>
+        <div class="ctx-row"><span>⚡</span><span><strong style="color:var(--fg)">14–21 days out (Jun 10–17)</strong> — Airlines may release unsold inventory at discounted prices. Set alerts and check daily. This is the last realistic hope for a discount.</span></div>
+        <div class="ctx-row"><span>⚠️</span><span><strong style="color:var(--fg)">Under 10 days</strong> — Prices typically spike for last-minute bookings on peak routes. Only book here if a specific deal appears.</span></div>
+        <div class="ctx-row"><span>🎯</span><span><strong style="color:var(--fg)">Budget reality</strong> — At $550 total, you likely need either an error fare or a budget carrier combo (Norse/PLAY + positioning). Standard carriers all exceed budget by $200–$600+.</span></div>
+        <div class="ctx-row"><span>🏆</span><span><strong style="color:var(--fg)">Miles & points</strong> — British Airways Avios, United MileagePlus, Delta SkyMiles, or AA miles could get you on this route for $50–$150 in fees. If you have any miles, check award availability now.</span></div>
+      </div>
+
+      <div class="page-footer">
+        <span class="live-dot"></span>Deal scanner running hourly &nbsp;·&nbsp;
+        <a href="https://claude.ai/code/routines">claude.ai/code/routines</a><br>
+        Data refreshed: ${new Date(D.meta.last_updated).toLocaleString()}
+      </div>
+    `;
+
+    /* ─────────────────────────────────────────────
+       NAVIGATION
+    ───────────────────────────────────────────── */
+    const pages  = document.querySelectorAll('.page');
+    const navBtns = document.querySelectorAll('.nav-item[data-page]');
+
+    function showPage(id){
+      pages.forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
+      navBtns.forEach(b=>b.classList.toggle('active', b.dataset.page===id));
+      closeSidebar();
+    }
+    navBtns.forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+
+    /* Mobile sidebar */
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    function openSidebar(){ sidebar.classList.add('open'); overlay.classList.add('show'); }
+    function closeSidebar(){ sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+    document.getElementById('menu-btn').addEventListener('click', openSidebar);
+    overlay.addEventListener('click', closeSidebar);
   })();
   </script>
 </body>
