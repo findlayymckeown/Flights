@@ -3,345 +3,321 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flight Hunter — Utah to England</title>
+  <title>Flight Hunter &mdash; Utah to England</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg-deep:      #020203;
-      --bg-base:      #050506;
-      --bg-elevated:  #0a0a0c;
-      --surface:      rgba(255,255,255,0.03);
-      --surface-hover:rgba(255,255,255,0.055);
+      --bg:           #050C1A;
+      --bg-raised:    #0A1628;
+      --surface:      rgba(255,255,255,0.04);
+      --surface-hover:rgba(255,255,255,0.075);
       --border:       rgba(255,255,255,0.08);
-      --border-top:   rgba(255,255,255,0.13);
-      --fg:           #EDEDEF;
-      --fg-muted:     #8A8F98;
-      --fg-subtle:    #4B5563;
-      --accent:       #5E6AD2;
-      --accent-glow:  rgba(94,106,210,0.25);
-      --accent-dim:   rgba(94,106,210,0.12);
+      --border-top:   rgba(255,255,255,0.15);
+      --fg:           #F1F5F9;
+      --fg-muted:     #94A3B8;
+      --fg-subtle:    #475569;
+      --primary:      #0EA5E9;
+      --primary-dim:  rgba(14,165,233,0.12);
+      --primary-glow: rgba(14,165,233,0.3);
+      --orange:       #F97316;
+      --orange-dim:   rgba(249,115,22,0.12);
       --success:      #10B981;
-      --success-dim:  rgba(16,185,129,0.1);
+      --success-dim:  rgba(16,185,129,0.10);
       --danger:       #EF4444;
-      --danger-dim:   rgba(239,68,68,0.1);
+      --danger-dim:   rgba(239,68,68,0.10);
       --warning:      #F59E0B;
-      --warning-dim:  rgba(245,158,11,0.1);
-      --sidebar-w:    220px;
-      --radius:       14px;
-      --radius-sm:    8px;
+      --warning-dim:  rgba(245,158,11,0.10);
+      --sidebar-w:    240px;
+      --radius:       16px;
+      --radius-sm:    10px;
       --ease:         cubic-bezier(0.16,1,0.3,1);
-      --mono: 'SF Mono','Fira Code','Cascadia Code','Consolas',monospace;
-      --sans: -apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif;
+      --mono:         'Fira Code','SF Mono','Cascadia Code','Consolas',monospace;
+      --sans:         'Fira Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     }
     html { color-scheme: dark; }
-    body { font-family: var(--sans); background: var(--bg-deep); color: var(--fg); min-height: 100dvh; overflow-x: hidden; }
-    a { color: var(--accent); text-decoration: none; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--fg); min-height: 100dvh; overflow-x: hidden; }
+    a { color: var(--primary); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+    a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 3px; }
 
-    /* ── Blobs ── */
-    .blobs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-    .blob { position: absolute; border-radius: 50%; filter: blur(90px); animation: drift 20s ease-in-out infinite alternate; }
-    .blob-1 { width:500px;height:500px;background:rgba(94,106,210,0.07);top:-150px;left:-100px;animation-duration:22s; }
-    .blob-2 { width:400px;height:400px;background:rgba(124,58,237,0.06);bottom:0;right:-80px;animation-delay:-8s;animation-duration:18s; }
-    .blob-3 { width:300px;height:300px;background:rgba(16,185,129,0.05);top:50%;left:40%;animation-delay:-14s;animation-duration:25s; }
-    @keyframes drift {
-      0%   { transform:translate(0,0) scale(1); }
-      33%  { transform:translate(40px,-30px) scale(1.05); }
-      66%  { transform:translate(-20px,50px) scale(0.97); }
-      100% { transform:translate(30px,20px) scale(1.02); }
-    }
-    @media(prefers-reduced-motion:reduce){ .blob { animation:none; } }
+    /* ── Aurora ── */
+    .aurora { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .ab { position: absolute; border-radius: 50%; filter: blur(110px); }
+    .ab1 { width:600px;height:600px;background:rgba(14,165,233,0.07);top:-200px;left:-150px;animation:drift 26s ease-in-out infinite alternate; }
+    .ab2 { width:500px;height:500px;background:rgba(249,115,22,0.05);bottom:-100px;right:-100px;animation:drift 22s ease-in-out infinite alternate-reverse; }
+    .ab3 { width:380px;height:380px;background:rgba(16,185,129,0.04);top:50%;left:45%;animation:drift 30s ease-in-out infinite alternate; }
+    @keyframes drift { 0%{transform:translate(0,0) scale(1)} 50%{transform:translate(40px,-30px) scale(1.07)} 100%{transform:translate(-20px,40px) scale(0.96)} }
+    @media(prefers-reduced-motion:reduce){ .ab{animation:none} }
 
-    /* ── Layout ── */
+    /* ── Sidebar ── */
     .sidebar {
       position: fixed; top: 0; left: 0; bottom: 0;
       width: var(--sidebar-w);
-      background: rgba(5,5,6,0.9);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
+      background: rgba(3,8,16,0.94);
+      backdrop-filter: blur(32px); -webkit-backdrop-filter: blur(32px);
       border-right: 1px solid var(--border);
       display: flex; flex-direction: column;
-      z-index: 50;
-      transition: transform 280ms var(--ease);
+      z-index: 50; transition: transform 280ms var(--ease);
     }
-    .main { margin-left: var(--sidebar-w); position: relative; z-index: 1; }
+    .main { margin-left: var(--sidebar-w); position: relative; z-index: 1; min-height: 100dvh; }
 
-    /* ── Mobile ── */
-    .mobile-header {
-      display: none;
-      position: fixed; top: 0; left: 0; right: 0; height: 52px;
-      background: rgba(5,5,6,0.95); backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
-      align-items: center; justify-content: space-between;
-      padding: 0 1rem; z-index: 60;
-    }
-    .menu-btn {
-      width: 36px; height: 36px; border-radius: 8px;
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--fg); display: flex; align-items: center; justify-content: center;
-      cursor: pointer; font-size: 1rem;
-    }
-    .mobile-title { font-size: .9rem; font-weight: 700; color: var(--fg); }
-    .overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.65); z-index: 49;
-    }
+    /* Brand */
+    .sidebar-brand { padding: 1.4rem 1.25rem 1rem; border-bottom: 1px solid var(--border); }
+    .brand-logo { display: flex; align-items: center; gap: .55rem; font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--primary); }
+    .brand-pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--success); flex-shrink: 0; animation: bpulse 2s ease-out infinite; }
+    @keyframes bpulse { 0%{box-shadow:0 0 0 0 rgba(16,185,129,0.7)} 70%{box-shadow:0 0 0 8px rgba(16,185,129,0)} 100%{box-shadow:0 0 0 0 rgba(16,185,129,0)} }
+    .brand-title { font-size: 1.1rem; font-weight: 800; color: var(--fg); margin-top: .3rem; letter-spacing: -0.3px; }
+    .brand-route { font-size: .78rem; color: var(--primary); font-weight: 600; margin-top: .08rem; }
+    .brand-sub   { font-size: .7rem; color: var(--fg-subtle); margin-top: .12rem; }
 
-    @media(max-width:768px){
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .mobile-header { display: flex; }
-      .overlay.show { display: block; }
-      .main { margin-left: 0; padding-top: 52px; }
-    }
+    /* Budget tracker */
+    .budget-track { margin: .85rem 1.1rem; padding: .85rem 1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+    .budget-lbl { display: flex; justify-content: space-between; font-size: .69rem; color: var(--fg-muted); margin-bottom: .5rem; }
+    .budget-lbl strong { color: var(--fg); font-family: var(--mono); font-size: .75rem; }
+    .budget-outer { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; position: relative; }
+    .budget-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg,var(--primary),var(--danger)); transition: width .9s var(--ease); }
+    .budget-mark { position: absolute; top: -2px; bottom: -2px; width: 2px; background: rgba(255,255,255,0.5); border-radius: 1px; }
+    .budget-sub  { font-size: .66rem; color: var(--fg-subtle); margin-top: .4rem; text-align: right; }
 
-    /* ── Sidebar internals ── */
-    .sidebar-brand {
-      padding: 1.25rem 1.1rem 1rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .brand-logo {
-      font-size: .72rem; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--accent);
-      display: flex; align-items: center; gap: .45rem;
-    }
-    .brand-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--success); flex-shrink: 0;
-      animation: ping 1.8s ease-out infinite;
-    }
-    @keyframes ping {
-      0%  { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
-      70% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
-      100%{ box-shadow: 0 0 0 0 rgba(16,185,129,0); }
-    }
-    .brand-title { font-size: 1rem; font-weight: 800; color: var(--fg); margin-top: .25rem; }
-    .brand-sub { font-size: .72rem; color: var(--fg-subtle); margin-top: .1rem; }
-
-    .sidebar-nav { flex: 1; padding: .75rem .6rem; display: flex; flex-direction: column; gap: .25rem; }
+    /* Nav */
+    .sidebar-nav { flex: 1; padding: .5rem .75rem; display: flex; flex-direction: column; gap: .15rem; overflow-y: auto; }
+    .nav-section { font-size: .63rem; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--fg-subtle); padding: .7rem .5rem .25rem; }
     .nav-item {
       display: flex; align-items: center; gap: .7rem;
-      padding: .6rem .8rem; border-radius: 10px;
-      font-size: .84rem; font-weight: 500; color: var(--fg-muted);
-      background: none; border: none; cursor: pointer; width: 100%;
-      text-align: left;
-      transition: background 150ms var(--ease), color 150ms var(--ease);
+      padding: .62rem .9rem; border-radius: var(--radius-sm);
+      font-size: .85rem; font-weight: 500; color: var(--fg-muted);
+      background: none; border: 1px solid transparent; cursor: pointer; width: 100%; text-align: left;
+      transition: background 150ms var(--ease), color 150ms var(--ease), border-color 150ms var(--ease);
+      position: relative;
     }
     .nav-item:hover { background: var(--surface); color: var(--fg); }
-    .nav-item.active {
-      background: var(--accent-dim);
-      color: var(--fg);
-      border: 1px solid rgba(94,106,210,0.25);
-    }
-    .nav-item svg { flex-shrink: 0; opacity: .7; }
-    .nav-item.active svg { opacity: 1; }
-    .nav-section-label {
-      font-size: .65rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .1em; color: var(--fg-subtle);
-      padding: .6rem .8rem .2rem;
+    .nav-item.active { background: var(--primary-dim); color: var(--fg); border-color: rgba(14,165,233,0.25); }
+    .nav-item.active::before { content:''; position:absolute; left:0; top:25%; bottom:25%; width:3px; background:var(--primary); border-radius:0 2px 2px 0; }
+    .nav-item svg { flex-shrink:0; opacity:.6; }
+    .nav-item.active svg { opacity:1; color:var(--primary); }
+
+    /* Footer */
+    .sidebar-footer { padding: .9rem 1.25rem; border-top: 1px solid var(--border); font-size: .71rem; color: var(--fg-subtle); line-height: 1.8; }
+    .live-pill { display:inline-flex; align-items:center; gap:.4rem; background:var(--success-dim); border:1px solid rgba(16,185,129,0.25); border-radius:20px; padding:.18rem .6rem; font-size:.68rem; color:#6EE7B7; font-weight:600; margin-bottom:.35rem; }
+    .live-dot { display:inline-block; width:7px; height:7px; background:var(--success); border-radius:50%; animation:bpulse 2s ease-out infinite; }
+
+    /* Mobile */
+    .mobile-header { display:none; position:fixed; top:0; left:0; right:0; height:56px; background:rgba(3,8,16,0.97); backdrop-filter:blur(24px); border-bottom:1px solid var(--border); align-items:center; justify-content:space-between; padding:0 1rem; z-index:60; }
+    .menu-btn { width:40px; height:40px; border-radius:10px; background:var(--surface); border:1px solid var(--border); color:var(--fg); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+    .mobile-title { font-size:.95rem; font-weight:800; }
+    .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:49; }
+    @media(max-width:768px){
+      .sidebar { transform:translateX(-100%); }
+      .sidebar.open { transform:translateX(0); }
+      .mobile-header { display:flex; }
+      .overlay.show { display:block; }
+      .main { margin-left:0; padding-top:56px; }
     }
 
-    .sidebar-footer {
-      padding: .9rem 1.1rem;
-      border-top: 1px solid var(--border);
-      font-size: .72rem; color: var(--fg-subtle); line-height: 1.6;
-    }
-    .sidebar-footer strong { color: var(--fg-muted); }
+    /* Page */
+    .page { display:none; padding:2.5rem 2rem 5rem; max-width:920px; }
+    .page.active { display:block; }
+    @media(max-width:768px){ .page{padding:1.5rem 1rem 4rem;} }
 
-    /* ── Page container ── */
-    .page { display: none; padding: 2rem 1.5rem 4rem; max-width: 860px; }
-    .page.active { display: block; }
-    @media(max-width:768px){ .page { padding: 1.25rem 1rem 4rem; } }
-
-    /* ── Section label ── */
-    .slabel {
-      font-size: .68rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .1em; color: var(--fg-subtle); margin-bottom: .75rem;
-    }
-    .mb { margin-bottom: 1rem; }
-
-    /* ── Glass card ── */
-    .glass {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-top-color: var(--border-top);
-      border-radius: var(--radius);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      transition: background 150ms var(--ease);
-    }
-    .glass:hover { background: var(--surface-hover); }
-    .card-pad { padding: 1.25rem; }
-
-    /* ── Page header ── */
-    .page-head { margin-bottom: 1.75rem; }
-    .page-eyebrow {
-      display: inline-flex; align-items: center; gap: .45rem;
-      font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-      color: var(--accent); background: var(--accent-dim);
-      border: 1px solid rgba(94,106,210,0.25);
-      padding: .25rem .75rem; border-radius: 20px; margin-bottom: .75rem;
-    }
-    .page-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: ping 1.8s ease-out infinite; }
-    .page-h1 { font-size: clamp(1.6rem,4vw,2.2rem); font-weight: 800; letter-spacing: -0.5px; }
-    .page-h1 .grad { background: linear-gradient(135deg,var(--accent),#818CF8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-    .page-sub { color: var(--fg-muted); font-size: .875rem; margin-top: .35rem; }
-    .header-pills { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:.8rem; }
+    /* Page header */
+    .page-head { margin-bottom:2rem; }
+    .page-eyebrow { display:inline-flex; align-items:center; gap:.5rem; font-size:.67rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--primary); background:var(--primary-dim); border:1px solid rgba(14,165,233,0.25); padding:.25rem .75rem; border-radius:20px; margin-bottom:.8rem; }
+    .page-eyebrow .dot { width:6px; height:6px; border-radius:50%; background:var(--success); animation:bpulse 2s ease-out infinite; }
+    .page-h1 { font-size:clamp(1.7rem,4vw,2.4rem); font-weight:800; letter-spacing:-0.7px; line-height:1.1; }
+    .page-h1 .grad { background:linear-gradient(135deg,var(--primary),#38BDF8,var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .page-sub { color:var(--fg-muted); font-size:.9rem; margin-top:.4rem; line-height:1.5; }
+    .header-pills { display:flex; flex-wrap:wrap; gap:.4rem; margin-top:1rem; }
     .hpill { font-size:.73rem; padding:.2rem .65rem; background:var(--surface); border:1px solid var(--border); border-radius:20px; color:var(--fg-muted); }
 
-    /* ── Status banner ── */
-    .status-banner {
-      padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
-      display: flex; align-items: center; gap: 1.1rem;
-      position: relative; overflow: hidden;
-    }
-    .status-banner::before { content:''; position:absolute; inset:0; opacity:.06; pointer-events:none; }
-    .status-banner.over { border-color:rgba(239,68,68,0.25); }
-    .status-banner.over::before { background:radial-gradient(ellipse at top left,var(--danger),transparent 70%); }
+    /* Cards */
+    .glass { background:var(--surface); border:1px solid var(--border); border-top-color:var(--border-top); border-radius:var(--radius); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); transition:background 150ms var(--ease),border-color 150ms var(--ease); }
+    .glass:hover { background:var(--surface-hover); }
+    .card-pad { padding:1.4rem; }
+    .mb { margin-bottom:1.1rem; }
+    .slabel { font-size:.67rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--fg-subtle); margin-bottom:.85rem; }
+
+    /* Status banner */
+    .status-banner { padding:1.4rem 1.6rem; margin-bottom:1.25rem; display:flex; align-items:center; gap:1.2rem; position:relative; overflow:hidden; }
+    .status-banner::before { content:''; position:absolute; inset:0; pointer-events:none; }
+    .status-banner.over  { border-color:rgba(239,68,68,0.25); }
+    .status-banner.over::before  { background:radial-gradient(ellipse at top left,rgba(239,68,68,0.06),transparent 70%); }
     .status-banner.found { border-color:rgba(16,185,129,0.3); }
-    .status-banner.found::before { background:radial-gradient(ellipse at top left,var(--success),transparent 70%); }
-    .status-icon { width:48px;height:48px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.4rem; }
+    .status-banner.found::before { background:radial-gradient(ellipse at top left,rgba(16,185,129,0.06),transparent 70%); }
+    .status-icon { width:52px; height:52px; border-radius:12px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:1.4rem; }
     .status-banner.over  .status-icon { background:var(--danger-dim); border:1px solid rgba(239,68,68,0.25); }
     .status-banner.found .status-icon { background:var(--success-dim); border:1px solid rgba(16,185,129,0.3); }
     .status-text h2 { font-size:1rem; font-weight:700; }
     .status-banner.over  .status-text h2 { color:#FCA5A5; }
     .status-banner.found .status-text h2 { color:#6EE7B7; }
-    .status-text p { font-size:.8rem; color:var(--fg-muted); margin-top:.2rem; line-height:1.5; }
-    .live-dot { display:inline-block;width:7px;height:7px;background:var(--success);border-radius:50%;margin-right:4px;vertical-align:middle;animation:ping 1.8s ease-out infinite; }
+    .status-text p { font-size:.82rem; color:var(--fg-muted); margin-top:.25rem; line-height:1.5; }
 
-    /* ── Stat grid ── */
-    .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.65rem; margin-bottom:1rem; }
-    @media(max-width:700px){ .stat-grid { grid-template-columns:1fr 1fr; } }
-    .stat-card { padding:1rem 1.1rem; }
-    .stat-label { font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--fg-subtle);margin-bottom:.3rem; }
-    .stat-val { font-family:var(--mono);font-size:1.55rem;font-weight:700;letter-spacing:-1px;line-height:1; }
-    .stat-val.blue   { color:var(--accent); }
-    .stat-val.red    { color:var(--danger); }
+    /* Stats */
+    .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:.75rem; margin-bottom:1.1rem; }
+    @media(max-width:700px){ .stat-grid{grid-template-columns:1fr 1fr;} }
+    .stat-card { padding:1.1rem 1.2rem; }
+    .stat-label { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--fg-subtle); margin-bottom:.35rem; }
+    .stat-val { font-family:var(--mono); font-size:1.6rem; font-weight:700; letter-spacing:-1.5px; line-height:1; }
+    .stat-val.blue { color:var(--primary); }
+    .stat-val.red  { color:var(--danger); }
     .stat-val.yellow { color:var(--warning); }
     .stat-val.green  { color:var(--success); }
-    .stat-sub { font-size:.7rem;color:var(--fg-subtle);margin-top:.25rem; }
+    .stat-sub { font-size:.7rem; color:var(--fg-subtle); margin-top:.3rem; }
 
-    /* ── Best card ── */
-    .best-card { padding:1.4rem; margin-bottom:1rem; position:relative; }
-    .best-card::after { content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35; }
-    .route-viz { display:flex;flex-wrap:wrap;align-items:center;gap:.4rem;margin:.5rem 0 .8rem; }
-    .atag { font-family:var(--mono);font-size:.76rem;font-weight:700;padding:.2rem .5rem;border-radius:6px;border:1px solid rgba(94,106,210,0.35);background:rgba(94,106,210,0.1);color:#A5B4FC; }
-    .atag.pref { border-color:rgba(167,139,250,0.4);background:rgba(124,58,237,0.12);color:#C4B5FD; }
-    .rarrow { color:var(--fg-subtle);font-size:.8rem; }
-    .chips { display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.7rem; }
-    .chip { font-size:.73rem;padding:.18rem .55rem;border-radius:20px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--fg-muted); }
-    .best-flex { display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem; }
-    .big-price { font-family:var(--mono);font-size:2.4rem;font-weight:800;letter-spacing:-2px;line-height:1; }
-    .big-price.over  { color:var(--danger);text-shadow:0 0 30px rgba(239,68,68,0.3); }
-    .big-price.found { color:var(--success);text-shadow:0 0 30px rgba(16,185,129,0.3); }
-    .price-badge { display:inline-block;margin-top:.35rem;font-size:.68rem;padding:.18rem .55rem;border-radius:20px;font-weight:700; }
-    .price-badge.over  { background:var(--danger-dim);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5; }
-    .price-badge.found { background:var(--success-dim);border:1px solid rgba(16,185,129,0.3);color:#6EE7B7; }
-    .best-notes { font-size:.79rem;color:var(--fg-muted);line-height:1.65;margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--border); }
+    /* ── FLIGHT CARDS ── */
+    .flight-list-head { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:.9rem; }
+    .flight-list-count { font-size:.72rem; color:var(--fg-subtle); font-family:var(--mono); }
+    .flight-card {
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-top-color:var(--border-top);
+      border-radius:var(--radius);
+      margin-bottom:.7rem;
+      overflow:hidden;
+      cursor:pointer;
+      transition:background 150ms var(--ease),border-color 200ms var(--ease),transform 150ms var(--ease),box-shadow 200ms var(--ease);
+    }
+    .flight-card:hover { background:var(--surface-hover); border-color:rgba(14,165,233,0.3); transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,0.35),0 0 0 1px rgba(14,165,233,0.1); }
+    .flight-card:active { transform:translateY(0); }
+    .flight-card.rejected { opacity:.45; }
+    .flight-card.rejected:hover { opacity:.65; }
+    .fc-main { display:flex; align-items:center; gap:.9rem; padding:1rem 1.2rem; }
+    .fc-rank { font-family:var(--mono); font-size:.72rem; font-weight:700; color:var(--fg-subtle); width:22px; flex-shrink:0; text-align:center; }
+    .fc-rank.gold   { color:#F59E0B; }
+    .fc-rank.silver { color:#94A3B8; }
+    .fc-rank.bronze { color:#CD7C54; }
+    .fc-route { flex:1; min-width:0; }
+    .fc-airports { display:flex; align-items:center; gap:.3rem; font-family:var(--mono); font-size:.82rem; font-weight:700; flex-wrap:wrap; }
+    .fc-airports .iata { color:var(--fg); }
+    .fc-airports .iata.dest-man { color:#7DD3FC; }
+    .fc-airports .iata.dest-lba { color:#C4B5FD; }
+    .fc-airports .arr { color:var(--fg-subtle); font-size:.7rem; }
+    .fc-airline { font-size:.76rem; color:var(--fg-muted); margin-top:.18rem; }
+    .fc-meta { display:flex; gap:.75rem; align-items:center; flex-shrink:0; }
+    .fc-pill { display:flex; flex-direction:column; align-items:center; min-width:52px; }
+    .fc-pill-val { font-family:var(--mono); font-size:.8rem; font-weight:700; color:var(--fg); }
+    .fc-pill-lbl { font-size:.59rem; color:var(--fg-subtle); text-transform:uppercase; letter-spacing:.06em; margin-top:.08rem; }
+    .fc-price-col { text-align:right; flex-shrink:0; }
+    .fc-price { font-family:var(--mono); font-size:1.35rem; font-weight:800; letter-spacing:-1px; line-height:1; }
+    .fc-price.over  { color:var(--danger); }
+    .fc-price.found { color:var(--success); }
+    .fc-badge { margin-top:.28rem; }
+    .fc-chevron { width:30px; height:30px; border-radius:8px; background:var(--primary-dim); border:1px solid rgba(14,165,233,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--primary); transition:background 150ms,transform 150ms; }
+    .flight-card:hover .fc-chevron { background:var(--primary); color:#fff; transform:translateX(2px); }
+    .fc-bar { height:3px; background:rgba(255,255,255,0.04); }
+    .fc-bar-fill { height:100%; transition:width .6s var(--ease); }
+    .fc-bar-fill.over  { background:linear-gradient(90deg,var(--primary),var(--danger)); }
+    .fc-bar-fill.found { background:linear-gradient(90deg,var(--primary),var(--success)); }
+    @media(max-width:580px){ .fc-meta{display:none;} }
 
-    /* ── Tables ── */
-    .table-card { margin-bottom:1rem; overflow:hidden; }
-    .table-bar { padding:.85rem 1.2rem .7rem;border-bottom:1px solid var(--border); }
+    /* Best option card */
+    .best-card { padding:1.5rem; margin-bottom:1.1rem; position:relative; overflow:hidden; }
+    .best-card::after { content:''; position:absolute; top:0; left:20%; right:20%; height:1px; background:linear-gradient(90deg,transparent,var(--primary),transparent); opacity:.4; }
+    .best-card::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at top right,rgba(14,165,233,0.04),transparent 65%); pointer-events:none; }
+    .route-viz { display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; margin:.6rem 0 .9rem; }
+    .atag { font-family:var(--mono); font-size:.78rem; font-weight:700; padding:.22rem .55rem; border-radius:7px; border:1px solid rgba(14,165,233,0.35); background:rgba(14,165,233,0.1); color:#7DD3FC; }
+    .atag.pref { border-color:rgba(167,139,250,0.4); background:rgba(124,58,237,0.12); color:#C4B5FD; }
+    .rarrow { color:var(--fg-subtle); }
+    .chips { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:.8rem; }
+    .chip { font-size:.73rem; padding:.2rem .6rem; border-radius:20px; background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--fg-muted); }
+    .best-flex { display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem; }
+    .big-price { font-family:var(--mono); font-size:2.5rem; font-weight:800; letter-spacing:-2px; line-height:1; }
+    .big-price.over  { color:var(--danger); text-shadow:0 0 40px rgba(239,68,68,0.2); }
+    .big-price.found { color:var(--success); text-shadow:0 0 40px rgba(16,185,129,0.2); }
+    .price-badge { display:inline-block; margin-top:.4rem; font-size:.7rem; padding:.2rem .6rem; border-radius:20px; font-weight:700; }
+    .price-badge.over  { background:var(--danger-dim); border:1px solid rgba(239,68,68,0.3); color:#FCA5A5; }
+    .price-badge.found { background:var(--success-dim); border:1px solid rgba(16,185,129,0.3); color:#6EE7B7; }
+    .best-notes { font-size:.8rem; color:var(--fg-muted); line-height:1.7; margin-top:.75rem; padding-top:.75rem; border-top:1px solid var(--border); }
+
+    /* Badges */
+    .badge { display:inline-flex; align-items:center; gap:.2rem; font-size:.67rem; font-weight:700; padding:.18rem .55rem; border-radius:6px; white-space:nowrap; }
+    .badge-red    { background:var(--danger-dim); color:#FCA5A5; border:1px solid rgba(239,68,68,0.25); }
+    .badge-green  { background:var(--success-dim); color:#6EE7B7; border:1px solid rgba(16,185,129,0.25); }
+    .badge-yellow { background:var(--warning-dim); color:#FDE68A; border:1px solid rgba(245,158,11,0.25); }
+    .badge-gray   { background:rgba(255,255,255,0.04); color:var(--fg-subtle); border:1px solid var(--border); }
+    .badge-accent { background:var(--primary-dim); color:#7DD3FC; border:1px solid rgba(14,165,233,0.3); }
+
+    /* Grid helpers */
+    .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.1rem; }
+    @media(max-width:580px){ .grid2{grid-template-columns:1fr;} }
+
+    /* Market bars */
+    .bar-row { margin-bottom:.7rem; }
+    .bar-row:last-of-type { margin-bottom:0; }
+    .bar-lbl { display:flex; justify-content:space-between; font-size:.73rem; color:var(--fg-muted); margin-bottom:.3rem; }
+    .bar-lbl span:last-child { font-family:var(--mono); color:var(--danger); }
+    .bar-track { height:5px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--primary),var(--danger)); transition:width .8s var(--ease); }
+    .bar-note { font-size:.69rem; color:var(--fg-subtle); margin-top:.55rem; padding-top:.55rem; border-top:1px solid var(--border); }
+
+    /* Context / list rows */
+    .ctx-row { display:flex; gap:.6rem; padding:.4rem 0; font-size:.82rem; color:var(--fg-muted); line-height:1.5; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .ctx-row:last-child { border-bottom:none; }
+    .log-empty { padding:2rem; text-align:center; color:var(--fg-subtle); font-size:.83rem; line-height:1.8; }
+    .list-item { display:flex; align-items:flex-start; gap:.65rem; padding:.65rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:.83rem; }
+    .list-item:last-child { border-bottom:none; }
+    .item-x { color:var(--danger); font-weight:700; flex-shrink:0; }
+    .item-sub { font-size:.73rem; color:var(--fg-subtle); margin-top:.12rem; }
+    .tip-row { display:flex; gap:.65rem; padding:.55rem 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:.83rem; align-items:flex-start; }
+    .tip-row:last-child { border-bottom:none; }
+    .tip-text { color:var(--fg-muted); line-height:1.65; }
+    .tip-text strong { color:var(--fg); }
+
+    /* Links */
+    .links-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:.45rem; }
+    .link-btn { display:block; padding:.55rem .9rem; text-align:center; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--primary); font-size:.8rem; font-weight:500; transition:background 150ms,border-color 150ms,transform 100ms; cursor:pointer; }
+    .link-btn:hover { background:var(--primary-dim); border-color:rgba(14,165,233,0.4); transform:translateY(-1px); text-decoration:none; }
+
+    /* Tables (used in deals/history pages) */
+    .table-card { margin-bottom:1.1rem; overflow:hidden; }
+    .table-bar { padding:.9rem 1.3rem .75rem; border-bottom:1px solid var(--border); }
     .tscroll { overflow-x:auto; }
-    table { width:100%;border-collapse:collapse;min-width:560px; }
-    thead th { padding:.55rem .9rem;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--fg-subtle);background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border); }
-    tbody tr { border-bottom:1px solid rgba(255,255,255,0.035);transition:background 120ms var(--ease); }
+    table { width:100%; border-collapse:collapse; min-width:520px; }
+    thead th { padding:.55rem .9rem; text-align:left; font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--fg-subtle); background:rgba(255,255,255,0.02); border-bottom:1px solid var(--border); }
+    tbody tr { border-bottom:1px solid rgba(255,255,255,0.04); transition:background 120ms var(--ease); }
     tbody tr:last-child { border-bottom:none; }
     tbody tr:hover { background:var(--surface-hover); }
     tbody tr.dim { opacity:.4; }
-    tbody td { padding:.7rem .9rem;font-size:.84rem;vertical-align:middle; }
-    .td-mono { font-family:var(--mono);font-weight:700;font-size:.92rem; }
+    tbody td { padding:.7rem .9rem; font-size:.84rem; vertical-align:middle; }
+    .td-mono { font-family:var(--mono); font-weight:700; font-size:.9rem; }
     .td-mono.over  { color:var(--danger); }
     .td-mono.found { color:var(--success); }
-    .td-rank { font-family:var(--mono);font-size:.78rem;color:var(--fg-subtle);font-weight:600; }
-    .td-man { color:#A5B4FC;font-weight:600; }
-    .td-lba { color:#C4B5FD;font-weight:600; }
-    .tlegend { padding:.55rem 1.2rem;border-top:1px solid var(--border);font-size:.69rem;color:var(--fg-subtle);display:flex;gap:1.25rem;flex-wrap:wrap; }
+    .td-rank { font-family:var(--mono); font-size:.78rem; color:var(--fg-subtle); font-weight:600; }
+    .td-man { color:#7DD3FC; font-weight:600; }
+    .td-lba { color:#C4B5FD; font-weight:600; }
+    .tlegend { padding:.55rem 1.2rem; border-top:1px solid var(--border); font-size:.69rem; color:var(--fg-subtle); display:flex; gap:1.25rem; flex-wrap:wrap; }
 
-    /* ── Badges ── */
-    .badge { display:inline-flex;align-items:center;gap:.2rem;font-size:.67rem;font-weight:700;padding:.16rem .52rem;border-radius:6px;white-space:nowrap; }
-    .badge-red    { background:var(--danger-dim);color:#FCA5A5;border:1px solid rgba(239,68,68,0.25); }
-    .badge-green  { background:var(--success-dim);color:#6EE7B7;border:1px solid rgba(16,185,129,0.25); }
-    .badge-yellow { background:var(--warning-dim);color:#FDE68A;border:1px solid rgba(245,158,11,0.25); }
-    .badge-gray   { background:rgba(255,255,255,0.04);color:var(--fg-subtle);border:1px solid var(--border); }
-    .badge-accent { background:var(--accent-dim);color:#A5B4FC;border:1px solid rgba(94,106,210,0.3); }
+    /* Strategy cards */
+    .strategy-grid { display:grid; grid-template-columns:1fr 1fr; gap:.85rem; margin-bottom:1.1rem; }
+    @media(max-width:620px){ .strategy-grid{grid-template-columns:1fr;} }
+    .strat-card { padding:1.2rem; display:flex; flex-direction:column; gap:.7rem; }
+    .strat-head { display:flex; justify-content:space-between; align-items:flex-start; gap:.5rem; }
+    .strat-name { font-size:.9rem; font-weight:700; }
+    .strat-price { font-family:var(--mono); font-size:.82rem; font-weight:700; color:var(--warning); white-space:nowrap; }
+    .strat-steps { display:flex; flex-direction:column; gap:.3rem; }
+    .strat-step { font-size:.75rem; color:var(--fg-muted); display:flex; gap:.45rem; align-items:flex-start; }
+    .step-n { font-family:var(--mono); font-size:.68rem; color:var(--fg-subtle); flex-shrink:0; margin-top:.05rem; }
+    .strat-procon { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; padding:.65rem; background:rgba(255,255,255,0.02); border-radius:8px; }
+    .pro-item,.con-item { font-size:.7rem; display:flex; gap:.3rem; color:var(--fg-muted); padding:.1rem 0; }
+    .pro-icon { color:var(--success); flex-shrink:0; }
+    .con-icon { color:var(--danger); flex-shrink:0; }
+    .strat-action { display:flex; gap:.4rem; }
+    .btn-sm { flex:1; padding:.45rem .6rem; text-align:center; border-radius:8px; font-size:.77rem; font-weight:600; cursor:pointer; border:none; transition:opacity 150ms; text-decoration:none; display:block; }
+    .btn-sm:hover { opacity:.8; text-decoration:none; }
+    .btn-primary   { background:var(--primary-dim); color:#7DD3FC; border:1px solid rgba(14,165,233,0.3); }
+    .btn-secondary { background:rgba(255,255,255,0.04); color:var(--fg-muted); border:1px solid var(--border); }
 
-    /* ── 2-col grid ── */
-    .grid2 { display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem; }
-    @media(max-width:580px){ .grid2 { grid-template-columns:1fr; } }
-
-    /* ── Market bars ── */
-    .bar-row { margin-bottom:.65rem; }
-    .bar-row:last-of-type { margin-bottom:0; }
-    .bar-lbl { display:flex;justify-content:space-between;font-size:.73rem;color:var(--fg-muted);margin-bottom:.3rem; }
-    .bar-lbl span:last-child { font-family:var(--mono);color:var(--danger); }
-    .bar-track { height:5px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden; }
-    .bar-fill { height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--danger));transition:width .8s var(--ease); }
-    .bar-note { font-size:.69rem;color:var(--fg-subtle);margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--border); }
-
-    /* ── Context rows ── */
-    .ctx-row { display:flex;gap:.55rem;padding:.35rem 0;font-size:.82rem;color:var(--fg-muted);line-height:1.5;border-bottom:1px solid rgba(255,255,255,0.035); }
-    .ctx-row:last-child { border-bottom:none; }
-
-    /* ── Rejected / drop items ── */
-    .log-empty { padding:1.75rem;text-align:center;color:var(--fg-subtle);font-size:.83rem;line-height:1.7; }
-    .list-item { display:flex;align-items:flex-start;gap:.65rem;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,0.035);font-size:.83rem; }
-    .list-item:last-child { border-bottom:none; }
-    .item-x { color:var(--danger);font-weight:700;flex-shrink:0; }
-    .item-sub { font-size:.73rem;color:var(--fg-subtle);margin-top:.12rem; }
-
-    /* ── Tips ── */
-    .tip-row { display:flex;gap:.65rem;padding:.55rem 0;border-bottom:1px solid rgba(255,255,255,0.035);font-size:.83rem;align-items:flex-start; }
-    .tip-row:last-child { border-bottom:none; }
-    .tip-text { color:var(--fg-muted);line-height:1.6; }
-    .tip-text strong { color:var(--fg); }
-
-    /* ── Links grid ── */
-    .links-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.45rem; }
-    .link-btn { display:block;padding:.55rem .9rem;text-align:center;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);font-size:.8rem;font-weight:500;transition:background 150ms var(--ease),border-color 150ms var(--ease),transform 100ms var(--ease);cursor:pointer; }
-    .link-btn:hover { background:var(--accent-dim);border-color:rgba(94,106,210,0.4);transform:translateY(-1px);text-decoration:none; }
-    .link-btn:active { transform:translateY(0); }
-
-    /* ── Page 2: Strategy cards ── */
-    .strategy-grid { display:grid;grid-template-columns:1fr 1fr;gap:.85rem;margin-bottom:1rem; }
-    @media(max-width:620px){ .strategy-grid { grid-template-columns:1fr; } }
-    .strat-card { padding:1.15rem;display:flex;flex-direction:column;gap:.65rem; }
-    .strat-head { display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem; }
-    .strat-name { font-size:.88rem;font-weight:700;color:var(--fg); }
-    .strat-price { font-family:var(--mono);font-size:.82rem;font-weight:700;color:var(--warning);white-space:nowrap; }
-    .strat-steps { display:flex;flex-direction:column;gap:.3rem; }
-    .strat-step { font-size:.75rem;color:var(--fg-muted);display:flex;gap:.45rem;align-items:flex-start; }
-    .step-n { font-family:var(--mono);font-size:.68rem;color:var(--fg-subtle);flex-shrink:0;margin-top:.05rem; }
-    .strat-procon { display:grid;grid-template-columns:1fr 1fr;gap:.5rem;padding:.6rem;background:rgba(255,255,255,0.02);border-radius:8px; }
-    .pro-list,.con-list { display:flex;flex-direction:column;gap:.2rem; }
-    .pro-item,.con-item { font-size:.7rem;display:flex;gap:.3rem;color:var(--fg-muted); }
-    .pro-icon { color:var(--success);flex-shrink:0; }
-    .con-icon { color:var(--danger);flex-shrink:0; }
-    .strat-action { display:flex;gap:.4rem; }
-    .btn-sm { flex:1;padding:.4rem .6rem;text-align:center;border-radius:7px;font-size:.75rem;font-weight:600;cursor:pointer;border:none;transition:opacity 150ms; }
-    .btn-sm:hover { opacity:.8; }
-    .btn-primary { background:var(--accent-dim);color:#A5B4FC;border:1px solid rgba(94,106,210,0.3); }
-    .btn-secondary { background:rgba(255,255,255,0.04);color:var(--fg-muted);border:1px solid var(--border); }
-
-    /* ── Deal feed ── */
-    .deal-feed-empty { padding:2rem;text-align:center;color:var(--fg-subtle);font-size:.83rem;line-height:1.8; }
-    .deal-item { display:flex;align-items:flex-start;gap:.75rem;padding:.75rem;background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:10px;margin-bottom:.5rem; }
-    .deal-icon { width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem; }
-    .deal-icon.sale { background:var(--success-dim); }
+    /* Deal feed */
+    .deal-item { display:flex; align-items:flex-start; gap:.75rem; padding:.8rem; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:10px; margin-bottom:.5rem; }
+    .deal-icon { width:38px; height:38px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .deal-icon.sale  { background:var(--success-dim); }
     .deal-icon.error { background:var(--warning-dim); }
     .deal-body { flex:1; }
-    .deal-title { font-size:.83rem;font-weight:600;color:var(--fg); }
-    .deal-meta { font-size:.72rem;color:var(--fg-subtle);margin-top:.15rem; }
-    .deal-price { font-family:var(--mono);font-size:.9rem;font-weight:700;color:var(--success);white-space:nowrap; }
+    .deal-title { font-size:.83rem; font-weight:600; }
+    .deal-meta  { font-size:.72rem; color:var(--fg-subtle); margin-top:.15rem; }
+    .deal-price { font-family:var(--mono); font-size:.92rem; font-weight:700; color:var(--success); white-space:nowrap; }
 
-    /* ── Airline intel table ── */
-    .verdict-cell { display:inline-flex; }
-
-    /* ── Footer ── */
-    .page-footer { text-align:center;padding-top:1rem;font-size:.73rem;color:var(--fg-subtle);line-height:1.9; }
-  
-    /* ── Page 3: Date Matrix ── */
+    /* Date matrix */
     .date-grid { display:grid; grid-template-columns:auto repeat(6,1fr); gap:2px; margin-bottom:1rem; font-size:.72rem; }
     .dg-header { background:rgba(255,255,255,0.04); padding:.4rem .3rem; text-align:center; border-radius:4px; font-weight:700; color:var(--fg-subtle); font-family:var(--mono); }
     .dg-dep { background:rgba(255,255,255,0.04); padding:.4rem .5rem; border-radius:4px; font-weight:700; color:var(--fg-muted); font-family:var(--mono); white-space:nowrap; }
@@ -350,96 +326,181 @@
     .dg-cell.unchecked { background:rgba(255,255,255,0.03); color:var(--fg-subtle); border:1px solid rgba(255,255,255,0.06); }
     .dg-cell.checked   { background:rgba(239,68,68,0.12); color:#FCA5A5; border:1px solid rgba(239,68,68,0.2); font-family:var(--mono); }
     .dg-cell.found     { background:rgba(16,185,129,0.15); color:#6EE7B7; border:1px solid rgba(16,185,129,0.3); font-family:var(--mono); font-weight:700; }
-    .dg-cell.ideal     { background:var(--accent-dim); border:1px solid rgba(94,106,210,0.35); color:#A5B4FC; }
+    .dg-cell.ideal     { background:var(--primary-dim); border:1px solid rgba(14,165,233,0.35); color:#7DD3FC; }
     .dg-cell.invalid   { background:rgba(255,255,255,0.01); color:rgba(255,255,255,0.12); border:1px dashed rgba(255,255,255,0.06); }
     .dg-legend { display:flex; gap:.75rem; flex-wrap:wrap; font-size:.7rem; color:var(--fg-subtle); margin-top:.5rem; }
     .dg-swatch { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:3px; vertical-align:middle; }
 
-    /* Airport cards */
-    .airport-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:.7rem; margin-bottom:1rem; }
-    .airport-card { padding:1rem; }
-    .airport-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:.6rem; }
-    .airport-code { font-family:var(--mono); font-size:1.5rem; font-weight:800; color:var(--accent); }
-    .airport-name { font-size:.82rem; font-weight:600; color:var(--fg); margin-top:.05rem; }
-    .airport-priority { font-size:.65rem; color:var(--fg-subtle); }
-    .airport-stat { font-size:.75rem; color:var(--fg-muted); display:flex; gap:.4rem; align-items:center; padding:.2rem 0; border-bottom:1px solid rgba(255,255,255,0.04); }
-    .airport-stat:last-of-type { border-bottom:none; }
-    .airport-stat-icon { width:14px; color:var(--fg-subtle); flex-shrink:0; }
-    .airport-notes { font-size:.72rem; color:var(--fg-subtle); margin-top:.5rem; line-height:1.5; padding-top:.5rem; border-top:1px solid var(--border); }
-
-    /* Distance bar */
+    /* Distance bars */
     .dist-bar-wrap { margin-bottom:1rem; }
     .dist-row { display:flex; align-items:center; gap:.75rem; padding:.35rem 0; border-bottom:1px solid rgba(255,255,255,0.04); }
     .dist-row:last-child { border-bottom:none; }
-    .dist-code { font-family:var(--mono); font-size:.78rem; font-weight:700; color:var(--accent); width:36px; flex-shrink:0; }
+    .dist-code { font-family:var(--mono); font-size:.78rem; font-weight:700; color:var(--primary); width:36px; flex-shrink:0; }
     .dist-bar-outer { flex:1; height:6px; background:rgba(255,255,255,0.05); border-radius:3px; overflow:hidden; }
     .dist-bar-inner { height:100%; border-radius:3px; }
     .dist-label { font-size:.72rem; color:var(--fg-muted); white-space:nowrap; width:60px; text-align:right; font-family:var(--mono); }
     .dist-train { font-size:.7rem; color:var(--fg-subtle); width:55px; text-align:right; }
 
-    /* Booking links with pre-filled dates */
-    .booking-links-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.5rem; }
-    .booking-link-card { padding:.7rem .9rem; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--radius-sm); text-decoration:none; display:flex; flex-direction:column; gap:.2rem; transition:background 150ms var(--ease),border-color 150ms var(--ease),transform 100ms var(--ease); }
-    .booking-link-card:hover { background:var(--accent-dim); border-color:rgba(94,106,210,0.35); transform:translateY(-1px); text-decoration:none; }
-    .blc-name { font-size:.82rem; font-weight:700; color:var(--accent); }
+    /* Booking cards */
+    .booking-links-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(195px,1fr)); gap:.5rem; }
+    .booking-link-card { padding:.75rem 1rem; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--radius-sm); text-decoration:none; display:flex; flex-direction:column; gap:.2rem; transition:background 150ms,border-color 150ms,transform 100ms; cursor:pointer; }
+    .booking-link-card:hover { background:var(--primary-dim); border-color:rgba(14,165,233,0.35); transform:translateY(-1px); text-decoration:none; }
+    .blc-name  { font-size:.83rem; font-weight:700; color:var(--primary); }
     .blc-route { font-size:.72rem; color:var(--fg-muted); }
-    .blc-note { font-size:.68rem; color:var(--fg-subtle); }
+    .blc-note  { font-size:.68rem; color:var(--fg-subtle); }
+
+    .page-footer { text-align:center; padding-top:1.25rem; font-size:.73rem; color:var(--fg-subtle); line-height:2; }
+
+    /* ══════════════════════════════════════════
+       FLIGHT DETAIL MODAL
+    ══════════════════════════════════════════ */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.72); z-index:100;
+      backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    }
+    .modal-overlay.open { display:flex; align-items:center; justify-content:center; }
+    .flight-modal {
+      background:#0A1628;
+      border:1px solid rgba(255,255,255,0.14);
+      border-radius:20px;
+      width:92%; max-width:560px; max-height:88dvh;
+      overflow-y:auto; position:relative;
+      box-shadow:0 32px 96px rgba(0,0,0,0.65),0 0 0 1px rgba(14,165,233,0.12);
+      animation:mSlide 260ms var(--ease);
+    }
+    @keyframes mSlide { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+    .modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.3rem 1.5rem .95rem;
+      border-bottom:1px solid var(--border);
+      position:sticky; top:0; background:#0A1628; z-index:1;
+    }
+    .modal-title { font-size:1rem; font-weight:700; }
+    .modal-rank  { font-family:var(--mono); font-size:.72rem; color:var(--fg-subtle); }
+    .modal-close { width:34px; height:34px; border-radius:8px; background:var(--surface); border:1px solid var(--border); color:var(--fg-muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background 150ms,color 150ms; }
+    .modal-close:hover { background:var(--danger-dim); color:var(--danger); border-color:rgba(239,68,68,0.3); }
+    .modal-body { padding:1.4rem 1.5rem 1.75rem; }
+
+    .modal-sec { margin-bottom:1.35rem; }
+    .modal-sec:last-child { margin-bottom:0; }
+    .modal-sec-title { font-size:.63rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--fg-subtle); margin-bottom:.7rem; padding-bottom:.35rem; border-bottom:1px solid var(--border); }
+
+    /* Route viz in modal */
+    .modal-route { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; margin-bottom:.6rem; }
+    .modal-iata { font-family:var(--mono); font-size:1.05rem; font-weight:800; padding:.32rem .6rem; border-radius:9px; background:rgba(14,165,233,0.1); border:1px solid rgba(14,165,233,0.25); color:#7DD3FC; }
+    .modal-iata.dest { background:rgba(167,139,250,0.1); border-color:rgba(167,139,250,0.3); color:#C4B5FD; }
+    .modal-arr { color:var(--fg-subtle); font-size:.9rem; }
+
+    /* Details grid */
+    .modal-dg { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.75rem; }
+    .modal-d { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:.75rem .9rem; }
+    .modal-d-lbl { font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--fg-subtle); margin-bottom:.22rem; }
+    .modal-d-val { font-size:.86rem; font-weight:600; font-family:var(--mono); }
+    .modal-d-val.lg   { font-size:1.5rem; letter-spacing:-1px; }
+    .modal-d-val.over  { color:var(--danger); }
+    .modal-d-val.found { color:var(--success); }
+
+    /* Budget bar in modal */
+    .modal-bbar { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:.9rem; }
+    .modal-bbar-lbls { display:flex; justify-content:space-between; font-size:.71rem; color:var(--fg-muted); margin-bottom:.5rem; }
+    .modal-bbar-outer { height:8px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; position:relative; }
+    .modal-bbar-fill { height:100%; border-radius:4px; transition:width .8s var(--ease); }
+    .modal-bbar-fill.over  { background:linear-gradient(90deg,var(--primary),var(--danger)); }
+    .modal-bbar-fill.found { background:linear-gradient(90deg,var(--primary),var(--success)); }
+    .modal-bbar-mark { position:absolute; top:-2px; bottom:-2px; width:2px; background:rgba(255,255,255,0.55); border-radius:1px; }
+    .modal-bbar-pct { font-size:.7rem; color:var(--fg-subtle); margin-top:.4rem; text-align:right; font-family:var(--mono); }
+
+    .modal-notes { font-size:.82rem; color:var(--fg-muted); line-height:1.75; }
+    .modal-notes a { color:var(--primary); }
+    .modal-rejected { background:var(--danger-dim); border:1px solid rgba(239,68,68,0.25); border-radius:10px; padding:.75rem 1rem; font-size:.8rem; color:#FCA5A5; line-height:1.6; margin-bottom:1rem; }
+    .modal-rejected strong { color:var(--danger); }
+
+    .modal-ctas { display:flex; gap:.65rem; margin-top:1.4rem; flex-wrap:wrap; }
+    .btn-book { flex:1; padding:.75rem 1.1rem; background:linear-gradient(135deg,var(--primary),#38BDF8); color:#fff; font-weight:700; font-size:.88rem; border:none; border-radius:10px; cursor:pointer; text-align:center; text-decoration:none; transition:opacity 150ms,transform 100ms; display:flex; align-items:center; justify-content:center; gap:.45rem; }
+    .btn-book:hover { opacity:.9; transform:translateY(-1px); text-decoration:none; color:#fff; }
+    .btn-kayak { padding:.75rem 1.1rem; background:var(--surface); border:1px solid var(--border); color:var(--fg-muted); font-weight:600; font-size:.85rem; border-radius:10px; cursor:pointer; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:.45rem; transition:background 150ms,color 150ms; }
+    .btn-kayak:hover { background:var(--surface-hover); color:var(--fg); text-decoration:none; }
 
   </style>
 </head>
 <body>
-  <div class="blobs">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
+
+  <!-- Aurora -->
+  <div class="aurora"><div class="ab ab1"></div><div class="ab ab2"></div><div class="ab ab3"></div></div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-label="Flight Details">
+    <div class="flight-modal" id="flight-modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title" id="modal-title">Flight Details</div>
+          <div class="modal-rank" id="modal-rank"></div>
+        </div>
+        <button class="modal-close" id="modal-close" aria-label="Close">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
   </div>
 
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-      <div class="brand-logo"><span class="brand-dot"></span> Flight Hunter</div>
-      <div class="brand-title">Utah → England</div>
-      <div class="brand-sub">July 2026 · $550 budget</div>
+      <div class="brand-logo"><span class="brand-pulse"></span>Flight Hunter</div>
+      <div class="brand-title">Utah &rarr; England</div>
+      <div class="brand-route">Jul 2026 &bull; Two Weddings</div>
+      <div class="brand-sub">$550 all-in budget</div>
     </div>
+
+    <div class="budget-track">
+      <div class="budget-lbl"><span>Closest found</span><strong id="budget-val">&mdash;</strong></div>
+      <div class="budget-outer">
+        <div class="budget-fill" id="budget-fill" style="width:0%"></div>
+        <div class="budget-mark" id="budget-mark" style="left:100%"></div>
+      </div>
+      <div class="budget-sub">$550 limit &bull; white line = budget cap</div>
+    </div>
+
     <nav class="sidebar-nav">
-      <div class="nav-section-label">Navigation</div>
-      <button class="nav-item active" data-page="hunt" id="nav-hunt">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Flight Hunt
+      <div class="nav-section">Searches</div>
+      <button class="nav-item active" data-page="hunt">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Main Trip
       </button>
-      <button class="nav-item" data-page="dates" id="nav-dates">
+      <button class="nav-item" data-page="boys">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        Boys Trip
+      </button>
+      <div class="nav-section">Tools</div>
+      <button class="nav-item" data-page="dates">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Date Finder
       </button>
-      <button class="nav-item" data-page="boys" id="nav-boys">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-        Boys Trip
-      </button>
-      <button class="nav-item" data-page="deals" id="nav-deals">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <button class="nav-item" data-page="deals">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         Deal Watch
       </button>
     </nav>
-    <div class="sidebar-footer" id="sidebar-footer">
-      <div><span class="live-dot"></span><strong>Scans active</strong></div>
-      <div>Updated: <span id="last-up">—</span></div>
-      <div>Run #<span id="run-count">—</span></div>
+
+    <div class="sidebar-footer">
+      <div class="live-pill"><span class="live-dot"></span>Scans active</div>
+      <div>Updated: <span id="last-up">&mdash;</span></div>
+      <div>Run #<span id="run-count">&mdash;</span> &nbsp;&bull;&nbsp; <a href="https://claude.ai/code/routines" style="font-size:.67rem">routines</a></div>
     </div>
   </aside>
 
-  <!-- Mobile overlay -->
   <div class="overlay" id="overlay"></div>
 
-  <!-- Mobile header -->
   <header class="mobile-header">
-    <button class="menu-btn" id="menu-btn">
+    <button class="menu-btn" id="menu-btn" aria-label="Open menu">
       <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-    <span class="mobile-title">✈ Flight Hunter</span>
+    <span class="mobile-title">Flight Hunter</span>
     <span class="live-dot"></span>
   </header>
 
-  <!-- Main -->
   <main class="main">
     <div class="page active" id="page-hunt"></div>
     <div class="page" id="page-boys"></div>
@@ -1367,51 +1428,238 @@ window.FLIGHT_DATA = {
 
   <script>
   (function(){
-    const D = window.FLIGHT_DATA;
-    const B = D.trip.budget_usd;
-    const St = D.status;
-    const bo = D.best_option;
+    const D   = window.FLIGHT_DATA;
+    const B   = D.trip.budget_usd;
+    const St  = D.status;
+    const bo  = D.best_option;
 
-    /* ── Helpers ── */
-    function e(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    /* helpers */
+    function e(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function ta(iso){
       const m=Math.round((Date.now()-new Date(iso))/60000);
-      if(m<2) return'just now'; if(m<60) return m+'m ago';
-      const h=Math.round(m/60); if(h<24) return h+'h ago';
+      if(m<2)return'just now';if(m<60)return m+'m ago';
+      const h=Math.round(m/60);if(h<24)return h+'h ago';
       return Math.round(h/24)+'d ago';
     }
     function badge(t,c){ return `<span class="badge badge-${c}">${t}</span>`; }
     function atag(a,pref){ return `<span class="atag${pref?' pref':''}">${e(a)}</span>`; }
     function destC(d){ return d==='MAN'?'td-man':d==='LBA'?'td-lba':''; }
 
-    /* ── Sidebar meta ── */
+    /* sidebar meta */
     document.getElementById('last-up').textContent = ta(D.meta.last_updated);
     document.getElementById('run-count').textContent = D.meta.run_count;
+
+    /* budget bar */
+    if(St.closest_price){
+      document.getElementById('budget-val').textContent = St.closest_price_display || ('$'+St.closest_price);
+      const fillPct = Math.min((St.closest_price / (St.closest_price * 1.3)) * 100, 100);
+      document.getElementById('budget-fill').style.width = '100%';
+      const markPct = Math.min((B / St.closest_price) * 100, 100);
+      document.getElementById('budget-mark').style.left = markPct + '%';
+    }
+
+    /* ── MODAL ── */
+    const mOverlay = document.getElementById('modal-overlay');
+    function openModal(html, title, rank){
+      document.getElementById('modal-body').innerHTML = html;
+      document.getElementById('modal-title').textContent = title || 'Flight Details';
+      document.getElementById('modal-rank').textContent = rank ? 'Option #'+rank : '';
+      mOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(){
+      mOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    mOverlay.addEventListener('click', ev => { if(ev.target===mOverlay) closeModal(); });
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.addEventListener('keydown', ev => { if(ev.key==='Escape') closeModal(); });
+
+    /* build flight card DOM node */
+    function mkCard(f, budget){
+      const over = f.price_numeric > budget;
+      const pct  = Math.min(Math.round((f.price_numeric / budget)*100), 200);
+      const airports = (f.route||'').split('→').map(s=>s.trim()).filter(Boolean);
+      const destIata = f.dest || airports[Math.floor(airports.length/2)];
+      const routeHtml = airports.map((a,i)=>{
+        const cls = a===destIata ? (destIata==='LBA'?'iata dest-lba':'iata dest-man') : 'iata';
+        return (i>0?'<span class="arr">→</span>':'')+`<span class="${cls}">${e(a)}</span>`;
+      }).join('');
+      const rankCls = f.rank===1?'gold':f.rank===2?'silver':f.rank===3?'bronze':'';
+
+      const div = document.createElement('div');
+      div.className = 'flight-card' + (f.rejected?' rejected':'');
+      div.setAttribute('role','button'); div.setAttribute('tabindex','0');
+      div.setAttribute('aria-label', `${f.route} — ${f.price_display}`);
+      div.innerHTML = `
+        <div class="fc-main">
+          <div class="fc-rank ${rankCls}">${f.rank||'—'}</div>
+          <div class="fc-route">
+            <div class="fc-airports">${routeHtml}</div>
+            <div class="fc-airline">${e(f.airline)}${f.ref_dates?` &nbsp;&middot;&nbsp; <span style="color:var(--fg-subtle)">${e(f.ref_dates)}</span>`:''}</div>
+          </div>
+          <div class="fc-meta">
+            <div class="fc-pill">
+              <div class="fc-pill-val">${e(f.stops)}</div>
+              <div class="fc-pill-lbl">Stops</div>
+            </div>
+          </div>
+          <div class="fc-price-col">
+            <div class="fc-price ${over?'over':'found'}">${e(f.price_display)}</div>
+            <div class="fc-badge">${f.rejected?badge('Rejected','gray'):over?badge('⚠ Over','red'):badge('✓ Budget','green')}</div>
+          </div>
+          <div class="fc-chevron">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+        <div class="fc-bar"><div class="fc-bar-fill ${over?'over':'found'}" style="width:${Math.min(pct,100)}%"></div></div>`;
+
+      function open(){
+        const strats = D.strategies || [];
+        const al     = (f.airline||'').toLowerCase();
+        const strat  = strats.find(s=>{
+          const n=s.name.toLowerCase();
+          return (n.includes('icelandair')&&al.includes('icelandair'))||
+                 (n.includes('norse')&&al.includes('norse'))||
+                 (n.includes('play')&&al.includes('play'))||
+                 (n.includes('aer lingus')&&al.includes('aer lingus'));
+        });
+        const notes = f.notes || (f.rank===1 && bo ? bo.notes : null);
+        openModal(buildModal(f, budget, strat, notes), f.airline, f.rank);
+      }
+      div.addEventListener('click', open);
+      div.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); open(); } });
+      return div;
+    }
+
+    /* build modal HTML string */
+    function buildModal(f, budget, strat, notes){
+      const over   = f.price_numeric > budget;
+      const pct    = Math.round((f.price_numeric / budget)*100);
+      const markPct= Math.min(Math.round((budget/f.price_numeric)*100), 99);
+      const airports= (f.route||'').split('→').map(s=>s.trim()).filter(Boolean);
+      const dest    = f.dest || airports[Math.floor(airports.length/2)];
+
+      const routeHtml = airports.map((a,i)=>{
+        const cls = a===dest ? 'modal-iata dest' : 'modal-iata';
+        return (i>0?'<span class="modal-arr">→</span>':'')+`<span class="${cls}">${e(a)}</span>`;
+      }).join('');
+
+      const rejHtml = f.rejected
+        ? `<div class="modal-rejected"><strong>Rejected:</strong> ${e(f.reject_reason||'Does not meet trip requirements')}</div>`
+        : '';
+
+      const stepsHtml = strat ? `
+        <div class="modal-sec">
+          <div class="modal-sec-title">How to book this route</div>
+          ${strat.steps.map((s,i)=>`<div style="display:flex;gap:.6rem;padding:.35rem 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:.82rem;color:var(--fg-muted)"><span style="font-family:var(--mono);font-size:.7rem;color:var(--fg-subtle);flex-shrink:0">${i+1}.</span><span>${e(s)}</span></div>`).join('')}
+        </div>` : '';
+
+      const pcHtml = strat ? `
+        <div class="modal-sec">
+          <div class="modal-sec-title">Pros &amp; Cons</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+            <div>${strat.pros.map(p=>`<div class="pro-item"><span class="pro-icon">&#10003;</span><span>${e(p)}</span></div>`).join('')}</div>
+            <div>${strat.cons.map(c=>`<div class="con-item"><span class="con-icon">&#10007;</span><span>${e(c)}</span></div>`).join('')}</div>
+          </div>
+        </div>` : '';
+
+      const bookBtn = f.booking_url
+        ? `<a href="${e(f.booking_url)}" target="_blank" rel="noopener" class="btn-book">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Book this flight
+           </a>`
+        : '';
+      const dep = airports[0]||'SLC';
+      const kayakUrl = `https://www.kayak.com/flights/${e(dep)}-${e(dest)}/2026-07-01/2026-07-15`;
+
+      return `
+        ${rejHtml}
+        <div class="modal-sec">
+          <div class="modal-sec-title">Route</div>
+          <div class="modal-route">${routeHtml}</div>
+          <div style="font-size:.8rem;color:var(--fg-muted)">${e(f.airline)}</div>
+        </div>
+        <div class="modal-sec">
+          <div class="modal-sec-title">Flight details</div>
+          <div class="modal-dg">
+            <div class="modal-d">
+              <div class="modal-d-lbl">Price</div>
+              <div class="modal-d-val lg ${over?'over':'found'}">${e(f.price_display)}</div>
+            </div>
+            <div class="modal-d">
+              <div class="modal-d-lbl">vs. Budget ($${budget})</div>
+              <div class="modal-d-val" style="color:${over?'var(--danger)':'var(--success)'}">
+                ${over?'⚠ $'+(f.price_numeric-budget)+' over':'&#10003; Within limit'}
+              </div>
+            </div>
+            <div class="modal-d">
+              <div class="modal-d-lbl">Stops</div>
+              <div class="modal-d-val">${e(f.stops)}</div>
+            </div>
+            <div class="modal-d">
+              <div class="modal-d-lbl">Destination</div>
+              <div class="modal-d-val">${e(dest)}</div>
+            </div>
+            ${f.ref_dates?`<div class="modal-d"><div class="modal-d-lbl">Ref. Dates</div><div class="modal-d-val" style="font-size:.78rem">${e(f.ref_dates)}</div></div>`:''}
+            ${f.travel_time?`<div class="modal-d"><div class="modal-d-lbl">Duration</div><div class="modal-d-val" style="font-size:.78rem">${e(f.travel_time)}</div></div>`:''}
+          </div>
+          <div class="modal-bbar">
+            <div class="modal-bbar-lbls"><span>$0</span><span style="color:var(--fg)">Budget $${budget}</span><span>${e(f.price_display)}</span></div>
+            <div class="modal-bbar-outer">
+              <div class="modal-bbar-fill ${over?'over':'found'}" style="width:${Math.min(pct,100)}%"></div>
+              <div class="modal-bbar-mark" style="left:${markPct}%"></div>
+            </div>
+            <div class="modal-bbar-pct">${pct}% of budget${over?' — $'+(f.price_numeric-budget)+' over limit':' — within limit'}</div>
+          </div>
+        </div>
+        ${notes?`<div class="modal-sec"><div class="modal-sec-title">Notes</div><div class="modal-notes">${notes}</div></div>`:''}
+        ${stepsHtml}
+        ${pcHtml}
+        <div class="modal-ctas">
+          ${bookBtn}
+          <a href="${kayakUrl}" target="_blank" rel="noopener" class="btn-kayak">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Check on Kayak
+          </a>
+        </div>`;
+    }
+
+    /* render flight card list */
+    function renderCards(flights, budget, container){
+      const frag = document.createDocumentFragment();
+      flights.forEach(f => frag.appendChild(mkCard(f, budget)));
+      container.appendChild(frag);
+    }
 
     /* ─────────────────────────────────────────────
        PAGE 1 — FLIGHT HUNT
     ───────────────────────────────────────────── */
-    document.getElementById('page-hunt').innerHTML = `
+    const huntEl = document.getElementById('page-hunt');
+    const activeFlights   = (D.flights||[]).filter(f=>!f.rejected);
+    const rejectedFlights = (D.flights||[]).filter(f=>f.rejected);
+
+    huntEl.innerHTML = `
       <div class="page-head">
         <div class="page-eyebrow"><span class="dot"></span> Live Search</div>
-        <h1 class="page-h1">Utah <span class="grad">→ England</span></h1>
-        <div class="page-sub">Real-time flight monitoring · July 2026</div>
+        <h1 class="page-h1">Utah <span class="grad">&rarr; England</span></h1>
+        <div class="page-sub">Real-time flight monitoring &bull; July 2026</div>
         <div class="header-pills">
-          <span class="hpill">📅 Arrive by ${e(D.trip.must_arrive_by)}</span>
-          <span class="hpill">💒 ${D.trip.weddings.join(' &amp; ')}</span>
-          <span class="hpill">🏠 Leave after ${e(D.trip.must_leave_after)}</span>
-          <span class="hpill">🔁 ${D.meta.run_count} run${D.meta.run_count!==1?'s':''}</span>
+          <span class="hpill">Arrive by ${e(D.trip.must_arrive_by)}</span>
+          <span class="hpill">${D.trip.weddings.join(' &amp; ')}</span>
+          <span class="hpill">Leave after ${e(D.trip.must_leave_after)}</span>
+          <span class="hpill">${D.meta.run_count} run${D.meta.run_count!==1?'s':''}</span>
         </div>
       </div>
 
       <div class="glass status-banner ${St.found_qualifying?'found':'over'} mb">
-        <div class="status-icon">${St.found_qualifying?'✅':'⚠️'}</div>
+        <div class="status-icon">${St.found_qualifying?'&#10003;':'&#8987;'}</div>
         <div class="status-text">
-          <h2>${St.found_qualifying?'QUALIFYING FLIGHT FOUND — BOOK NOW':`No flight found under $${B} yet`}</h2>
-          <p>Closest: <strong style="color:var(--fg)">${e(St.closest_price_display)}</strong> &nbsp;·&nbsp;
-            Gap: ~$${St.budget_gap} &nbsp;·&nbsp;
-            <span class="live-dot"></span>${ta(D.meta.last_updated)} &nbsp;·&nbsp;
-            ${St.days_to_departure} days to departure</p>
+          <h2>${St.found_qualifying?'QUALIFYING FLIGHT FOUND — BOOK NOW':`No flight under $${B} found yet`}</h2>
+          <p>Closest: <strong style="color:var(--fg)">${e(St.closest_price_display)}</strong>
+            &nbsp;&bull;&nbsp; Gap: ~$${St.budget_gap}
+            &nbsp;&bull;&nbsp; <span class="live-dot"></span>${ta(D.meta.last_updated)}
+            &nbsp;&bull;&nbsp; ${St.days_to_departure} days to departure</p>
         </div>
       </div>
 
@@ -1427,7 +1675,7 @@ window.FLIGHT_DATA = {
         <div class="best-flex">
           <div style="flex:1;min-width:0">
             <div class="route-viz">
-              ${bo.route_airports.map((a,i,arr)=>atag(a,a===bo.preferred_dest)+(i<arr.length-1?'<span class="rarrow">→</span>':'')).join('')}
+              ${bo.route_airports.map((a,i,arr)=>atag(a,a===bo.preferred_dest)+(i<arr.length-1?'<span class="rarrow">&rarr;</span>':'')).join('')}
             </div>
             <div class="chips">
               <span class="chip">${e(bo.airlines)}</span>
@@ -1435,48 +1683,23 @@ window.FLIGHT_DATA = {
               <span class="chip">${e(bo.travel_time)}</span>
               <span class="chip">${e(bo.dates)}</span>
             </div>
-            ${bo.booking_url?`<a href="${e(bo.booking_url)}" target="_blank" rel="noopener" class="link-btn" style="display:inline-block;margin-top:.2rem;padding:.38rem .8rem;font-size:.78rem;">Check price →</a>`:''}
+            ${bo.booking_url?`<a href="${e(bo.booking_url)}" target="_blank" rel="noopener" class="link-btn" style="display:inline-block;padding:.38rem .8rem;font-size:.78rem">Check price &rarr;</a>`:''}
           </div>
           <div style="text-align:right;flex-shrink:0">
             <div class="big-price ${bo.price_numeric<=B?'found':'over'}">${e(bo.price_display)}</div>
-            <div><span class="price-badge ${bo.price_numeric<=B?'found':'over'}">${bo.price_numeric<=B?'✅ IN BUDGET':'⚠ OVER BUDGET'}</span></div>
+            <span class="price-badge ${bo.price_numeric<=B?'found':'over'}">${bo.price_numeric<=B?'&#10003; IN BUDGET':'&#8987; OVER BUDGET'}</span>
           </div>
         </div>
         <div class="best-notes">${e(bo.notes)}</div>
       </div>
 
-      <div class="glass table-card mb">
-        <div class="table-bar"><div class="slabel" style="margin:0">All Options — Cheapest First</div></div>
-        <div class="tscroll"><table>
-          <thead><tr><th>#</th><th>Price</th><th>Route</th><th>Airline</th><th>Ref. Dates</th><th>Stops</th><th>Status</th></tr></thead>
-          <tbody>
-            ${D.flights.map(f=>`
-              <tr class="${f.rejected?'dim':''}">
-                <td class="td-rank">${f.rank??'—'}</td>
-                <td class="td-mono ${f.price_numeric<=B?'found':'over'}">${e(f.price_display)}</td>
-                <td class="${destC(f.dest)}" style="font-weight:${['MAN','LBA'].includes(f.dest)?600:400}">${e(f.route)}</td>
-                <td style="color:var(--fg-muted)">${e(f.airline)}</td>
-                <td style="color:var(--fg-subtle);font-size:.77rem">${e(f.ref_dates)}</td>
-                <td>${badge(e(f.stops),f.stops.startsWith('1')?'green':'gray')}</td>
-                <td>${f.rejected?badge('❌ REJECTED','gray'):f.price_numeric<=B?badge('✅ IN BUDGET','green'):badge('⚠ OVER','red')}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table></div>
-        <div class="tlegend">
-          <span><strong style="color:#A5B4FC">Blue</strong> = Manchester #1</span>
-          <span><strong style="color:#C4B5FD">Purple</strong> = Leeds Bradford #2</span>
-          <span>Faded = date violation</span>
-        </div>
-      </div>
+      <div id="cards-main" class="mb"></div>
+      <div id="cards-rejected" class="mb"></div>
 
       <div class="grid2">
         <div class="glass card-pad">
           <div class="slabel">Budget vs. Market</div>
-          ${D.market_bars.map(b=>`
-            <div class="bar-row">
-              <div class="bar-lbl"><span>${e(b.label)}</span><span>${e(b.price)}</span></div>
-              <div class="bar-track"><div class="bar-fill" style="width:${b.pct}%"></div></div>
-            </div>`).join('')}
+          ${D.market_bars.map(b=>`<div class="bar-row"><div class="bar-lbl"><span>${e(b.label)}</span><span>${e(b.price)}</span></div><div class="bar-track"><div class="bar-fill" style="width:${b.pct}%"></div></div></div>`).join('')}
           <div class="bar-note">$${B} budget sits far left — every bar exceeds it.</div>
         </div>
         <div class="glass card-pad">
@@ -1489,12 +1712,12 @@ window.FLIGHT_DATA = {
         <div class="glass card-pad">
           <div class="slabel">Price Drop Log</div>
           ${D.price_drops.length===0
-            ?'<div class="log-empty">No drops yet.<br>Watching every hour.</div>'
-            :D.price_drops.map(p=>`<div class="list-item"><div style="color:var(--success);font-weight:700">↓</div><div><div>${e(p.date)} — $${p.saving} saved</div><div class="item-sub">${e(p.from)} → ${e(p.to)}</div></div></div>`).join('')}
+            ?'<div class="log-empty">No drops yet.<br>Watching 5&times; daily.</div>'
+            :D.price_drops.map(p=>`<div class="list-item"><div style="color:var(--success);font-weight:700">&darr;</div><div><div>${e(p.date)} &mdash; $${p.saving} saved</div><div class="item-sub">${e(p.from)} &rarr; ${e(p.to)}</div></div></div>`).join('')}
         </div>
         <div class="glass card-pad">
           <div class="slabel">Rejected Flights</div>
-          ${D.rejected.map(r=>`<div class="list-item"><div class="item-x">✕</div><div><div>${e(r.flight)}</div><div class="item-sub">${e(r.reason)}</div></div></div>`).join('')}
+          ${D.rejected.map(r=>`<div class="list-item"><div class="item-x">&times;</div><div><div>${e(r.flight)}</div><div class="item-sub">${e(r.reason)}</div></div></div>`).join('')}
         </div>
       </div>
 
@@ -1515,32 +1738,41 @@ window.FLIGHT_DATA = {
         <div class="tscroll"><table>
           <thead><tr><th>#</th><th>Date</th><th>Type</th><th>Cheapest</th><th>Notes</th></tr></thead>
           <tbody>
-            ${D.history.map(h=>`
-              <tr>
-                <td class="td-rank">#${h.run}</td>
-                <td style="font-family:var(--mono);font-size:.8rem">${e(h.date)}</td>
-                <td>${badge(h.type==='manual'?'Manual':'Auto',h.type==='manual'?'accent':'green')}</td>
-                <td class="td-mono over">${e(h.cheapest)}</td>
-                <td style="color:var(--fg-muted);font-size:.79rem">${e(h.notes)}</td>
-              </tr>`).join('')}
+            ${D.history.map(h=>`<tr>
+              <td class="td-rank">#${h.run}</td>
+              <td style="font-family:var(--mono);font-size:.8rem">${e(h.date)}</td>
+              <td>${badge(h.type==='manual'?'Manual':'Auto',h.type==='manual'?'accent':'green')}</td>
+              <td class="td-mono over">${e(h.cheapest)}</td>
+              <td style="color:var(--fg-muted);font-size:.79rem">${e(h.notes)}</td>
+            </tr>`).join('')}
           </tbody>
         </table></div>
       </div>
 
       <div class="page-footer">
-        <span class="live-dot"></span>Hourly scans active &nbsp;·&nbsp;
-        <a href="https://claude.ai/code/routines">claude.ai/code/routines</a> &nbsp;·&nbsp;
+        <span class="live-dot"></span>5 scans daily &nbsp;&bull;&nbsp;
+        <a href="https://claude.ai/code/routines">claude.ai/code/routines</a> &nbsp;&bull;&nbsp;
         <a href="https://github.com/findlayymckeown/Flights">github.com/findlayymckeown/Flights</a><br>
-        Last updated: ${new Date(D.meta.last_updated).toLocaleString()} · Run #${D.meta.run_count}
-      </div>
-    `;
+        Last updated: ${new Date(D.meta.last_updated).toLocaleString()} &bull; Run #${D.meta.run_count}
+      </div>`;
+
+    /* inject flight cards */
+    const mainContainer = huntEl.querySelector('#cards-main');
+    mainContainer.innerHTML = `<div class="flight-list-head"><div class="slabel" style="margin:0">All Options &mdash; Cheapest First</div><div class="flight-list-count">${activeFlights.length} routes</div></div>`;
+    renderCards(activeFlights, B, mainContainer);
+
+    if(rejectedFlights.length){
+      const rejContainer = huntEl.querySelector('#cards-rejected');
+      rejContainer.innerHTML = `<div class="slabel">Rejected (date violations / one-way only)</div>`;
+      renderCards(rejectedFlights, B, rejContainer);
+    }
 
     /* ─────────────────────────────────────────────
        PAGE 2 — DEAL WATCH
     ───────────────────────────────────────────── */
     const deals   = D.deals   || {last_checked:'',items:[]};
     const strats  = D.strategies || [];
-    const airlines = D.airlines || [];
+    const airlines= D.airlines  || [];
 
     document.getElementById('page-deals').innerHTML = `
       <div class="page-head">
@@ -1552,26 +1784,11 @@ window.FLIGHT_DATA = {
       <div class="glass card-pad mb">
         <div class="slabel">Live Deal Feed</div>
         ${deals.items.length===0
-          ? `<div class="deal-feed-empty">
-               🔍 No deals spotted yet.<br>
-               The hourly scanner checks <strong style="color:var(--fg)">Going.com</strong>,
-               <strong style="color:var(--fg)">Secret Flying</strong> &amp;
-               <strong style="color:var(--fg)">Thrifty Traveler</strong> each run.<br>
-               <span style="font-size:.75rem;margin-top:.5rem;display:block;color:var(--fg-subtle)">
-                 Last checked: ${deals.last_checked ? ta(deals.last_checked) : 'pending first scan'}
-               </span>
-             </div>`
-          : deals.items.map(d=>`
-              <div class="deal-item">
-                <div class="deal-icon ${d.type}">
-                  ${d.type==='error'?'⚡':'🏷'}
-                </div>
-                <div class="deal-body">
-                  <div class="deal-title">${e(d.title)}</div>
-                  <div class="deal-meta">${e(d.source)} · ${ta(d.found_at)}</div>
-                </div>
-                <div class="deal-price">${e(d.price)}</div>
-              </div>`).join('')}
+          ?`<div style="padding:1.5rem;text-align:center;color:var(--fg-subtle);font-size:.83rem;line-height:1.8">
+              No deals spotted yet.<br>Scanner checks Going.com, Secret Flying &amp; Thrifty Traveler each run.<br>
+              <span style="font-size:.73rem;color:var(--fg-subtle);display:block;margin-top:.5rem">Last checked: ${deals.last_checked?ta(deals.last_checked):'pending'}</span>
+            </div>`
+          :deals.items.map(d=>`<div class="deal-item"><div class="deal-icon ${d.type}">${d.type==='error'?'&#9889;':'&#127991;'}</div><div class="deal-body"><div class="deal-title">${e(d.title)}</div><div class="deal-meta">${e(d.source)} &bull; ${ta(d.found_at)}</div></div><div class="deal-price">${e(d.price)}</div></div>`).join('')}
         <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
           <a class="link-btn" href="https://www.going.com" target="_blank" rel="noopener">Going.com</a>
           <a class="link-btn" href="https://secretflying.com" target="_blank" rel="noopener">Secret Flying</a>
@@ -1580,407 +1797,239 @@ window.FLIGHT_DATA = {
         </div>
       </div>
 
-      <div class="slabel">Route Strategies — ${strats.length} options ranked</div>
+      <div class="slabel">Route Strategies &mdash; ${strats.length} options ranked</div>
       <div class="strategy-grid mb">
         ${strats.map(s=>`
           <div class="glass strat-card">
-            <div class="strat-head">
-              <div class="strat-name">${e(s.name)}</div>
-              ${badge(e(s.tag), s.tag_type)}
-            </div>
+            <div class="strat-head"><div class="strat-name">${e(s.name)}</div>${badge(e(s.tag),s.tag_type)}</div>
             <div class="strat-price">${e(s.est_price)}</div>
-            <div class="strat-steps">
-              ${s.steps.map((st,i)=>`
-                <div class="strat-step">
-                  <span class="step-n">${i+1}.</span>
-                  <span>${e(st)}</span>
-                </div>`).join('')}
-            </div>
+            <div class="strat-steps">${s.steps.map((st,i)=>`<div class="strat-step"><span class="step-n">${i+1}.</span><span>${e(st)}</span></div>`).join('')}</div>
             <div class="strat-procon">
-              <div class="pro-list">
-                ${s.pros.map(p=>`<div class="pro-item"><span class="pro-icon">✓</span><span>${e(p)}</span></div>`).join('')}
-              </div>
-              <div class="con-list">
-                ${s.cons.map(c=>`<div class="con-item"><span class="con-icon">✗</span><span>${e(c)}</span></div>`).join('')}
-              </div>
+              <div>${s.pros.map(p=>`<div class="pro-item"><span class="pro-icon">&#10003;</span><span>${e(p)}</span></div>`).join('')}</div>
+              <div>${s.cons.map(c=>`<div class="con-item"><span class="con-icon">&#10007;</span><span>${e(c)}</span></div>`).join('')}</div>
             </div>
             <div class="strat-action">
-              <a href="${e(s.booking_url)}" target="_blank" rel="noopener" class="btn-sm btn-primary">Book →</a>
-              <a href="${e(s.check_url)}" target="_blank" rel="noopener" class="btn-sm btn-secondary">Check price</a>
+              <a href="${e(s.booking_url)}" target="_blank" rel="noopener" class="btn-sm btn-primary">Book &rarr;</a>
+              <a href="${e(s.check_url)}"   target="_blank" rel="noopener" class="btn-sm btn-secondary">Check price</a>
             </div>
           </div>`).join('')}
       </div>
 
       <div class="glass table-card mb">
-        <div class="table-bar"><div class="slabel" style="margin:0">Airline Intelligence — All Carriers Serving This Route</div></div>
+        <div class="table-bar"><div class="slabel" style="margin:0">Airline Intelligence</div></div>
         <div class="tscroll"><table>
           <thead><tr><th>Airline</th><th>Hub</th><th>Route</th><th>July Est.</th><th>Stops</th><th>Verdict</th><th>Link</th></tr></thead>
           <tbody>
-            ${airlines.map(a=>`
-              <tr>
-                <td style="font-weight:600">${e(a.name)}</td>
-                <td style="font-family:var(--mono);font-size:.78rem;color:var(--fg-muted)">${e(a.hub)}</td>
-                <td style="font-size:.8rem;color:var(--fg-muted)">${e(a.routes)}</td>
-                <td class="td-mono" style="color:${a.vtype==='green'?'var(--success)':a.vtype==='yellow'?'var(--warning)':'var(--danger)'}">${e(a.july_est)}</td>
-                <td>${badge(e(a.stops)+'★', a.stops==='0'?'green':a.stops==='1'?'yellow':'gray')}</td>
-                <td>${badge(e(a.verdict), a.vtype)}</td>
-                <td><a href="${e(a.url)}" target="_blank" rel="noopener" style="font-size:.75rem">Check →</a></td>
-              </tr>`).join('')}
+            ${airlines.map(a=>`<tr>
+              <td style="font-weight:600">${e(a.name)}</td>
+              <td style="font-family:var(--mono);font-size:.78rem;color:var(--fg-muted)">${e(a.hub)}</td>
+              <td style="font-size:.8rem;color:var(--fg-muted)">${e(a.routes)}</td>
+              <td class="td-mono" style="color:${a.vtype==='green'?'var(--success)':a.vtype==='yellow'?'var(--warning)':'var(--danger)'}">${e(a.july_est)}</td>
+              <td>${badge(e(a.stops)+'&#9733;',a.stops==='0'?'green':a.stops==='1'?'yellow':'gray')}</td>
+              <td>${badge(e(a.verdict),a.vtype)}</td>
+              <td><a href="${e(a.url)}" target="_blank" rel="noopener" style="font-size:.75rem">Check &rarr;</a></td>
+            </tr>`).join('')}
           </tbody>
         </table></div>
-        <div class="tlegend"><span>★ stops each way · RT = round trip · OW = one way</span></div>
+        <div class="tlegend"><span>&#9733; stops each way &bull; RT = round trip &bull; OW = one way</span></div>
       </div>
 
       <div class="glass card-pad mb">
-        <div class="slabel">Booking Timeline Guidance</div>
-        <div class="ctx-row"><span>📉</span><span><strong style="color:var(--fg)">Now (31 days out)</strong> — Past the optimal 40–60 day window. Prices have likely peaked for peak-season travel. Keep watching but prepare for current rates.</span></div>
-        <div class="ctx-row"><span>⚡</span><span><strong style="color:var(--fg)">14–21 days out (Jun 10–17)</strong> — Airlines may release unsold inventory at discounted prices. Set alerts and check daily. This is the last realistic hope for a discount.</span></div>
-        <div class="ctx-row"><span>⚠️</span><span><strong style="color:var(--fg)">Under 10 days</strong> — Prices typically spike for last-minute bookings on peak routes. Only book here if a specific deal appears.</span></div>
-        <div class="ctx-row"><span>🎯</span><span><strong style="color:var(--fg)">Budget reality</strong> — At $550 total, you likely need either an error fare or a budget carrier combo (Norse/PLAY + positioning). Standard carriers all exceed budget by $200–$600+.</span></div>
-        <div class="ctx-row"><span>🏆</span><span><strong style="color:var(--fg)">Miles & points</strong> — British Airways Avios, United MileagePlus, Delta SkyMiles, or AA miles could get you on this route for $50–$150 in fees. If you have any miles, check award availability now.</span></div>
+        <div class="slabel">Booking Timeline</div>
+        <div class="ctx-row"><span>&#128200;</span><span><strong style="color:var(--fg)">Now (31 days out)</strong> &mdash; Past the optimal 40&ndash;60 day window. Prices have likely peaked. Keep watching but prepare for current rates.</span></div>
+        <div class="ctx-row"><span>&#9889;</span><span><strong style="color:var(--fg)">14&ndash;21 days out (Jun 10&ndash;17)</strong> &mdash; Airlines may release unsold inventory. Set alerts, check daily. Last realistic hope for a discount.</span></div>
+        <div class="ctx-row"><span>&#9888;&#65039;</span><span><strong style="color:var(--fg)">Under 10 days</strong> &mdash; Prices typically spike. Only book here if a specific deal appears.</span></div>
+        <div class="ctx-row"><span>&#127942;</span><span><strong style="color:var(--fg)">Miles &amp; points</strong> &mdash; BA Avios, United, Delta, AA miles could get you there for $50&ndash;$150 in fees. Check award availability now.</span></div>
       </div>
 
       <div class="page-footer">
-        <span class="live-dot"></span>Deal scanner running hourly &nbsp;·&nbsp;
+        <span class="live-dot"></span>Deal scanner active &nbsp;&bull;&nbsp;
         <a href="https://claude.ai/code/routines">claude.ai/code/routines</a><br>
         Data refreshed: ${new Date(D.meta.last_updated).toLocaleString()}
-      </div>
-    `;
-
-
-
+      </div>`;
 
     /* ─────────────────────────────────────────────
-       PAGE: BOYS TRIP
+       PAGE 3 — BOYS TRIP
     ───────────────────────────────────────────── */
-    const BT = D.boys_trip || {};
-    const BTt = BT.trip || {};
+    const BT  = D.boys_trip || {};
+    const BTt = BT.trip  || {};
     const BTs = BT.status || {};
-    const BTb = BT.budget_usd || (BTt.budget_usd || 550);
-    const budget_boys = BTt.budget_usd || 550;
+    const budgetB = BTt.budget_usd || 550;
+    const neverRun = BT.meta && BT.meta.run_count === 0;
+    const boysFlights = BT.flights || [];
 
-    (function renderBoysTrip(){
-      const el = document.getElementById('page-boys');
-      if(!el) return;
-
-      const hasFlights = (BT.flights||[]).length > 0;
-      const hasBO      = !!BT.best_option;
-      const found      = BTs.found_qualifying;
-      const closest    = BTs.closest_price_display || 'Not yet searched';
-      const daysOut    = BTs.days_to_departure;
-      const gap        = BTs.budget_gap;
-      const neverRun   = BT.meta && BT.meta.run_count === 0;
-
-      // Status banner
-      let bannerClass = neverRun ? 'pending' : found ? 'found' : 'over';
-      let bannerIcon  = neverRun ? '🔍' : found ? '✅' : '⚠️';
-      let bannerTitle = neverRun
-        ? 'First scan pending — results will appear within the hour'
-        : found
-          ? 'QUALIFYING FLIGHT FOUND — BOOK NOW'
-          : `No qualifying flight under $${budget_boys} found yet`;
-      let bannerSub = neverRun
-        ? `Search will run hourly for Jul 7–15 departures · Budget $${budget_boys}`
-        : `Closest: <strong style="color:var(--fg)">${e(closest)}</strong>${gap != null ? ` &nbsp;·&nbsp; Gap: ~$${gap}` : ''} &nbsp;·&nbsp; <span class="live-dot"></span>${ta(BT.meta.last_updated)} &nbsp;·&nbsp; ${daysOut} days to departure`;
-
-      // Flights table
-      let tableHTML = '';
-      if(hasFlights){
-        tableHTML = `
-          <div class="glass table-card mb">
-            <div class="table-bar"><div class="slabel" style="margin:0">Flights Found — Cheapest First</div></div>
-            <div class="tscroll"><table>
-              <thead><tr><th>#</th><th>Price</th><th>Route</th><th>Airline</th><th>Dates</th><th>Stops</th><th>Status</th></tr></thead>
-              <tbody>
-                ${(BT.flights||[]).map(f=>`
-                  <tr class="${f.rejected?'dim':''}">
-                    <td class="td-rank">${f.rank??'—'}</td>
-                    <td class="td-mono ${f.price_numeric<=budget_boys?'found':'over'}">${e(f.price_display)}</td>
-                    <td class="${destC(f.dest)}">${e(f.route)}</td>
-                    <td style="color:var(--fg-muted)">${e(f.airline)}</td>
-                    <td style="color:var(--fg-subtle);font-size:.77rem">${e(f.ref_dates||f.dates||'')}</td>
-                    <td>${badge(e(f.stops),f.stops&&f.stops.startsWith('1')?'green':'gray')}</td>
-                    <td>${f.rejected?badge('❌ REJECTED','gray'):f.price_numeric<=budget_boys?badge('✅ IN BUDGET','green'):badge('⚠ OVER','red')}</td>
-                  </tr>`).join('')}
-              </tbody>
-            </table></div>
-          </div>`;
-      } else {
-        tableHTML = `<div class="glass card-pad mb log-empty" style="padding:2rem;text-align:center">
-          🔍 No flights found yet.<br>
-          <span style="font-size:.75rem;color:var(--fg-subtle);margin-top:.5rem;display:block">
-            The hourly scanner will populate this table automatically.
-          </span>
-        </div>`;
-      }
-
-      // Best option card
-      let bestHTML = '';
-      if(hasBO){
-        const bo2 = BT.best_option;
-        bestHTML = `<div class="glass best-card mb">
-          <div class="slabel">Current Best Option</div>
-          <div class="best-flex">
-            <div style="flex:1;min-width:0">
-              <div class="route-viz">
-                ${(bo2.route_airports||[]).map((a,i,arr)=>atag(a,a===bo2.preferred_dest)+(i<arr.length-1?'<span class="rarrow">→</span>':'')).join('')}
-              </div>
-              <div class="chips">
-                <span class="chip">${e(bo2.airlines||'')}</span>
-                <span class="chip">${e(bo2.stops||'')}</span>
-                <span class="chip">${e(bo2.dates||'')}</span>
-              </div>
-              ${bo2.booking_url?`<a href="${e(bo2.booking_url)}" target="_blank" rel="noopener" class="link-btn" style="display:inline-block;margin-top:.3rem;padding:.38rem .8rem;font-size:.78rem;">Check price →</a>`:''}
-            </div>
-            <div style="text-align:right;flex-shrink:0">
-              <div class="big-price ${bo2.price_numeric<=budget_boys?'found':'over'}">${e(bo2.price_display)}</div>
-              <div><span class="price-badge ${bo2.price_numeric<=budget_boys?'found':'over'}">${bo2.price_numeric<=budget_boys?'✅ IN BUDGET':'⚠ OVER BUDGET'}</span></div>
-            </div>
-          </div>
-          ${bo2.notes?`<div class="best-notes">${e(bo2.notes)}</div>`:''}
-        </div>`;
-      }
-
-      el.innerHTML = `
-        <div class="page-head">
-          <div class="page-eyebrow"><span class="dot"></span> Boys Trip</div>
-          <h1 class="page-h1"><span class="grad">Boys Trip</span></h1>
-          <div class="page-sub">Utah → England · ${e(BTt.ideal_depart||'Jul 7')} → ${e(BTt.ideal_return||'Jul 15, 2026')}</div>
-          <div class="header-pills">
-            <span class="hpill">✈ Depart ~${e(BTt.ideal_depart||'Jul 7')}</span>
-            <span class="hpill">🏠 Return ${e(BTt.ideal_return||'Jul 15')}</span>
-            <span class="hpill">💒 Must arrive by ${e(BTt.must_arrive_by||'Jul 9')}</span>
-            <span class="hpill">💰 Budget $${budget_boys}</span>
-            <span class="hpill">📅 ${daysOut} days away</span>
-          </div>
+    const boysEl = document.getElementById('page-boys');
+    boysEl.innerHTML = `
+      <div class="page-head">
+        <div class="page-eyebrow"><span class="dot"></span> Boys Trip</div>
+        <h1 class="page-h1"><span class="grad">Boys Trip</span></h1>
+        <div class="page-sub">Utah &rarr; England &bull; ${e(BTt.ideal_depart||'Jul 7')} &rarr; ${e(BTt.ideal_return||'Jul 15, 2026')}</div>
+        <div class="header-pills">
+          <span class="hpill">Depart ~${e(BTt.ideal_depart||'Jul 7')}</span>
+          <span class="hpill">Return ${e(BTt.ideal_return||'Jul 15')}</span>
+          <span class="hpill">Arrive by ${e(BTt.must_arrive_by||'Jul 9')}</span>
+          <span class="hpill">Budget $${budgetB}</span>
+          <span class="hpill">${BTs.days_to_departure} days away</span>
         </div>
+      </div>
 
-        <div class="glass status-banner ${bannerClass==='pending'?'over':bannerClass} mb"
-          style="${neverRun?'border-color:rgba(94,106,210,0.3);':''}${neverRun?'background:var(--accent-dim);':''}"
-        >
-          <div class="status-icon" style="${neverRun?'background:var(--accent-dim);border-color:rgba(94,106,210,0.3);':''}">${bannerIcon}</div>
-          <div class="status-text">
-            <h2 style="${neverRun?'color:#A5B4FC;':''}">${bannerTitle}</h2>
-            <p>${bannerSub}</p>
-          </div>
+      <div class="glass status-banner ${BTs.found_qualifying?'found':'over'} mb" style="${neverRun?'border-color:rgba(14,165,233,0.3);':''}">
+        <div class="status-icon" style="${neverRun?'background:var(--primary-dim);border-color:rgba(14,165,233,0.3);':''}">${neverRun?'&#128269;':BTs.found_qualifying?'&#10003;':'&#8987;'}</div>
+        <div class="status-text">
+          <h2 style="${neverRun?'color:#7DD3FC;':''}">${neverRun?'First scan pending &mdash; results appear within the hour':BTs.found_qualifying?'QUALIFYING FLIGHT FOUND &mdash; BOOK NOW':`No qualifying flight under $${budgetB} yet`}</h2>
+          <p>${neverRun?`Searching Jul 7&ndash;15 departures &bull; Budget $${budgetB}`:`Closest: <strong style="color:var(--fg)">${e(BTs.closest_price_display||'Not yet searched')}</strong>${BTs.budget_gap!=null?' &bull; Gap: ~$'+BTs.budget_gap:''} &bull; ${BTs.days_to_departure} days out`}</p>
         </div>
+      </div>
 
-        <div class="stat-grid">
-          <div class="glass stat-card"><div class="stat-label">Budget</div><div class="stat-val blue">$${budget_boys}</div><div class="stat-sub">All-in max</div></div>
-          <div class="glass stat-card"><div class="stat-label">Closest Found</div><div class="stat-val ${found?'green':neverRun?'blue':'red'}">${e(closest)}</div><div class="stat-sub">${neverRun?'Pending scan':'Est. total'}</div></div>
-          <div class="glass stat-card"><div class="stat-label">Budget Gap</div><div class="stat-val ${gap==null?'blue':gap<=0?'green':'yellow'}">${gap==null?'—':'~$'+gap}</div><div class="stat-sub">${gap==null?'Pending':'Over limit'}</div></div>
-          <div class="glass stat-card"><div class="stat-label">Days Out</div><div class="stat-val ${daysOut<=21?'red':'yellow'}">${daysOut}</div><div class="stat-sub">Until Jul 7</div></div>
+      <div class="stat-grid">
+        <div class="glass stat-card"><div class="stat-label">Budget</div><div class="stat-val blue">$${budgetB}</div><div class="stat-sub">All-in max</div></div>
+        <div class="glass stat-card"><div class="stat-label">Closest Found</div><div class="stat-val ${neverRun?'blue':'red'}">${e(BTs.closest_price_display||'—')}</div><div class="stat-sub">${neverRun?'Pending':'Est. total'}</div></div>
+        <div class="glass stat-card"><div class="stat-label">Budget Gap</div><div class="stat-val ${BTs.budget_gap==null?'blue':'yellow'}">${BTs.budget_gap==null?'—':'~$'+BTs.budget_gap}</div><div class="stat-sub">Pending</div></div>
+        <div class="glass stat-card"><div class="stat-label">Days Out</div><div class="stat-val ${BTs.days_to_departure<=21?'red':'yellow'}">${BTs.days_to_departure}</div><div class="stat-sub">Until Jul 7</div></div>
+      </div>
+
+      <div class="glass card-pad mb" style="border-color:rgba(14,165,233,0.2);background:var(--primary-dim);">
+        <div class="slabel" style="color:var(--primary)">Trip Notes</div>
+        <div class="ctx-row"><span>&#128197;</span><span><strong style="color:var(--fg)">Tuesday departure (Jul 7)</strong> &mdash; Weekdays typically 10&ndash;15% cheaper than weekends.</span></div>
+        <div class="ctx-row"><span>&#128146;</span><span><strong style="color:var(--fg)">One wedding only</strong> &mdash; Arrive by Jul 9, attend Jul 10 wedding, depart Jul 15.</span></div>
+        <div class="ctx-row"><span>&#10003;</span><span><strong style="color:var(--fg)">Valid window</strong> &mdash; Jul 6, 7, or 8 departure all work (arrive Jul 7&ndash;9, before Jul 10 wedding).</span></div>
+      </div>
+
+      <div id="cards-boys" class="mb"></div>
+
+      ${boysFlights.length===0?`<div class="glass card-pad mb log-empty" style="padding:2rem;text-align:center">No flights found yet &mdash; hourly scanner will populate this automatically.</div>`:''}
+
+      <div class="glass card-pad mb">
+        <div class="slabel">Search Links &mdash; Jul 7 &rarr; Jul 15 Pre-Filled</div>
+        <div class="links-grid">
+          ${(BT.search_links||[]).map(l=>`<a class="link-btn" href="${e(l.url)}" target="_blank" rel="noopener">${e(l.label)}</a>`).join('')}
         </div>
+      </div>
 
-        <div class="glass card-pad mb" style="border-color:rgba(94,106,210,0.2);background:var(--accent-dim);">
-          <div class="slabel" style="color:var(--accent)">Trip Notes</div>
-          <div class="ctx-row"><span>📅</span><span><strong style="color:var(--fg)">Tuesday departure (Jul 7)</strong> — weekdays are typically 10–15% cheaper than weekends. Good timing.</span></div>
-          <div class="ctx-row"><span>💒</span><span><strong style="color:var(--fg)">One wedding only</strong> — arrive by Jul 9, attend Jul 10 wedding, depart Jul 15.</span></div>
-          <div class="ctx-row"><span>📊</span><span><strong style="color:var(--fg)">vs. Main Trip pricing</strong> — Jul 7 is slightly after the July 4 US holiday rush. May see marginally lower fares than Jul 1.</span></div>
-          <div class="ctx-row"><span>✅</span><span><strong style="color:var(--fg)">Valid window</strong> — Jul 6, 7, or 8 departure all work (arrive Jul 7–9, well before Jul 10 wedding).</span></div>
-        </div>
+      <div class="page-footer">
+        <span class="live-dot"></span>Scans active &nbsp;&bull;&nbsp;
+        <a href="https://github.com/findlayymckeown/Flights">github.com/findlayymckeown/Flights</a>
+      </div>`;
 
-        ${bestHTML}
-        ${tableHTML}
-
-        <div class="glass card-pad mb">
-          <div class="slabel">Search Links — Jul 7 → Jul 15 Pre-Filled</div>
-          <div class="links-grid">
-            ${(BT.search_links||[]).map(l=>`<a class="link-btn" href="${e(l.url)}" target="_blank" rel="noopener">${e(l.label)}</a>`).join('')}
-          </div>
-        </div>
-
-        ${(BT.history||[]).length>0?`
-        <div class="glass table-card">
-          <div class="table-bar"><div class="slabel" style="margin:0">Search History</div></div>
-          <div class="tscroll"><table>
-            <thead><tr><th>#</th><th>Date</th><th>Type</th><th>Cheapest</th><th>Notes</th></tr></thead>
-            <tbody>
-              ${(BT.history||[]).map(h=>`<tr>
-                <td class="td-rank">#${h.run}</td>
-                <td style="font-family:var(--mono);font-size:.8rem">${e(h.date)}</td>
-                <td>${badge(h.type==='manual'?'Manual':'Auto',h.type==='manual'?'accent':'green')}</td>
-                <td class="td-mono over">${e(h.cheapest)}</td>
-                <td style="color:var(--fg-muted);font-size:.79rem">${e(h.notes)}</td>
-              </tr>`).join('')}
-            </tbody>
-          </table></div>
-        </div>`:
-        `<div class="glass card-pad log-empty">No search history yet — first automated scan pending.</div>`}
-
-        <div class="page-footer">
-          <span class="live-dot"></span>Hourly scans active &nbsp;·&nbsp;
-          <a href="https://github.com/findlayymckeown/Flights">github.com/findlayymckeown/Flights</a>
-        </div>
-      `;
-    })();
+    if(boysFlights.length){
+      const bc = boysEl.querySelector('#cards-boys');
+      bc.innerHTML = `<div class="flight-list-head"><div class="slabel" style="margin:0">Flights Found &mdash; Cheapest First</div><div class="flight-list-count">${boysFlights.length} routes</div></div>`;
+      renderCards(boysFlights, budgetB, bc);
+    }
 
     /* ─────────────────────────────────────────────
-       PAGE 3 — DATE FINDER
+       PAGE 4 — DATE FINDER
     ───────────────────────────────────────────── */
-    const dm = D.date_matrix || {valid:[],depart_options:[],return_options:[]};
-    const ag = D.airport_guide || [];
-
-    // Build date matrix lookup
+    const dm  = D.date_matrix  || {valid:[],depart_options:[],return_options:[]};
+    const ag  = D.airport_guide || [];
     const priceMap = {};
-    (dm.valid||[]).forEach(v=>{ priceMap[v.dep+'|'+v.ret] = v; });
-
+    (dm.valid||[]).forEach(v=>{ priceMap[v.dep+'|'+v.ret]=v; });
     const depOpts = dm.depart_options || [];
     const retOpts = dm.return_options || [];
-
-    // Identify ideal combo
-    const isIdeal = (d,r) => d==='Jul 1' && r==='Jul 15';
+    const isIdeal = (d,r) => d==='Jul 1'&&r==='Jul 15';
 
     let gridHTML = '<div class="date-grid">';
-    // header row
-    gridHTML += '<div class="dg-header">Depart ↓ / Return →</div>';
-    retOpts.forEach(r => gridHTML += `<div class="dg-header">${e(r)}</div>`);
-    // data rows
-    depOpts.forEach(dep => {
-      gridHTML += `<div class="dg-dep">${e(dep)}</div>`;
-      retOpts.forEach(ret => {
-        const key = dep+'|'+ret;
-        const cell = priceMap[key];
-        if(!cell){
-          gridHTML += '<div class="dg-cell invalid">✕</div>';
-        } else if(cell.price_est){
-          const cls = cell.price_est <= B ? 'found' : 'checked';
-          gridHTML += `<div class="dg-cell ${cls}" title="${e(cell.notes||'')}">$${cell.price_est}</div>`;
-        } else {
-          const cls = isIdeal(dep,ret) ? 'ideal' : 'unchecked';
-          gridHTML += `<div class="dg-cell ${cls}" title="${e(cell.notes||'')} (${cell.days} days)">${isIdeal(dep,ret)?'★':'—'}</div>`;
-        }
+    gridHTML += '<div class="dg-header">Depart &darr; / Return &rarr;</div>';
+    retOpts.forEach(r=>gridHTML+=`<div class="dg-header">${e(r)}</div>`);
+    depOpts.forEach(dep=>{
+      gridHTML+=`<div class="dg-dep">${e(dep)}</div>`;
+      retOpts.forEach(ret=>{
+        const cell=priceMap[dep+'|'+ret];
+        if(!cell){ gridHTML+='<div class="dg-cell invalid">&#10005;</div>'; }
+        else if(cell.price_est){ gridHTML+=`<div class="dg-cell ${cell.price_est<=B?'found':'checked'}" title="${e(cell.notes||'')}">$${cell.price_est}</div>`; }
+        else { gridHTML+=`<div class="dg-cell ${isIdeal(dep,ret)?'ideal':'unchecked'}" title="${e(cell.notes||'')} (${cell.days} days)">${isIdeal(dep,ret)?'&#9733;':'&mdash;'}</div>`; }
       });
     });
     gridHTML += '</div>';
     gridHTML += `<div class="dg-legend">
       <span><span class="dg-swatch" style="background:rgba(16,185,129,0.3)"></span>Under $550</span>
       <span><span class="dg-swatch" style="background:rgba(239,68,68,0.2)"></span>Over budget</span>
-      <span><span class="dg-swatch" style="background:var(--accent-dim)"></span>Ideal dates</span>
-      <span><span class="dg-swatch" style="background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.1)"></span>Invalid combo</span>
-      <span style="color:var(--fg-subtle);margin-top:.2rem;flex-basis:100%;font-size:.68rem">Hover a cell for notes. — = not yet priced. ✕ = fails 8–15 day or date requirements.</span>
+      <span><span class="dg-swatch" style="background:var(--primary-dim)"></span>Ideal dates</span>
+      <span><span class="dg-swatch" style="background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.1)"></span>Invalid</span>
     </div>`;
 
-    // Airport distance bars (max distance ~215 miles = LGW)
     const maxDist = 215;
     let distHTML = '<div class="dist-bar-wrap">';
-    ag.forEach(a => {
-      const pct = Math.round((a.miles_from_leeds / maxDist) * 100);
+    ag.forEach(a=>{
+      const pct = Math.round((a.miles_from_leeds/maxDist)*100);
       const col = a.verdict_type==='green'?'var(--success)':a.verdict_type==='yellow'?'var(--warning)':'var(--danger)';
-      distHTML += `<div class="dist-row">
-        <div class="dist-code">${e(a.code)}</div>
-        <div class="dist-bar-outer"><div class="dist-bar-inner" style="width:${pct}%;background:${col}"></div></div>
-        <div class="dist-label">${a.miles_from_leeds} mi</div>
-        <div class="dist-train">🚂 ${a.train_mins}m</div>
-      </div>`;
+      distHTML+=`<div class="dist-row"><div class="dist-code">${e(a.code)}</div><div class="dist-bar-outer"><div class="dist-bar-inner" style="width:${pct}%;background:${col}"></div></div><div class="dist-label">${a.miles_from_leeds} mi</div><div class="dist-train">&#128650; ${a.train_mins}m</div></div>`;
     });
     distHTML += '</div>';
 
-    // Pre-filled booking links
     const bookingLinks = [
-      {name:"Google Flights",route:"SLC→MAN",url:"https://www.google.com/travel/flights/search?tfs=CBwQAhooEgoyMDI2LTA3LTAxagwIAxIIL20vMHFrZGpyDAgDEggvbS8wNWx3MRooEgoyMDI2LTA3LTE1agwIAxIIL20vMDVsdzFyDAgDEggvbS8wcWtkag%3D%3D&curr=USD",note:"Jul 1 → Jul 15 pre-filled"},
-      {name:"Kayak DEN→MAN",route:"DEN→MAN Jul 1–15",url:"https://www.kayak.com/flights/DEN-MAN/2026-07-01/2026-07-15",note:"Icelandair route"},
-      {name:"Kayak SLC→MAN",route:"SLC→MAN Jul 1–15",url:"https://www.kayak.com/flights/SLC-MAN/2026-07-01/2026-07-15",note:"All airlines"},
-      {name:"Kayak SLC→LHR",route:"SLC→LHR Jul 1–15",url:"https://www.kayak.com/flights/SLC-LHR/2026-07-01/2026-07-15",note:"London Heathrow"},
-      {name:"Skyscanner SLC→UK",route:"SLC→UK Jul 1–15",url:"https://www.skyscanner.com/transport/flights/slc/uk/20260701/20260715/",note:"Flexible destination"},
-      {name:"Momondo SLC→MAN",route:"SLC→MAN Jul 1–15",url:"https://www.momondo.com/flights/salt-lake-city/manchester/2026-07-01/2026-07-15",note:"Price comparison"},
-      {name:"Expedia SLC→MAN",route:"SLC→MAN Jul 1–15",url:"https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from%3ASLC%2Cto%3AMAN%2Cdeparture%3A07%2F01%2F2026&leg2=from%3AMAN%2Cto%3ASLC%2Cdeparture%3A07%2F15%2F2026",note:"Package deals"},
-      {name:"Orbitz SLC→MAN",route:"SLC→MAN Jul 1–15",url:"https://www.orbitz.com/Flights-Search?trip=roundtrip&leg1=from%3ASLC%2Cto%3AMAN%2Cdeparture%3A07%2F01%2F2026&leg2=from%3AMAN%2Cto%3ASLC%2Cdeparture%3A07%2F15%2F2026",note:"Often has deals"},
-      {name:"Icelandair DEN→MAN",route:"DEN→MAN direct",url:"https://www.icelandair.com/us/book/flights/?from=DEN&to=MAN&departure=2026-07-01&return=2026-07-15&adults=1&class=economy",note:"Best structural option"},
-      {name:"Norse Atlantic",route:"JFK→LGW",url:"https://flights.flynorse.com/en-us/",note:"Budget transatlantic"},
-      {name:"PLAY Airlines",route:"US→LPL/STN",url:"https://www.flyplay.com/en-us/cheap-flights-from-united-states",note:"Via Reykjavik"},
-      {name:"Kiwi.com SLC→MAN",route:"Self-transfer combos",url:"https://www.kiwi.com/us/search/tiles/SLC/MAN/2026-07-01/2026-07-15?adults=1&selectedBaggageOption=0",note:"Multi-carrier"},
+      {name:"Google Flights",route:"SLC&rarr;MAN",url:"https://www.google.com/travel/flights",note:"Jul 1&rarr;15 flexible"},
+      {name:"Kayak DEN&rarr;MAN",route:"DEN&rarr;MAN Jul 1&ndash;15",url:"https://www.kayak.com/flights/DEN-MAN/2026-07-01/2026-07-15",note:"Icelandair route"},
+      {name:"Kayak SLC&rarr;MAN",route:"SLC&rarr;MAN Jul 1&ndash;15",url:"https://www.kayak.com/flights/SLC-MAN/2026-07-01/2026-07-15",note:"All airlines"},
+      {name:"Kayak SLC&rarr;LHR",route:"SLC&rarr;LHR Jul 1&ndash;15",url:"https://www.kayak.com/flights/SLC-LHR/2026-07-01/2026-07-15",note:"London Heathrow"},
+      {name:"Skyscanner",route:"SLC&rarr;UK flexible",url:"https://www.skyscanner.com/transport/flights/slc/uk/20260701/20260715/",note:"Any UK airport"},
+      {name:"Momondo",route:"SLC&rarr;MAN",url:"https://www.momondo.com/flights/salt-lake-city/manchester/2026-07-01/2026-07-15",note:"Price comparison"},
+      {name:"Icelandair",route:"DEN&rarr;MAN direct",url:"https://www.icelandair.com/us/book/flights/?from=DEN&to=MAN&departure=2026-07-01&return=2026-07-15&adults=1&class=economy",note:"Best structural option"},
+      {name:"Norse Atlantic",route:"JFK&rarr;LGW",url:"https://flights.flynorse.com/en-us/",note:"Budget transatlantic"},
+      {name:"PLAY Airlines",route:"US&rarr;LPL/STN",url:"https://www.flyplay.com/en-us/cheap-flights-from-united-states",note:"Via Reykjavik"},
+      {name:"Kiwi.com",route:"Self-transfer combos",url:"https://www.kiwi.com/us/search/tiles/SLC/MAN/2026-07-01/2026-07-15?adults=1",note:"Multi-carrier"},
     ];
-
-    let blHTML = '<div class="booking-links-grid">';
-    bookingLinks.forEach(l => {
-      blHTML += `<a class="booking-link-card" href="${e(l.url)}" target="_blank" rel="noopener">
-        <div class="blc-name">${e(l.name)}</div>
-        <div class="blc-route">${e(l.route)}</div>
-        <div class="blc-note">${e(l.note)}</div>
-      </a>`;
-    });
-    blHTML += '</div>';
 
     document.getElementById('page-dates').innerHTML = `
       <div class="page-head">
         <div class="page-eyebrow"><span class="dot"></span> Date Intelligence</div>
         <h1 class="page-h1">Date <span class="grad">Finder</span></h1>
-        <div class="page-sub">All valid date combinations · Airport distances · Direct booking links</div>
+        <div class="page-sub">All valid combinations &bull; Airport distances &bull; Direct booking links</div>
       </div>
 
       <div class="glass card-pad mb">
-        <div class="slabel">Valid Date Combinations — All 27 options that meet requirements</div>
-        <div style="font-size:.78rem;color:var(--fg-muted);margin-bottom:.75rem;line-height:1.6;">
-          Hard rules: <strong style="color:var(--fg)">arrive by Jul 3</strong> (depart Jun 28–Jul 2) ·
-          <strong style="color:var(--fg)">leave no earlier than Jul 10</strong> ·
-          <strong style="color:var(--fg)">8–15 days</strong> in England ·
-          <span style="color:var(--accent)">★ = your ideal dates</span>
+        <div class="slabel">Valid Date Combinations</div>
+        <div style="font-size:.78rem;color:var(--fg-muted);margin-bottom:.75rem;line-height:1.6">
+          Hard rules: <strong style="color:var(--fg)">arrive by Jul 3</strong> &bull;
+          <strong style="color:var(--fg)">leave no earlier than Jul 10</strong> &bull;
+          <strong style="color:var(--fg)">8&ndash;15 days</strong> &bull;
+          <span style="color:var(--primary)">&#9733; = your ideal dates</span>
         </div>
         ${gridHTML}
-        <div style="font-size:.75rem;color:var(--fg-muted);margin-top:.75rem;line-height:1.6;">
-          <strong style="color:var(--fg)">Tip:</strong> Earlier departure (Jun 28–30) may be cheaper since it avoids the
-          peak July 1 holiday rush. The routine will fill in prices as they're discovered.
-          Jul 2 → Jul 10 is the shortest valid trip (8 days, tight).
-        </div>
       </div>
 
       <div class="grid2">
         <div class="glass card-pad">
-          <div class="slabel">Airport Distance from Leeds (assumed wedding area)</div>
+          <div class="slabel">Airport Distance from Leeds</div>
           ${distHTML}
-          <div style="font-size:.69rem;color:var(--fg-subtle);margin-top:.5rem">
-            Bars show distance. Clock = estimated train time to Leeds. MAN &amp; LBA are by far closest.
-          </div>
+          <div style="font-size:.69rem;color:var(--fg-subtle);margin-top:.5rem">Bars show road distance. Clock = train time to Leeds. MAN &amp; LBA are closest.</div>
         </div>
         <div class="glass card-pad">
           <div class="slabel">Airport Quick Reference</div>
-          ${ag.map(a=>`
-            <div class="dist-row" style="align-items:flex-start;gap:.6rem;padding:.5rem 0">
-              <div style="min-width:36px">
-                <div style="font-family:var(--mono);font-size:.82rem;font-weight:700;color:var(--accent)">${e(a.code)}</div>
-                <div>${{green:'🟢',yellow:'🟡',red:'🔴'}[a.verdict_type]||''}</div>
-              </div>
-              <div>
-                <div style="font-size:.8rem;font-weight:600;color:var(--fg)">${e(a.name)}</div>
-                <div style="font-size:.72rem;color:var(--fg-muted);margin-top:.1rem">${e(a.notes)}</div>
-              </div>
-            </div>`).join('')}
+          ${ag.map(a=>`<div class="dist-row" style="align-items:flex-start;gap:.6rem;padding:.5rem 0">
+            <div style="min-width:36px"><div style="font-family:var(--mono);font-size:.82rem;font-weight:700;color:var(--primary)">${e(a.code)}</div><div>${{green:'&#128994;',yellow:'&#128993;',red:'&#128308;'}[a.verdict_type]||''}</div></div>
+            <div><div style="font-size:.8rem;font-weight:600">${e(a.name)}</div><div style="font-size:.72rem;color:var(--fg-muted);margin-top:.1rem">${e(a.notes)}</div></div>
+          </div>`).join('')}
         </div>
       </div>
 
       <div class="glass card-pad mb">
-        <div class="slabel">Direct Booking Links — Dates Pre-Filled Where Possible</div>
-        <div style="font-size:.77rem;color:var(--fg-muted);margin-bottom:.75rem;">
-          Links use Jul 1 → Jul 15. Change dates in the booking site if needed.
+        <div class="slabel">Direct Booking Links &mdash; Dates Pre-Filled</div>
+        <div style="font-size:.77rem;color:var(--fg-muted);margin-bottom:.75rem">Links use Jul 1 &rarr; Jul 15. Change dates in the booking site if needed.</div>
+        <div class="booking-links-grid">
+          ${bookingLinks.map(l=>`<a class="booking-link-card" href="${e(l.url)}" target="_blank" rel="noopener"><div class="blc-name">${l.name}</div><div class="blc-route">${l.route}</div><div class="blc-note">${l.note}</div></a>`).join('')}
         </div>
-        ${blHTML}
       </div>
 
       <div class="glass card-pad">
-        <div class="slabel">What to Book if You're Over Budget</div>
-        <div class="ctx-row"><span>💡</span><span><strong style="color:var(--fg)">Widen dates:</strong> Try Jun 28 or Jun 29 departure — holiday surge pricing often starts Jul 1. Could save $50–150.</span></div>
-        <div class="ctx-row"><span>🔀</span><span><strong style="color:var(--fg)">Try shorter trip:</strong> Jul 2 → Jul 10 (8 days, bare minimum). Shorter trips can sometimes be cheaper by ~5–10%.</span></div>
-        <div class="ctx-row"><span>🏙</span><span><strong style="color:var(--fg)">Accept London:</strong> LGW via Norse Atlantic is cheapest total combination. Train to Leeds is long but doable overnight.</span></div>
-        <div class="ctx-row"><span>📞</span><span><strong style="color:var(--fg)">Call the airline:</strong> Occasionally unpublished fares exist. Try calling Icelandair (+1-800-223-5500) and asking for the lowest available July fare DEN–MAN.</span></div>
-        <div class="ctx-row"><span>🎫</span><span><strong style="color:var(--fg)">Award seats:</strong> Check British Airways Executive Club (Avios), United MileagePlus, and Delta SkyMiles. Award flights on this route in economy often cost £100–£200 in fees only.</span></div>
+        <div class="slabel">What to do if Over Budget</div>
+        <div class="ctx-row"><span>&#128161;</span><span><strong style="color:var(--fg)">Widen dates:</strong> Try Jun 28 or Jun 29 departure &mdash; avoids the Jul 1 holiday surge. Could save $50&ndash;$150.</span></div>
+        <div class="ctx-row"><span>&#128256;</span><span><strong style="color:var(--fg)">Accept London:</strong> LGW via Norse Atlantic is cheapest total combo. Overnight train to Leeds is doable.</span></div>
+        <div class="ctx-row"><span>&#127942;</span><span><strong style="color:var(--fg)">Award seats:</strong> BA Avios, United MileagePlus, Delta SkyMiles &mdash; economy awards often cost just &pound;100&ndash;&pound;200 in fees.</span></div>
+        <div class="ctx-row"><span>&#128222;</span><span><strong style="color:var(--fg)">Call Icelandair:</strong> +1-800-223-5500 &mdash; occasionally unpublished fares. Ask for lowest July fare DEN&ndash;MAN.</span></div>
       </div>
 
       <div class="page-footer">
-        <span class="live-dot"></span>Date matrix prices filled in automatically each hourly scan &nbsp;·&nbsp;
+        <span class="live-dot"></span>Date matrix prices filled in automatically each scan &nbsp;&bull;&nbsp;
         <a href="https://github.com/findlayymckeown/Flights">github.com/findlayymckeown/Flights</a>
-      </div>
-    `;
+      </div>`;
 
-    /* ─────────────────────────────────────────────
-       NAVIGATION
-    ───────────────────────────────────────────── */
-    const pages  = document.querySelectorAll('.page');
+    /* ── NAVIGATION ── */
+    const pages   = document.querySelectorAll('.page');
     const navBtns = document.querySelectorAll('.nav-item[data-page]');
-
     function showPage(id){
-      pages.forEach(p=>p.classList.toggle('active', p.id==='page-'+id));
-      navBtns.forEach(b=>b.classList.toggle('active', b.dataset.page===id));
+      pages.forEach(p=>p.classList.toggle('active',p.id==='page-'+id));
+      navBtns.forEach(b=>b.classList.toggle('active',b.dataset.page===id));
       closeSidebar();
     }
     navBtns.forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
@@ -1994,5 +2043,6 @@ window.FLIGHT_DATA = {
     overlay.addEventListener('click', closeSidebar);
   })();
   </script>
+
 </body>
 </html>
