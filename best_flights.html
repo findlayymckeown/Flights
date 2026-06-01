@@ -1476,7 +1476,7 @@ window.FLIGHT_DATA = {
     document.addEventListener('keydown', ev => { if(ev.key==='Escape') closeModal(); });
 
     /* build flight card DOM node */
-    function mkCard(f, budget){
+    function mkCard(f, budget, tripDates){
       const over = f.price_numeric > budget;
       const pct  = Math.min(Math.round((f.price_numeric / budget)*100), 200);
       const airports = (f.route||'').split('→').map(s=>s.trim()).filter(Boolean);
@@ -1525,7 +1525,7 @@ window.FLIGHT_DATA = {
                  (n.includes('aer lingus')&&al.includes('aer lingus'));
         });
         const notes = f.notes || (f.rank===1 && bo ? bo.notes : null);
-        openModal(buildModal(f, budget, strat, notes), f.airline, f.rank);
+        openModal(buildModal(f, budget, strat, notes, tripDates), f.airline, f.rank);
       }
       div.addEventListener('click', open);
       div.addEventListener('keydown', ev=>{ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); open(); } });
@@ -1533,7 +1533,7 @@ window.FLIGHT_DATA = {
     }
 
     /* build modal HTML string */
-    function buildModal(f, budget, strat, notes){
+    function buildModal(f, budget, strat, notes, tripDates){
       const over   = f.price_numeric > budget;
       const pct    = Math.round((f.price_numeric / budget)*100);
       const markPct= Math.min(Math.round((budget/f.price_numeric)*100), 99);
@@ -1564,14 +1564,49 @@ window.FLIGHT_DATA = {
           </div>
         </div>` : '';
 
-      const bookBtn = f.booking_url
-        ? `<a href="${e(f.booking_url)}" target="_blank" rel="noopener" class="btn-book">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            Book this flight
-           </a>`
-        : '';
-      const dep = airports[0]||'SLC';
-      const kayakUrl = `https://www.kayak.com/flights/${e(dep)}-${e(dest)}/2026-07-01/2026-07-15`;
+      const depAirport = airports[0] || 'SLC';
+      const al  = (f.airline||'').toLowerCase();
+      const depDate = (tripDates && tripDates.dep) || '2026-07-01';
+      const retDate = (tripDates && tripDates.ret) || '2026-07-15';
+      // Icelandair flies from DEN not SLC — use DEN as search origin for those
+      const searchFrom = al.includes('icelandair') ? 'DEN' : depAirport;
+
+      const kayakUrl   = `https://www.kayak.com/flights/${searchFrom}-${dest}/${depDate}/${retDate}`;
+      const googleUrl  = `https://www.google.com/travel/flights?q=flights+from+${searchFrom}+to+${dest}+${depDate}+return+${retDate}`;
+
+      // Airline-specific direct booking URLs
+      let airlineUrl = '', airlineLabel = '';
+      if (al.includes('icelandair')) {
+        airlineUrl   = `https://www.icelandair.com/us/book/flights/?from=DEN&to=MAN&departure=${depDate}&return=${retDate}&adults=1&class=economy`;
+        airlineLabel = 'Icelandair.com';
+      } else if (al.includes('norse')) {
+        airlineUrl   = 'https://flights.flynorse.com/en-us/';
+        airlineLabel = 'Norse Atlantic';
+      } else if (al.includes('play')) {
+        airlineUrl   = 'https://www.flyplay.com/en-us/cheap-flights-from-united-states';
+        airlineLabel = 'PLAY Airlines';
+      } else if (al.includes('united')) {
+        airlineUrl   = `https://www.united.com/en-us/flights?from=${depAirport}&to=${dest}&departDate=${depDate}&returnDate=${retDate}&travelers=1`;
+        airlineLabel = 'United Airlines';
+      } else if (al.includes('delta')) {
+        airlineUrl   = `https://www.delta.com/us/en/flight-search/book-a-flight?tripType=roundTrip&fromAirportName=${depAirport}&toAirportName=${dest}&departureDate=${depDate}&returnDate=${retDate}&passengerCount=1&fareClass=COACH`;
+        airlineLabel = 'Delta.com';
+      } else if (al.includes('american')) {
+        airlineUrl   = `https://www.aa.com/booking/search?locale=en_US&pax=1&adult=1&type=RoundTrip&searchType=Matrix&cabin=&flights[0].departDate=${depDate}&flights[0].origin=${depAirport}&flights[0].destination=${dest}&flights[1].departDate=${retDate}&flights[1].origin=${dest}&flights[1].destination=${depAirport}`;
+        airlineLabel = 'AmericanAirlines.com';
+      } else if (al.includes('british airways')) {
+        airlineUrl   = `https://www.britishairways.com/travel/searchresults/public/en_us?onds=${depAirport}-${dest}&outbounddate=${depDate.replace(/-/g,'')}&returndate=${retDate.replace(/-/g,'')}&classoftravel=M&numberofadults=01`;
+        airlineLabel = 'BritishAirways.com';
+      } else if (al.includes('virgin')) {
+        airlineUrl   = `https://flights.virginatlantic.com/en-us/?departing=${depAirport}&arriving=${dest}&outboundDate=${depDate}&returnDate=${retDate}&adults=1&cabin=economy`;
+        airlineLabel = 'Virgin Atlantic';
+      } else if (al.includes('aer lingus')) {
+        airlineUrl   = 'https://www.aerlingus.com/en-us/flights-from-denver-to-manchester';
+        airlineLabel = 'Aer Lingus';
+      } else if (al.includes('swiss')) {
+        airlineUrl   = `https://www.swiss.com/us/en/book/flights#outboundDate=${depDate}&inboundDate=${retDate}&adults=1&origin=${depAirport}&destination=${dest}`;
+        airlineLabel = 'SWISS.com';
+      }
 
       return `
         ${rejHtml}
@@ -1616,19 +1651,32 @@ window.FLIGHT_DATA = {
         ${notes?`<div class="modal-sec"><div class="modal-sec-title">Notes</div><div class="modal-notes">${notes}</div></div>`:''}
         ${stepsHtml}
         ${pcHtml}
+        <div style="margin-bottom:.6rem;font-size:.72rem;color:var(--fg-subtle);line-height:1.6">
+          These links search <strong style="color:var(--fg)">${searchFrom} &rarr; ${dest}</strong> on <strong style="color:var(--fg)">${depDate} &rarr; ${retDate}</strong> with 1 adult.
+          ${al.includes('icelandair')?'<br>Icelandair flies <em>Denver</em>&rarr;Manchester; the Kayak link reflects that.':''}
+        </div>
         <div class="modal-ctas">
-          ${bookBtn}
-          <a href="${kayakUrl}" target="_blank" rel="noopener" class="btn-kayak">
+          ${airlineUrl
+            ? `<a href="${airlineUrl}" target="_blank" rel="noopener" class="btn-book">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Book on ${airlineLabel}
+               </a>`
+            : ''}
+          <a href="${kayakUrl}" target="_blank" rel="noopener" class="${airlineUrl?'btn-kayak':'btn-book'}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            Search on Kayak
+          </a>
+          <a href="${googleUrl}" target="_blank" rel="noopener" class="btn-kayak">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Check on Kayak
+            Google Flights
           </a>
         </div>`;
     }
 
     /* render flight card list */
-    function renderCards(flights, budget, container){
+    function renderCards(flights, budget, container, tripDates){
       const frag = document.createDocumentFragment();
-      flights.forEach(f => frag.appendChild(mkCard(f, budget)));
+      flights.forEach(f => frag.appendChild(mkCard(f, budget, tripDates)));
       container.appendChild(frag);
     }
 
@@ -1758,13 +1806,14 @@ window.FLIGHT_DATA = {
 
     /* inject flight cards */
     const mainContainer = huntEl.querySelector('#cards-main');
+    const mainDates = {dep:'2026-07-01', ret:'2026-07-15'};
     mainContainer.innerHTML = `<div class="flight-list-head"><div class="slabel" style="margin:0">All Options &mdash; Cheapest First</div><div class="flight-list-count">${activeFlights.length} routes</div></div>`;
-    renderCards(activeFlights, B, mainContainer);
+    renderCards(activeFlights, B, mainContainer, mainDates);
 
     if(rejectedFlights.length){
       const rejContainer = huntEl.querySelector('#cards-rejected');
       rejContainer.innerHTML = `<div class="slabel">Rejected (date violations / one-way only)</div>`;
-      renderCards(rejectedFlights, B, rejContainer);
+      renderCards(rejectedFlights, B, rejContainer, mainDates);
     }
 
     /* ─────────────────────────────────────────────
@@ -1914,7 +1963,7 @@ window.FLIGHT_DATA = {
     if(boysFlights.length){
       const bc = boysEl.querySelector('#cards-boys');
       bc.innerHTML = `<div class="flight-list-head"><div class="slabel" style="margin:0">Flights Found &mdash; Cheapest First</div><div class="flight-list-count">${boysFlights.length} routes</div></div>`;
-      renderCards(boysFlights, budgetB, bc);
+      renderCards(boysFlights, budgetB, bc, {dep:'2026-07-07', ret:'2026-07-15'});
     }
 
     /* ─────────────────────────────────────────────
