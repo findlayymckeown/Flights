@@ -3,90 +3,362 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flight Tracker — Utah to England</title>
+  <title>Flight Hunter — Utah to England</title>
   <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f1117;color:#e2e8f0;min-height:100vh;padding:2rem 1rem}
-    .container{max-width:960px;margin:0 auto}
-    .header{text-align:center;margin-bottom:2rem}
-    .header h1{font-size:2rem;font-weight:700;letter-spacing:-0.5px;color:#f8fafc}
-    .header h1 span{color:#60a5fa}
-    .header .subtitle{color:#94a3b8;margin-top:.4rem;font-size:.95rem}
-    .header .meta{display:flex;justify-content:center;gap:1.5rem;margin-top:.75rem;font-size:.82rem;color:#64748b;flex-wrap:wrap}
-    .status-banner{border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem}
-    .status-banner.over{background:#1e1010;border:1px solid #7f1d1d}
-    .status-banner.found{background:#0d1f14;border:1px solid #14532d}
-    .status-icon{font-size:2rem;flex-shrink:0}
-    .status-text h2{font-size:1.1rem;font-weight:700}
-    .status-banner.over .status-text h2{color:#fca5a5}
-    .status-banner.found .status-text h2{color:#86efac}
-    .status-text p{font-size:.85rem;color:#94a3b8;margin-top:.2rem}
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
-    @media(max-width:640px){.grid-2{grid-template-columns:1fr}}
-    .card{background:#1e2433;border:1px solid #2d3748;border-radius:12px;padding:1.25rem}
-    .card-title{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#64748b;margin-bottom:.9rem}
-    .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
-    .stat{background:#161b27;border-radius:8px;padding:.75rem}
-    .stat-label{font-size:.72rem;color:#64748b;margin-bottom:.2rem}
-    .stat-value{font-size:1.05rem;font-weight:600;color:#e2e8f0}
-    .stat-value.blue{color:#60a5fa}.stat-value.yellow{color:#fbbf24}.stat-value.red{color:#f87171}.stat-value.green{color:#34d399}
-    .best-card{background:#1e2433;border:1px solid #2d3748;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
-    .route-viz{font-size:1.1rem;font-weight:700;color:#f8fafc;margin:.5rem 0;letter-spacing:-.3px;display:flex;flex-wrap:wrap;align-items:center;gap:.3rem}
-    .atag{font-size:.72rem;font-weight:700;color:#60a5fa;background:#1e3a5f;border-radius:4px;padding:.1rem .35rem}
-    .atag.pref{color:#a78bfa;background:#2e1a5e}
-    .arrow{color:#60a5fa}
-    .pills{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
-    .pill{font-size:.75rem;padding:.2rem .65rem;border-radius:20px;font-weight:500}
-    .pill-blue{background:#1e3a5f;color:#93c5fd;border:1px solid #1d4ed8}
-    .pill-gray{background:#1f2937;color:#9ca3af;border:1px solid #374151}
-    .pill-yellow{background:#2d1f00;color:#fbbf24;border:1px solid #92400e}
-    .big-price{font-size:2.2rem;font-weight:800;letter-spacing:-1px}
-    .big-price.over{color:#f87171}.big-price.ok{color:#34d399}
-    .price-sub{font-size:.8rem;color:#64748b;margin-top:.1rem}
-    .table-wrap{background:#1e2433;border:1px solid #2d3748;border-radius:12px;overflow:hidden;margin-bottom:1rem}
-    .table-header{padding:1rem 1.25rem .75rem;border-bottom:1px solid #2d3748;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#64748b}
-    table{width:100%;border-collapse:collapse}
-    thead th{padding:.6rem 1rem;text-align:left;font-size:.72rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.05em;background:#161b27;border-bottom:1px solid #2d3748}
-    tbody tr{border-bottom:1px solid #1a2030;transition:background .15s}
-    tbody tr:last-child{border-bottom:none}
-    tbody tr:hover{background:#242b3d}
-    tbody tr.rejected-row{opacity:.5}
-    tbody td{padding:.8rem 1rem;font-size:.875rem;vertical-align:middle}
-    .td-price{font-weight:700;font-size:.95rem;white-space:nowrap}
-    .td-price.over{color:#f87171}.td-price.ok{color:#34d399}
-    .badge{display:inline-flex;align-items:center;gap:.25rem;font-size:.7rem;font-weight:600;padding:.18rem .55rem;border-radius:6px;white-space:nowrap}
-    .badge-red{background:#2d0a0a;color:#f87171;border:1px solid #7f1d1d}
-    .badge-green{background:#0d1f14;color:#34d399;border:1px solid #14532d}
-    .badge-yellow{background:#2d1f00;color:#fbbf24;border:1px solid #92400e}
-    .badge-gray{background:#1f2937;color:#6b7280;border:1px solid #374151}
-    .badge-blue{background:#1e3a5f;color:#93c5fd;border:1px solid #1d4ed8}
-    .log-empty{padding:2rem;text-align:center;color:#475569;font-size:.85rem}
-    .rejected-item{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-bottom:1px solid #1a2030;font-size:.85rem}
-    .rejected-item:last-child{border-bottom:none}
-    .rejected-icon{color:#f87171;flex-shrink:0}
-    .rejected-reason{color:#64748b;font-size:.78rem;margin-top:.2rem}
-    .link-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.5rem}
-    .link-btn{display:block;padding:.6rem .9rem;background:#161b27;border:1px solid #2d3748;border-radius:8px;color:#93c5fd;text-decoration:none;font-size:.82rem;font-weight:500;transition:all .15s;text-align:center}
-    .link-btn:hover{background:#1e3a5f;border-color:#1d4ed8}
-    .tip{display:flex;gap:.75rem;padding:.65rem 0;border-bottom:1px solid #1a2030;font-size:.84rem;align-items:flex-start}
-    .tip:last-child{border-bottom:none}
-    .tip-text{color:#94a3b8}
-    .tip-text strong{color:#e2e8f0}
-    .footer{text-align:center;margin-top:2.5rem;font-size:.78rem;color:#334155}
-    .mb-1{margin-bottom:1rem}
-    .market-bar-label{display:flex;justify-content:space-between;font-size:.75rem;color:#64748b;margin-bottom:.3rem}
-    .market-bar{height:8px;background:#161b27;border-radius:4px;overflow:hidden;margin-bottom:.6rem}
-    .market-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#2563eb,#dc2626)}
-    a{color:#60a5fa}
-    .ctx-item{display:flex;gap:.5rem;font-size:.82rem;color:#94a3b8;line-height:1.7}
-    .update-pulse{display:inline-block;width:8px;height:8px;background:#34d399;border-radius:50%;margin-right:6px;animation:pulse 2s infinite}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Root tokens (Modern Dark Cinema) ── */
+    :root {
+      --bg-deep:      #020203;
+      --bg-base:      #050506;
+      --bg-elevated:  #0a0a0c;
+      --surface:      rgba(255,255,255,0.03);
+      --surface-hover:rgba(255,255,255,0.06);
+      --border:       rgba(255,255,255,0.08);
+      --border-top:   rgba(255,255,255,0.13);
+      --fg:           #EDEDEF;
+      --fg-muted:     #8A8F98;
+      --fg-subtle:    #4B5563;
+      --accent:       #5E6AD2;
+      --accent-glow:  rgba(94,106,210,0.25);
+      --accent-dim:   rgba(94,106,210,0.15);
+      --success:      #10B981;
+      --success-glow: rgba(16,185,129,0.2);
+      --success-dim:  rgba(16,185,129,0.1);
+      --danger:       #EF4444;
+      --danger-glow:  rgba(239,68,68,0.2);
+      --danger-dim:   rgba(239,68,68,0.1);
+      --warning:      #F59E0B;
+      --warning-dim:  rgba(245,158,11,0.1);
+      --radius:       14px;
+      --radius-sm:    8px;
+      --ease:         cubic-bezier(0.16,1,0.3,1);
+      --font-mono:    'SF Mono','Fira Code','Cascadia Code','Consolas',monospace;
+      --font-sans:    -apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',sans-serif;
+    }
+
+    /* ── Base ── */
+    html { color-scheme: dark; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-deep);
+      color: var(--fg);
+      min-height: 100dvh;
+      padding: 2.5rem 1rem 4rem;
+      overflow-x: hidden;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+    /* ── Ambient background ── */
+    .blobs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+    .blob-1 {
+      width: 500px; height: 500px;
+      background: rgba(94,106,210,0.07);
+      top: -150px; left: -100px;
+      animation-delay: 0s; animation-duration: 22s;
+    }
+    .blob-2 {
+      width: 400px; height: 400px;
+      background: rgba(124,58,237,0.06);
+      bottom: 0; right: -80px;
+      animation-delay: -8s; animation-duration: 18s;
+    }
+    .blob-3 {
+      width: 300px; height: 300px;
+      background: rgba(16,185,129,0.05);
+      top: 50%; left: 40%;
+      animation-delay: -14s; animation-duration: 25s;
+    }
+    @keyframes drift {
+      0%   { transform: translate(0,0) scale(1); }
+      33%  { transform: translate(40px,-30px) scale(1.05); }
+      66%  { transform: translate(-20px,50px) scale(0.97); }
+      100% { transform: translate(30px,20px) scale(1.02); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .blob { animation: none; }
+    }
+
+    /* ── Layout ── */
+    .container { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; }
+
+    /* ── Header ── */
+    .header { text-align: center; margin-bottom: 2.5rem; }
+    .header-eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      font-size: .72rem; font-weight: 600; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--accent);
+      background: var(--accent-dim); border: 1px solid rgba(94,106,210,0.3);
+      padding: .3rem .8rem; border-radius: 20px; margin-bottom: 1rem;
+    }
+    .header-eyebrow .pulse {
+      width: 6px; height: 6px; background: var(--success);
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 var(--success-glow);
+      animation: ping 1.8s ease-out infinite;
+    }
+    @keyframes ping {
+      0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+      70%  { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+    .header h1 {
+      font-size: clamp(2rem, 5vw, 3rem); font-weight: 800;
+      letter-spacing: -1px; color: var(--fg); line-height: 1.1;
+    }
+    .header h1 .route-accent {
+      background: linear-gradient(135deg, var(--accent), #818CF8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-sub { color: var(--fg-muted); margin-top: .5rem; font-size: .9rem; }
+    .header-pills {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: .5rem; margin-top: 1rem;
+    }
+    .header-pill {
+      font-size: .75rem; padding: .25rem .75rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; color: var(--fg-muted);
+    }
+
+    /* ── Glass card base ── */
+    .glass {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top-color: var(--border-top);
+      border-radius: var(--radius);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: background var(--ease) 150ms, border-color var(--ease) 150ms;
+    }
+    .glass:hover { background: var(--surface-hover); }
+
+    /* ── Status banner ── */
+    .status-banner {
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; gap: 1.25rem;
+      position: relative; overflow: hidden;
+    }
+    .status-banner::before {
+      content: ''; position: absolute; inset: 0;
+      opacity: .07; pointer-events: none;
+    }
+    .status-banner.over { border-color: rgba(239,68,68,0.25); }
+    .status-banner.over::before { background: radial-gradient(ellipse at top left, var(--danger), transparent 70%); }
+    .status-banner.found { border-color: rgba(16,185,129,0.3); }
+    .status-banner.found::before { background: radial-gradient(ellipse at top left, var(--success), transparent 70%); }
+
+    .status-icon-wrap {
+      width: 52px; height: 52px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+    }
+    .status-banner.over .status-icon-wrap { background: var(--danger-dim); border: 1px solid rgba(239,68,68,0.25); }
+    .status-banner.found .status-icon-wrap { background: var(--success-dim); border: 1px solid rgba(16,185,129,0.3); }
+    .status-text h2 { font-size: 1.05rem; font-weight: 700; }
+    .status-banner.over .status-text h2  { color: #FCA5A5; }
+    .status-banner.found .status-text h2 { color: #6EE7B7; }
+    .status-text p { font-size: .82rem; color: var(--fg-muted); margin-top: .25rem; line-height: 1.5; }
+    .live-dot {
+      display: inline-block; width: 7px; height: 7px;
+      background: var(--success); border-radius: 50%;
+      margin-right: 5px; vertical-align: middle;
+      animation: ping 1.8s ease-out infinite;
+    }
+
+    /* ── Grids ── */
+    .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: .75rem; margin-bottom: 1rem; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    @media (max-width: 800px) { .grid-4 { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .grid-4 { grid-template-columns: 1fr 1fr; } .grid-2 { grid-template-columns: 1fr; } }
+
+    /* ── Stat cards ── */
+    .stat-card { padding: 1.1rem 1.25rem; }
+    .stat-label { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--fg-subtle); margin-bottom: .35rem; }
+    .stat-value { font-family: var(--font-mono); font-size: 1.6rem; font-weight: 700; letter-spacing: -1px; line-height: 1; }
+    .stat-value.blue    { color: var(--accent); }
+    .stat-value.green   { color: var(--success); }
+    .stat-value.red     { color: var(--danger); }
+    .stat-value.yellow  { color: var(--warning); }
+    .stat-sub { font-size: .72rem; color: var(--fg-subtle); margin-top: .3rem; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-size: .68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--fg-subtle); margin-bottom: .75rem;
+    }
+
+    /* ── Best option card ── */
+    .best-card { padding: 1.5rem; margin-bottom: 1rem; position: relative; }
+    .best-card::after {
+      content: ''; position: absolute;
+      top: 0; left: 20%; right: 20%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: .4;
+    }
+    .route-display {
+      display: flex; flex-wrap: wrap; align-items: center; gap: .4rem;
+      margin: .6rem 0 .9rem;
+    }
+    .atag {
+      font-family: var(--font-mono); font-size: .78rem; font-weight: 700;
+      padding: .2rem .5rem; border-radius: 6px;
+      border: 1px solid rgba(94,106,210,0.4);
+      background: rgba(94,106,210,0.1); color: #A5B4FC;
+    }
+    .atag.pref {
+      border-color: rgba(167,139,250,0.4);
+      background: rgba(124,58,237,0.12); color: #C4B5FD;
+    }
+    .route-arrow { color: var(--fg-subtle); font-size: .85rem; }
+    .best-meta { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .75rem; }
+    .meta-chip {
+      font-size: .75rem; padding: .2rem .6rem; border-radius: 20px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      color: var(--fg-muted);
+    }
+    .best-price-wrap { text-align: right; flex-shrink: 0; }
+    .big-price { font-family: var(--font-mono); font-size: 2.6rem; font-weight: 800; letter-spacing: -2px; line-height: 1; }
+    .big-price.over  { color: var(--danger); text-shadow: 0 0 30px var(--danger-glow); }
+    .big-price.found { color: var(--success); text-shadow: 0 0 30px var(--success-glow); }
+    .price-badge {
+      display: inline-block; margin-top: .4rem;
+      font-size: .7rem; padding: .2rem .6rem; border-radius: 20px; font-weight: 600;
+    }
+    .price-badge.over  { background: var(--danger-dim); border: 1px solid rgba(239,68,68,0.3); color: #FCA5A5; }
+    .price-badge.found { background: var(--success-dim); border: 1px solid rgba(16,185,129,0.3); color: #6EE7B7; }
+    .best-flex { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; }
+    .best-notes { font-size: .8rem; color: var(--fg-muted); line-height: 1.6; margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--border); }
+
+    /* ── Flights table ── */
+    .table-card { margin-bottom: 1rem; overflow: hidden; }
+    .table-header-bar { padding: .9rem 1.25rem .7rem; border-bottom: 1px solid var(--border); }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    thead th {
+      padding: .6rem 1rem; text-align: left;
+      font-size: .67rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+      color: var(--fg-subtle); background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 150ms var(--ease);
+      cursor: default;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface-hover); }
+    tbody tr.rejected { opacity: .4; }
+    tbody td { padding: .75rem 1rem; font-size: .855rem; vertical-align: middle; }
+    .td-price { font-family: var(--font-mono); font-weight: 700; font-size: .95rem; white-space: nowrap; }
+    .td-price.over  { color: var(--danger); }
+    .td-price.found { color: var(--success); }
+    .td-rank { font-family: var(--font-mono); font-size: .8rem; color: var(--fg-subtle); font-weight: 600; }
+    .td-route { font-weight: 500; }
+    .td-dest-man { color: #A5B4FC; font-weight: 600; }
+    .td-dest-lba { color: #C4B5FD; font-weight: 600; }
+    .table-legend {
+      padding: .6rem 1.25rem; border-top: 1px solid var(--border);
+      font-size: .7rem; color: var(--fg-subtle);
+      display: flex; gap: 1.5rem; flex-wrap: wrap;
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: .2rem;
+      font-size: .68rem; font-weight: 700; padding: .18rem .55rem; border-radius: 6px; white-space: nowrap;
+    }
+    .badge-red    { background: var(--danger-dim); color: #FCA5A5; border: 1px solid rgba(239,68,68,0.25); }
+    .badge-green  { background: var(--success-dim); color: #6EE7B7; border: 1px solid rgba(16,185,129,0.25); }
+    .badge-yellow { background: var(--warning-dim); color: #FDE68A; border: 1px solid rgba(245,158,11,0.25); }
+    .badge-gray   { background: rgba(255,255,255,0.04); color: var(--fg-subtle); border: 1px solid var(--border); }
+    .badge-accent { background: var(--accent-dim); color: #A5B4FC; border: 1px solid rgba(94,106,210,0.3); }
+
+    /* ── Market bars ── */
+    .market-card { padding: 1.25rem; margin-bottom: 1rem; }
+    .bar-row { margin-bottom: .75rem; }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-label { display: flex; justify-content: space-between; font-size: .75rem; color: var(--fg-muted); margin-bottom: .35rem; }
+    .bar-label span:last-child { font-family: var(--font-mono); color: var(--danger); }
+    .bar-track { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+    .bar-fill {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--danger));
+      transition: width .8s var(--ease);
+    }
+    .bar-budget-line {
+      font-size: .7rem; color: var(--fg-subtle); margin-top: .5rem;
+      padding-top: .5rem; border-top: 1px solid var(--border);
+    }
+
+    /* ── Context card ── */
+    .context-card { padding: 1.25rem; }
+    .ctx-row { display: flex; gap: .6rem; padding: .4rem 0; font-size: .83rem; color: var(--fg-muted); line-height: 1.5; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .ctx-row:last-child { border-bottom: none; }
+
+    /* ── Drop log / rejected ── */
+    .log-empty { padding: 2rem; text-align: center; color: var(--fg-subtle); font-size: .85rem; line-height: 1.7; }
+    .rejected-row-item { display: flex; align-items: flex-start; gap: .75rem; padding: .7rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: .84rem; }
+    .rejected-row-item:last-child { border-bottom: none; }
+    .rej-x { color: var(--danger); flex-shrink: 0; font-weight: 700; margin-top: 1px; }
+    .rej-reason { font-size: .75rem; color: var(--fg-subtle); margin-top: .15rem; }
+
+    /* ── Tips ── */
+    .tips-card { padding: 1.25rem; margin-bottom: 1rem; }
+    .tip-row { display: flex; gap: .75rem; padding: .6rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: .84rem; align-items: flex-start; }
+    .tip-row:last-child { border-bottom: none; }
+    .tip-text { color: var(--fg-muted); line-height: 1.6; }
+    .tip-text strong { color: var(--fg); }
+    .tip-text a { color: var(--accent); }
+
+    /* ── Search links ── */
+    .links-card { padding: 1.25rem; margin-bottom: 1rem; }
+    .links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: .5rem; }
+    .link-btn {
+      display: block; padding: .6rem 1rem; text-align: center;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); color: var(--accent); font-size: .82rem; font-weight: 500;
+      transition: background 150ms var(--ease), border-color 150ms var(--ease), transform 100ms var(--ease);
+      cursor: pointer;
+    }
+    .link-btn:hover { background: var(--accent-dim); border-color: rgba(94,106,210,0.4); transform: translateY(-1px); text-decoration: none; }
+    .link-btn:active { transform: translateY(0); }
+
+    /* ── History table ── */
+    .hist-card { overflow: hidden; margin-bottom: 1rem; }
+
+    /* ── Footer ── */
+    .footer { text-align: center; margin-top: 2rem; font-size: .75rem; color: var(--fg-subtle); line-height: 1.8; }
+
+    /* ── Utility ── */
+    .mb { margin-bottom: 1rem; }
+    .card-pad { padding: 1.25rem; }
   </style>
 </head>
 <body>
-<div class="container" id="app"></div>
+  <div class="blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
 
-<!-- DATA_START -->
+  <div class="container" id="app"></div>
+
+  <!-- DATA_START -->
 <script>
 window.FLIGHT_DATA = {
   "meta": {
@@ -176,211 +448,252 @@ window.FLIGHT_DATA = {
 </script>
 <!-- DATA_END -->
 
-<script>
-(function(){
-  const D = window.FLIGHT_DATA;
-  const $ = id => document.getElementById(id);
-  const budget = D.trip.budget_usd;
+  <script>
+  (function () {
+    const D = window.FLIGHT_DATA;
+    const budget = D.trip.budget_usd;
 
-  function destColor(dest) {
-    if (dest === 'MAN') return '#60a5fa';
-    if (dest === 'LBA') return '#a78bfa';
-    return '#94a3b8';
-  }
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    function timeAgo(iso) {
+      const m = Math.round((Date.now() - new Date(iso)) / 60000);
+      if (m < 2)  return 'just now';
+      if (m < 60) return m + 'm ago';
+      const h = Math.round(m / 60);
+      if (h < 24) return h + 'h ago';
+      return Math.round(h / 24) + 'd ago';
+    }
+    function badge(text, type) {
+      return `<span class="badge badge-${type}">${text}</span>`;
+    }
+    function atag(code, pref) {
+      return `<span class="atag${pref ? ' pref' : ''}">${esc(code)}</span>`;
+    }
+    function destClass(dest) {
+      if (dest === 'MAN') return 'td-dest-man';
+      if (dest === 'LBA') return 'td-dest-lba';
+      return '';
+    }
 
-  function airportTag(code, preferred) {
-    const cls = (code === D.best_option.preferred_dest) ? 'atag pref' : 'atag';
-    return `<span class="${cls}">${code}</span>`;
-  }
+    const bo = D.best_option;
+    const st = D.status;
 
-  function badge(text, type) {
-    return `<span class="badge badge-${type}">${text}</span>`;
-  }
-
-  function timeAgo(iso) {
-    const d = new Date(iso), now = new Date();
-    const mins = Math.round((now - d) / 60000);
-    if (mins < 2) return 'just now';
-    if (mins < 60) return `${mins}m ago`;
-    const hrs = Math.round(mins / 60);
-    if (hrs < 24) return `${hrs}h ago`;
-    return `${Math.round(hrs/24)}d ago`;
-  }
-
-  const html = `
-    <div class="header">
-      <h1>✈ Utah <span>→</span> England</h1>
-      <div class="subtitle">Flight Tracker — July 2026 Weddings</div>
-      <div class="meta">
-        <span>📅 Must arrive by ${D.trip.must_arrive_by}</span>
-        <span>💒 Weddings: ${D.trip.weddings.join(' & ')}</span>
-        <span>🏠 Depart no earlier than ${D.trip.must_leave_after}</span>
-        <span>💰 Budget: $${budget}</span>
-      </div>
-    </div>
-
-    <div class="status-banner ${D.status.found_qualifying ? 'found' : 'over'}">
-      <div class="status-icon">${D.status.found_qualifying ? '✅' : '⚠️'}</div>
-      <div class="status-text">
-        <h2>${D.status.found_qualifying
-          ? 'QUALIFYING FLIGHT FOUND — BOOK NOW'
-          : `No qualifying flight found under $${budget}`}</h2>
-        <p>Closest: ${D.status.closest_price_display} &nbsp;·&nbsp; Budget gap: ~$${D.status.budget_gap} &nbsp;·&nbsp;
-          <span class="update-pulse"></span>Last updated ${timeAgo(D.meta.last_updated)} &nbsp;·&nbsp; ${D.meta.run_count} search run${D.meta.run_count !== 1 ? 's' : ''} &nbsp;·&nbsp; Automated hourly scans active</p>
-      </div>
-    </div>
-
-    <div class="grid-2 mb-1">
-      <div class="card">
-        <div class="card-title">Snapshot</div>
-        <div class="stat-grid">
-          <div class="stat"><div class="stat-label">Budget</div><div class="stat-value blue">$${budget}</div></div>
-          <div class="stat"><div class="stat-label">Market Floor (Jul est.)</div><div class="stat-value red">~$790</div></div>
-          <div class="stat"><div class="stat-label">Budget Gap</div><div class="stat-value yellow">~$${D.status.budget_gap}</div></div>
-          <div class="stat"><div class="stat-label">Days to Departure</div><div class="stat-value yellow">${D.status.days_to_departure}</div></div>
+    const html = `
+      <div class="header">
+        <div class="header-eyebrow">
+          <span class="pulse"></span> Live Flight Tracker
+        </div>
+        <h1>Utah <span class="route-accent">→ England</span></h1>
+        <div class="header-sub">July 2026 · Two Weddings · Budget $${budget}</div>
+        <div class="header-pills">
+          <span class="header-pill">📅 Arrive by ${esc(D.trip.must_arrive_by)}</span>
+          <span class="header-pill">💒 Weddings: ${D.trip.weddings.join(' &amp; ')}</span>
+          <span class="header-pill">🏠 Depart after ${esc(D.trip.must_leave_after)}</span>
+          <span class="header-pill">✈ ${D.meta.run_count} search run${D.meta.run_count !== 1 ? 's' : ''}</span>
         </div>
       </div>
-      <div class="card">
-        <div class="card-title">Market Context</div>
-        ${D.context_items.map(c => `<div class="ctx-item"><span>${c.icon}</span><span>${c.text}</span></div>`).join('')}
-      </div>
-    </div>
 
-    <div class="best-card mb-1">
-      <div class="card-title">Current Best Option</div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
-        <div>
-          <div class="route-viz">
-            ${D.best_option.route_airports.map((a,i,arr) =>
-              airportTag(a) + (i < arr.length-1 ? '<span class="arrow">→</span>' : '')
-            ).join('')}
-          </div>
-          <div class="pills">
-            <span class="pill pill-blue">${D.best_option.airlines}</span>
-            <span class="pill pill-yellow">${D.best_option.stops}</span>
-            <span class="pill pill-gray">${D.best_option.travel_time}</span>
-            <span class="pill pill-gray">${D.best_option.dates}</span>
-          </div>
-          <div style="margin-top:.75rem;font-size:.82rem;color:#64748b;">${D.best_option.notes}</div>
-        </div>
-        <div style="text-align:right;flex-shrink:0;">
-          <div class="big-price over">${D.best_option.price_display}</div>
-          <div class="price-sub">est. total · OVER BUDGET</div>
-          <div style="margin-top:.5rem;">
-            <a href="${D.best_option.booking_url}" target="_blank" class="link-btn" style="display:inline-block;font-size:.8rem;padding:.4rem .8rem;">Check on Kayak →</a>
-          </div>
+      <div class="glass status-banner ${st.found_qualifying ? 'found' : 'over'}">
+        <div class="status-icon-wrap">${st.found_qualifying ? '✅' : '⚠️'}</div>
+        <div class="status-text">
+          <h2>${st.found_qualifying
+            ? 'QUALIFYING FLIGHT FOUND — BOOK NOW'
+            : `No qualifying flight under $${budget} found yet`}</h2>
+          <p>
+            Closest: <strong style="color:var(--fg)">${esc(st.closest_price_display)}</strong> &nbsp;·&nbsp;
+            Budget gap: ~$${st.budget_gap} &nbsp;·&nbsp;
+            <span class="live-dot"></span>Updated ${timeAgo(D.meta.last_updated)} &nbsp;·&nbsp;
+            ${st.days_to_departure} days to departure
+          </p>
         </div>
       </div>
-    </div>
 
-    <div class="table-wrap mb-1">
-      <div class="table-header">All Options — Ranked Cheapest to Most Expensive</div>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead><tr>
-            <th>#</th><th>Price</th><th>Route</th><th>Airline</th><th>Ref. Dates</th><th>Stops</th><th>Status</th>
-          </tr></thead>
-          <tbody>
-            ${D.flights.map(f => `
-              <tr class="${f.rejected ? 'rejected-row' : ''}">
-                <td style="color:#64748b;font-weight:600;">${f.rank ?? '—'}</td>
-                <td class="td-price ${f.price_numeric <= budget ? 'ok' : 'over'}">${f.price_display}</td>
-                <td style="color:${destColor(f.dest)};font-weight:${['MAN','LBA'].includes(f.dest)?'600':'400'}">
-                  ${f.route}
-                </td>
-                <td style="color:#94a3b8;">${f.airline}</td>
-                <td style="color:#64748b;font-size:.78rem;">${f.ref_dates}</td>
-                <td>${badge(f.stops, f.stops.startsWith('1') ? 'green' : 'red')}</td>
-                <td>${f.rejected
-                  ? badge('❌ REJECTED', 'gray')
-                  : f.price_numeric <= budget
-                    ? badge('✅ IN BUDGET', 'green')
-                    : badge('⚠ OVER BUDGET', 'red')}</td>
-              </tr>`).join('')}
-          </tbody>
-        </table>
+      <div class="grid-4">
+        <div class="glass stat-card">
+          <div class="stat-label">Budget</div>
+          <div class="stat-value blue">$${budget}</div>
+          <div class="stat-sub">All-in max</div>
+        </div>
+        <div class="glass stat-card">
+          <div class="stat-label">Closest Found</div>
+          <div class="stat-value red">${esc(st.closest_price_display)}</div>
+          <div class="stat-sub">Est. total</div>
+        </div>
+        <div class="glass stat-card">
+          <div class="stat-label">Budget Gap</div>
+          <div class="stat-value yellow">~$${st.budget_gap}</div>
+          <div class="stat-sub">Over budget</div>
+        </div>
+        <div class="glass stat-card">
+          <div class="stat-label">Days Out</div>
+          <div class="stat-value ${st.days_to_departure <= 21 ? 'red' : 'yellow'}">${st.days_to_departure}</div>
+          <div class="stat-sub">Until Jul 1</div>
+        </div>
       </div>
-      <div style="padding:.6rem 1rem;font-size:.72rem;color:#475569;border-top:1px solid #2d3748;display:flex;gap:1.5rem;flex-wrap:wrap;">
-        <span><strong style="color:#a78bfa;">Purple</strong> = Leeds Bradford (priority #2)</span>
-        <span><strong style="color:#60a5fa;">Blue</strong> = Manchester (priority #1)</span>
-        <span>Greyed rows = rejected (date violation)</span>
-      </div>
-    </div>
 
-    <div class="card mb-1">
-      <div class="card-title">Budget vs. Market</div>
-      ${D.market_bars.map(b => `
-        <div class="market-bar-label"><span>${b.label}</span><span style="color:#f87171;">${b.price}</span></div>
-        <div class="market-bar"><div class="market-bar-fill" style="width:${b.pct}%;"></div></div>
-      `).join('')}
-      <div style="font-size:.72rem;color:#475569;margin-top:.4rem;">$${budget} budget sits far left. Every bar exceeds it.</div>
-    </div>
-
-    <div class="grid-2 mb-1">
-      <div class="card">
-        <div class="card-title">Price Drop Log</div>
-        ${D.price_drops.length === 0
-          ? '<div class="log-empty">No drops recorded yet.<br>Watching hourly.</div>'
-          : D.price_drops.map(p => `
-              <div class="rejected-item">
-                <div class="rejected-icon">↓</div>
-                <div><div>${p.date} — saved $${p.saving}</div><div class="rejected-reason">${p.from} → ${p.to} · ${p.route}</div></div>
-              </div>`).join('')}
+      <div class="glass best-card mb">
+        <div class="section-label">Current Best Option</div>
+        <div class="best-flex">
+          <div style="flex:1;min-width:0;">
+            <div class="route-display">
+              ${bo.route_airports.map((a, i, arr) =>
+                atag(a, a === bo.preferred_dest) +
+                (i < arr.length - 1 ? '<span class="route-arrow">→</span>' : '')
+              ).join('')}
+            </div>
+            <div class="best-meta">
+              <span class="meta-chip">${esc(bo.airlines)}</span>
+              <span class="meta-chip">${esc(bo.stops)}</span>
+              <span class="meta-chip">${esc(bo.travel_time)}</span>
+              <span class="meta-chip">${esc(bo.dates)}</span>
+            </div>
+            ${bo.booking_url ? `<a href="${esc(bo.booking_url)}" target="_blank" rel="noopener"
+              class="link-btn" style="display:inline-block;margin-top:.25rem;font-size:.8rem;padding:.4rem .9rem;">
+              Check price →
+            </a>` : ''}
+          </div>
+          <div class="best-price-wrap">
+            <div class="big-price ${bo.price_numeric <= budget ? 'found' : 'over'}">${esc(bo.price_display)}</div>
+            <div>
+              <span class="price-badge ${bo.price_numeric <= budget ? 'found' : 'over'}">
+                ${bo.price_numeric <= budget ? '✅ IN BUDGET' : '⚠ OVER BUDGET'}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="best-notes">${esc(bo.notes)}</div>
       </div>
-      <div class="card">
-        <div class="card-title">Rejected Flights</div>
-        ${D.rejected.map(r => `
-          <div class="rejected-item">
-            <div class="rejected-icon">✕</div>
-            <div><div>${r.flight}</div><div class="rejected-reason">${r.reason}</div></div>
+
+      <div class="glass table-card">
+        <div class="table-header-bar">
+          <div class="section-label" style="margin-bottom:0;">All Options — Cheapest to Most Expensive</div>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr>
+              <th>#</th><th>Price</th><th>Route</th><th>Airline</th>
+              <th>Ref. Dates</th><th>Stops</th><th>Status</th>
+            </tr></thead>
+            <tbody>
+              ${D.flights.map(f => `
+                <tr class="${f.rejected ? 'rejected' : ''}">
+                  <td class="td-rank">${f.rank ?? '—'}</td>
+                  <td class="td-price ${f.price_numeric <= budget ? 'found' : 'over'}">${esc(f.price_display)}</td>
+                  <td class="td-route ${destClass(f.dest)}">${esc(f.route)}</td>
+                  <td style="color:var(--fg-muted)">${esc(f.airline)}</td>
+                  <td style="color:var(--fg-subtle);font-size:.78rem;">${esc(f.ref_dates)}</td>
+                  <td>${badge(esc(f.stops), f.stops.startsWith('1') ? 'green' : 'gray')}</td>
+                  <td>${f.rejected
+                    ? badge('❌ REJECTED', 'gray')
+                    : f.price_numeric <= budget
+                      ? badge('✅ IN BUDGET', 'green')
+                      : badge('⚠ OVER', 'red')}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="table-legend">
+          <span><strong style="color:#A5B4FC;">Blue</strong> = Manchester (priority #1)</span>
+          <span><strong style="color:#C4B5FD;">Purple</strong> = Leeds Bradford (priority #2)</span>
+          <span style="color:var(--fg-subtle);">Faded rows = rejected (date violation)</span>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="glass market-card">
+          <div class="section-label">Budget vs. Market</div>
+          ${D.market_bars.map(b => `
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>${esc(b.label)}</span>
+                <span>${esc(b.price)}</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width:${b.pct}%"></div></div>
+            </div>`).join('')}
+          <div class="bar-budget-line">$${budget} budget = far left. Every bar exceeds it.</div>
+        </div>
+        <div class="glass context-card">
+          <div class="section-label">Market Context</div>
+          ${D.context_items.map(c => `
+            <div class="ctx-row"><span>${c.icon}</span><span>${esc(c.text)}</span></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="glass card-pad">
+          <div class="section-label">Price Drop Log</div>
+          ${D.price_drops.length === 0
+            ? `<div class="log-empty">No drops recorded yet.<br>Watching every hour.</div>`
+            : D.price_drops.map(p => `
+                <div class="rejected-row-item">
+                  <div style="color:var(--success);font-weight:700;">↓</div>
+                  <div>
+                    <div>${esc(p.date)} — saved $${p.saving}</div>
+                    <div class="rej-reason">${esc(p.from)} → ${esc(p.to)} · ${esc(p.route)}</div>
+                  </div>
+                </div>`).join('')}
+        </div>
+        <div class="glass card-pad">
+          <div class="section-label">Rejected Flights</div>
+          ${D.rejected.map(r => `
+            <div class="rejected-row-item">
+              <div class="rej-x">✕</div>
+              <div>
+                <div>${esc(r.flight)}</div>
+                <div class="rej-reason">${esc(r.reason)}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="glass tips-card">
+        <div class="section-label">Strategies to Watch</div>
+        ${D.tips.map(t => `
+          <div class="tip-row">
+            <div>${t.icon}</div>
+            <div class="tip-text">${t.text}</div>
           </div>`).join('')}
       </div>
-    </div>
 
-    <div class="card mb-1">
-      <div class="card-title">Strategies to Watch</div>
-      ${D.tips.map(t => `
-        <div class="tip">
-          <div>${t.icon}</div>
-          <div class="tip-text">${t.text}</div>
-        </div>`).join('')}
-    </div>
-
-    <div class="card mb-1">
-      <div class="card-title">Search Now</div>
-      <div class="link-grid">
-        ${D.search_links.map(l => `<a class="link-btn" href="${l.url}" target="_blank">${l.label}</a>`).join('')}
+      <div class="glass links-card">
+        <div class="section-label">Search Now</div>
+        <div class="links-grid">
+          ${D.search_links.map(l => `
+            <a class="link-btn" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`).join('')}
+        </div>
       </div>
-    </div>
 
-    <div class="table-wrap">
-      <div class="table-header">Search History</div>
-      <table>
-        <thead><tr><th>Run</th><th>Date</th><th>Type</th><th>Cheapest Found</th><th>Notes</th></tr></thead>
-        <tbody>
-          ${D.history.map(h => `
-            <tr>
-              <td style="color:#64748b;">#${h.run}</td>
-              <td>${h.date}</td>
-              <td>${badge(h.type === 'manual' ? 'Manual' : 'Auto', h.type === 'manual' ? 'blue' : 'green')}</td>
-              <td class="td-price over">${h.cheapest}</td>
-              <td style="color:#94a3b8;font-size:.82rem;">${h.notes}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>
-    </div>
+      <div class="glass hist-card">
+        <div class="table-header-bar"><div class="section-label" style="margin-bottom:0;">Search History</div></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>#</th><th>Date</th><th>Type</th><th>Cheapest</th><th>Notes</th></tr></thead>
+            <tbody>
+              ${D.history.map(h => `
+                <tr>
+                  <td class="td-rank">#${h.run}</td>
+                  <td style="font-family:var(--font-mono);font-size:.82rem;">${esc(h.date)}</td>
+                  <td>${badge(h.type === 'manual' ? 'Manual' : 'Auto', h.type === 'manual' ? 'accent' : 'green')}</td>
+                  <td class="td-price over">${esc(h.cheapest)}</td>
+                  <td style="color:var(--fg-muted);font-size:.8rem;">${esc(h.notes)}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-    <div class="footer">
-      <span class="update-pulse"></span>
-      Automated hourly scans active &nbsp;·&nbsp;
-      Results at <a href="https://claude.ai/code/routines">claude.ai/code/routines</a> &nbsp;·&nbsp;
-      GitHub: <a href="https://github.com/findlayymckeown/Flights">findlayymckeown/Flights</a> &nbsp;·&nbsp;
-      Last updated: ${new Date(D.meta.last_updated).toLocaleString()}
-    </div>
-  `;
+      <div class="footer">
+        <span class="live-dot"></span>
+        Automated hourly scans active &nbsp;·&nbsp;
+        <a href="https://claude.ai/code/routines">claude.ai/code/routines</a> &nbsp;·&nbsp;
+        <a href="https://github.com/findlayymckeown/Flights">github.com/findlayymckeown/Flights</a><br>
+        Last updated: ${new Date(D.meta.last_updated).toLocaleString()} &nbsp;·&nbsp; Run #${D.meta.run_count}
+      </div>
+    `;
 
-  document.getElementById('app').innerHTML = html;
-})();
-</script>
+    document.getElementById('app').innerHTML = html;
+  })();
+  </script>
 </body>
 </html>
