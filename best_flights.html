@@ -411,6 +411,10 @@
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Date Finder
       </button>
+      <button class="nav-item" data-page="boys" id="nav-boys">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        Boys Trip
+      </button>
       <button class="nav-item" data-page="deals" id="nav-deals">
         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         Deal Watch
@@ -438,6 +442,7 @@
   <!-- Main -->
   <main class="main">
     <div class="page active" id="page-hunt"></div>
+    <div class="page" id="page-boys"></div>
     <div class="page" id="page-dates"></div>
     <div class="page" id="page-deals"></div>
   </main>
@@ -1274,7 +1279,88 @@ window.FLIGHT_DATA = {
       "verdict_type": "red",
       "notes": "Budget airport. Similar distance to LHR. Avoid if possible."
     }
-  ]
+  ],
+  "boys_trip": {
+    "meta": {
+      "last_updated": "2026-06-01T00:00:00Z",
+      "run_count": 0,
+      "run_type": "pending"
+    },
+    "trip": {
+      "label": "Boys Trip",
+      "ideal_depart": "July 7, 2026",
+      "ideal_return": "July 15, 2026",
+      "acceptable_depart": [
+        "Jul 6",
+        "Jul 7",
+        "Jul 8"
+      ],
+      "must_arrive_by": "July 9, 2026",
+      "must_leave_on": "July 15, 2026",
+      "budget_usd": 550,
+      "notes": "Must arrive by Jul 9 to attend Jul 10 wedding. Jul 7 = Tuesday departure, often cheaper."
+    },
+    "status": {
+      "found_qualifying": false,
+      "closest_price": null,
+      "closest_price_display": "Not yet searched",
+      "budget_gap": null,
+      "days_to_departure": 36
+    },
+    "best_option": null,
+    "flights": [],
+    "search_links": [
+      {
+        "label": "Google Flights",
+        "url": "https://www.google.com/travel/flights"
+      },
+      {
+        "label": "Kayak DEN→MAN",
+        "url": "https://www.kayak.com/flights/DEN-MAN/2026-07-07/2026-07-15"
+      },
+      {
+        "label": "Kayak SLC→MAN",
+        "url": "https://www.kayak.com/flights/SLC-MAN/2026-07-07/2026-07-15"
+      },
+      {
+        "label": "Kayak SLC→LHR",
+        "url": "https://www.kayak.com/flights/SLC-LHR/2026-07-07/2026-07-15"
+      },
+      {
+        "label": "Skyscanner",
+        "url": "https://www.skyscanner.com/transport/flights/slc/uk/20260707/20260715/"
+      },
+      {
+        "label": "Momondo",
+        "url": "https://www.momondo.com/flights/salt-lake-city/manchester/2026-07-07/2026-07-15"
+      },
+      {
+        "label": "Icelandair",
+        "url": "https://www.icelandair.com/us/book/flights/?from=DEN&to=MAN&departure=2026-07-07&return=2026-07-15&adults=1&class=economy"
+      },
+      {
+        "label": "Norse Atlantic",
+        "url": "https://flights.flynorse.com/en-us/"
+      },
+      {
+        "label": "PLAY Airlines",
+        "url": "https://www.flyplay.com/en-us/cheap-flights-from-united-states"
+      },
+      {
+        "label": "Kiwi.com",
+        "url": "https://www.kiwi.com/us/search/tiles/SLC/MAN/2026-07-07/2026-07-15?adults=1"
+      },
+      {
+        "label": "Expedia",
+        "url": "https://www.expedia.com/Flights-Search?trip=roundtrip&leg1=from%3ASLC%2Cto%3AMAN%2Cdeparture%3A07%2F07%2F2026&leg2=from%3AMAN%2Cto%3ASLC%2Cdeparture%3A07%2F15%2F2026"
+      },
+      {
+        "label": "Orbitz",
+        "url": "https://www.orbitz.com/Flights-Search?trip=roundtrip&leg1=from%3ASLC%2Cto%3AMAN%2Cdeparture%3A07%2F07%2F2026&leg2=from%3AMAN%2Cto%3ASLC%2Cdeparture%3A07%2F15%2F2026"
+      }
+    ],
+    "history": []
+  }
 };
 </script>
 <!-- DATA_END -->
@@ -1562,6 +1648,172 @@ window.FLIGHT_DATA = {
     `;
 
 
+
+
+    /* ─────────────────────────────────────────────
+       PAGE: BOYS TRIP
+    ───────────────────────────────────────────── */
+    const BT = D.boys_trip || {};
+    const BTt = BT.trip || {};
+    const BTs = BT.status || {};
+    const BTb = BT.budget_usd || (BTt.budget_usd || 550);
+    const budget_boys = BTt.budget_usd || 550;
+
+    (function renderBoysTrip(){
+      const el = document.getElementById('page-boys');
+      if(!el) return;
+
+      const hasFlights = (BT.flights||[]).length > 0;
+      const hasBO      = !!BT.best_option;
+      const found      = BTs.found_qualifying;
+      const closest    = BTs.closest_price_display || 'Not yet searched';
+      const daysOut    = BTs.days_to_departure;
+      const gap        = BTs.budget_gap;
+      const neverRun   = BT.meta && BT.meta.run_count === 0;
+
+      // Status banner
+      let bannerClass = neverRun ? 'pending' : found ? 'found' : 'over';
+      let bannerIcon  = neverRun ? '🔍' : found ? '✅' : '⚠️';
+      let bannerTitle = neverRun
+        ? 'First scan pending — results will appear within the hour'
+        : found
+          ? 'QUALIFYING FLIGHT FOUND — BOOK NOW'
+          : `No qualifying flight under $${budget_boys} found yet`;
+      let bannerSub = neverRun
+        ? `Search will run hourly for Jul 7–15 departures · Budget $${budget_boys}`
+        : `Closest: <strong style="color:var(--fg)">${e(closest)}</strong>${gap != null ? ` &nbsp;·&nbsp; Gap: ~$${gap}` : ''} &nbsp;·&nbsp; <span class="live-dot"></span>${ta(BT.meta.last_updated)} &nbsp;·&nbsp; ${daysOut} days to departure`;
+
+      // Flights table
+      let tableHTML = '';
+      if(hasFlights){
+        tableHTML = `
+          <div class="glass table-card mb">
+            <div class="table-bar"><div class="slabel" style="margin:0">Flights Found — Cheapest First</div></div>
+            <div class="tscroll"><table>
+              <thead><tr><th>#</th><th>Price</th><th>Route</th><th>Airline</th><th>Dates</th><th>Stops</th><th>Status</th></tr></thead>
+              <tbody>
+                ${(BT.flights||[]).map(f=>`
+                  <tr class="${f.rejected?'dim':''}">
+                    <td class="td-rank">${f.rank??'—'}</td>
+                    <td class="td-mono ${f.price_numeric<=budget_boys?'found':'over'}">${e(f.price_display)}</td>
+                    <td class="${destC(f.dest)}">${e(f.route)}</td>
+                    <td style="color:var(--fg-muted)">${e(f.airline)}</td>
+                    <td style="color:var(--fg-subtle);font-size:.77rem">${e(f.ref_dates||f.dates||'')}</td>
+                    <td>${badge(e(f.stops),f.stops&&f.stops.startsWith('1')?'green':'gray')}</td>
+                    <td>${f.rejected?badge('❌ REJECTED','gray'):f.price_numeric<=budget_boys?badge('✅ IN BUDGET','green'):badge('⚠ OVER','red')}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table></div>
+          </div>`;
+      } else {
+        tableHTML = `<div class="glass card-pad mb log-empty" style="padding:2rem;text-align:center">
+          🔍 No flights found yet.<br>
+          <span style="font-size:.75rem;color:var(--fg-subtle);margin-top:.5rem;display:block">
+            The hourly scanner will populate this table automatically.
+          </span>
+        </div>`;
+      }
+
+      // Best option card
+      let bestHTML = '';
+      if(hasBO){
+        const bo2 = BT.best_option;
+        bestHTML = `<div class="glass best-card mb">
+          <div class="slabel">Current Best Option</div>
+          <div class="best-flex">
+            <div style="flex:1;min-width:0">
+              <div class="route-viz">
+                ${(bo2.route_airports||[]).map((a,i,arr)=>atag(a,a===bo2.preferred_dest)+(i<arr.length-1?'<span class="rarrow">→</span>':'')).join('')}
+              </div>
+              <div class="chips">
+                <span class="chip">${e(bo2.airlines||'')}</span>
+                <span class="chip">${e(bo2.stops||'')}</span>
+                <span class="chip">${e(bo2.dates||'')}</span>
+              </div>
+              ${bo2.booking_url?`<a href="${e(bo2.booking_url)}" target="_blank" rel="noopener" class="link-btn" style="display:inline-block;margin-top:.3rem;padding:.38rem .8rem;font-size:.78rem;">Check price →</a>`:''}
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div class="big-price ${bo2.price_numeric<=budget_boys?'found':'over'}">${e(bo2.price_display)}</div>
+              <div><span class="price-badge ${bo2.price_numeric<=budget_boys?'found':'over'}">${bo2.price_numeric<=budget_boys?'✅ IN BUDGET':'⚠ OVER BUDGET'}</span></div>
+            </div>
+          </div>
+          ${bo2.notes?`<div class="best-notes">${e(bo2.notes)}</div>`:''}
+        </div>`;
+      }
+
+      el.innerHTML = `
+        <div class="page-head">
+          <div class="page-eyebrow"><span class="dot"></span> Boys Trip</div>
+          <h1 class="page-h1"><span class="grad">Boys Trip</span></h1>
+          <div class="page-sub">Utah → England · ${e(BTt.ideal_depart||'Jul 7')} → ${e(BTt.ideal_return||'Jul 15, 2026')}</div>
+          <div class="header-pills">
+            <span class="hpill">✈ Depart ~${e(BTt.ideal_depart||'Jul 7')}</span>
+            <span class="hpill">🏠 Return ${e(BTt.ideal_return||'Jul 15')}</span>
+            <span class="hpill">💒 Must arrive by ${e(BTt.must_arrive_by||'Jul 9')}</span>
+            <span class="hpill">💰 Budget $${budget_boys}</span>
+            <span class="hpill">📅 ${daysOut} days away</span>
+          </div>
+        </div>
+
+        <div class="glass status-banner ${bannerClass==='pending'?'over':bannerClass} mb"
+          style="${neverRun?'border-color:rgba(94,106,210,0.3);':''}${neverRun?'background:var(--accent-dim);':''}"
+        >
+          <div class="status-icon" style="${neverRun?'background:var(--accent-dim);border-color:rgba(94,106,210,0.3);':''}">${bannerIcon}</div>
+          <div class="status-text">
+            <h2 style="${neverRun?'color:#A5B4FC;':''}">${bannerTitle}</h2>
+            <p>${bannerSub}</p>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="glass stat-card"><div class="stat-label">Budget</div><div class="stat-val blue">$${budget_boys}</div><div class="stat-sub">All-in max</div></div>
+          <div class="glass stat-card"><div class="stat-label">Closest Found</div><div class="stat-val ${found?'green':neverRun?'blue':'red'}">${e(closest)}</div><div class="stat-sub">${neverRun?'Pending scan':'Est. total'}</div></div>
+          <div class="glass stat-card"><div class="stat-label">Budget Gap</div><div class="stat-val ${gap==null?'blue':gap<=0?'green':'yellow'}">${gap==null?'—':'~$'+gap}</div><div class="stat-sub">${gap==null?'Pending':'Over limit'}</div></div>
+          <div class="glass stat-card"><div class="stat-label">Days Out</div><div class="stat-val ${daysOut<=21?'red':'yellow'}">${daysOut}</div><div class="stat-sub">Until Jul 7</div></div>
+        </div>
+
+        <div class="glass card-pad mb" style="border-color:rgba(94,106,210,0.2);background:var(--accent-dim);">
+          <div class="slabel" style="color:var(--accent)">Trip Notes</div>
+          <div class="ctx-row"><span>📅</span><span><strong style="color:var(--fg)">Tuesday departure (Jul 7)</strong> — weekdays are typically 10–15% cheaper than weekends. Good timing.</span></div>
+          <div class="ctx-row"><span>💒</span><span><strong style="color:var(--fg)">One wedding only</strong> — arrive by Jul 9, attend Jul 10 wedding, depart Jul 15.</span></div>
+          <div class="ctx-row"><span>📊</span><span><strong style="color:var(--fg)">vs. Main Trip pricing</strong> — Jul 7 is slightly after the July 4 US holiday rush. May see marginally lower fares than Jul 1.</span></div>
+          <div class="ctx-row"><span>✅</span><span><strong style="color:var(--fg)">Valid window</strong> — Jul 6, 7, or 8 departure all work (arrive Jul 7–9, well before Jul 10 wedding).</span></div>
+        </div>
+
+        ${bestHTML}
+        ${tableHTML}
+
+        <div class="glass card-pad mb">
+          <div class="slabel">Search Links — Jul 7 → Jul 15 Pre-Filled</div>
+          <div class="links-grid">
+            ${(BT.search_links||[]).map(l=>`<a class="link-btn" href="${e(l.url)}" target="_blank" rel="noopener">${e(l.label)}</a>`).join('')}
+          </div>
+        </div>
+
+        ${(BT.history||[]).length>0?`
+        <div class="glass table-card">
+          <div class="table-bar"><div class="slabel" style="margin:0">Search History</div></div>
+          <div class="tscroll"><table>
+            <thead><tr><th>#</th><th>Date</th><th>Type</th><th>Cheapest</th><th>Notes</th></tr></thead>
+            <tbody>
+              ${(BT.history||[]).map(h=>`<tr>
+                <td class="td-rank">#${h.run}</td>
+                <td style="font-family:var(--mono);font-size:.8rem">${e(h.date)}</td>
+                <td>${badge(h.type==='manual'?'Manual':'Auto',h.type==='manual'?'accent':'green')}</td>
+                <td class="td-mono over">${e(h.cheapest)}</td>
+                <td style="color:var(--fg-muted);font-size:.79rem">${e(h.notes)}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table></div>
+        </div>`:
+        `<div class="glass card-pad log-empty">No search history yet — first automated scan pending.</div>`}
+
+        <div class="page-footer">
+          <span class="live-dot"></span>Hourly scans active &nbsp;·&nbsp;
+          <a href="https://github.com/findlayymckeown/Flights">github.com/findlayymckeown/Flights</a>
+        </div>
+      `;
+    })();
 
     /* ─────────────────────────────────────────────
        PAGE 3 — DATE FINDER
