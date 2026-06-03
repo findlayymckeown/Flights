@@ -1651,24 +1651,20 @@ window.FLIGHT_DATA = {
         ${notes?`<div class="modal-sec"><div class="modal-sec-title">Notes</div><div class="modal-notes">${notes}</div></div>`:''}
         ${stepsHtml}
         ${pcHtml}
-        <div style="margin-bottom:.6rem;font-size:.72rem;color:var(--fg-subtle);line-height:1.6">
-          These links search <strong style="color:var(--fg)">${searchFrom} &rarr; ${dest}</strong> on <strong style="color:var(--fg)">${depDate} &rarr; ${retDate}</strong> with 1 adult.
-          ${al.includes('icelandair')?'<br>Icelandair flies <em>Denver</em>&rarr;Manchester; the Kayak link reflects that.':''}
+        <div style="margin:.2rem 0 .75rem;padding:.65rem .8rem;background:rgba(14,165,233,0.06);border:1px solid rgba(14,165,233,0.18);border-radius:9px;font-size:.75rem;color:var(--fg-muted);line-height:1.6">
+          These open a live search for <strong style="color:var(--fg)">${searchFrom} &rarr; ${dest}</strong>,
+          <strong style="color:var(--fg)">${depDate}</strong> out &bull; <strong style="color:var(--fg)">${retDate}</strong> back, 1 adult economy.
+          The results page shows specific flights you can select and book directly.
+          ${al.includes('icelandair')?'<br><em>Icelandair departs Denver (DEN), not SLC — links reflect that.</em>':''}
         </div>
         <div class="modal-ctas">
-          ${airlineUrl
-            ? `<a href="${airlineUrl}" target="_blank" rel="noopener" class="btn-book">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                Book on ${airlineLabel}
-               </a>`
-            : ''}
-          <a href="${kayakUrl}" target="_blank" rel="noopener" class="${airlineUrl?'btn-kayak':'btn-book'}">
+          <a href="https://www.skyscanner.com/transport/flights/${searchFrom.toLowerCase()}/${dest.toLowerCase()}/${depDate.replace(/-/g,'')}/${retDate.replace(/-/g,'')}/?adults=1&cabinclass=economy&rtn=1" target="_blank" rel="noopener" class="btn-book">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            See flights on Skyscanner
+          </a>
+          <a href="${kayakUrl}" target="_blank" rel="noopener" class="btn-kayak">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             Search on Kayak
-          </a>
-          <a href="${googleUrl}" target="_blank" rel="noopener" class="btn-kayak">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            Google Flights
           </a>
         </div>`;
     }
